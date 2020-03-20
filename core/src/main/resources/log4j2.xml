@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="test">
+    <Properties>
+        <Property name="logDir">log</Property>
+        <Property name="pattern">[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+        <RollingFile name="RollingFile">
+            <FileName>${logDir}/gate.log</FileName>
+            <FilePattern>${logDir}/gate-%i.log</FilePattern>
+            <PatternLayout>
+                <Pattern>${pattern}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="5" />
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger additivity="false" name = "org.gate" level="info">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
+        </Logger>
+    </Loggers>
+</Configuration>
