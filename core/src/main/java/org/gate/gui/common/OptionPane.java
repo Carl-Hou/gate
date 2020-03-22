@@ -17,12 +17,10 @@
  */
 package org.gate.gui.common;
 
-import jdk.nashorn.internal.scripts.JO;
+
 import org.gate.common.util.GateUtils;
 
 import javax.swing.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class OptionPane {
 

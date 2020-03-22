@@ -32,6 +32,7 @@ import org.gate.gui.details.results.elements.test.*;
 import org.gate.gui.tree.GateTreeSupport;
 
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -94,11 +95,7 @@ public class ResultManager implements TestConstraint {
     public void modelComplete(ModelContainerResult modelContainerResult) {
         ResultTreeNode testSuiteNode = getSuiteResultNode(modelContainerResult.getSuiteName());
         TestSuiteResult testSuitesResult = (TestSuiteResult) testSuiteNode.getResult();
-        if(modelContainerResult.getStatus().equals(TS_PROCESSING)){
-            throw new GateRuntimeExcepiton("Invalid status. should not call model Complete on processing model");
-        }else {
-            testSuitesResult.updateModelResultSummary(modelContainerResult);
-        }
+        testSuitesResult.updateModelResultSummary(modelContainerResult);
         if (testSuitesResult.isFailure()) {
             reload(testSuiteNode);
         }
@@ -191,10 +188,10 @@ public class ResultManager implements TestConstraint {
     }
 
     public LinkedList<ResultTreeNode> findChildren(ResultTreeNode parent, Class userObjectClass) {
-        Enumeration<ResultTreeNode> enumNodes = parent.children();
+        Enumeration<TreeNode> enumNodes = parent.children();
         LinkedList<ResultTreeNode> nodes = new LinkedList<>();
         while (enumNodes.hasMoreElements()) {
-            ResultTreeNode childTreeNode = enumNodes.nextElement();
+            ResultTreeNode childTreeNode = (ResultTreeNode) enumNodes.nextElement();
             if (userObjectClass.isAssignableFrom(childTreeNode.getUserObject().getClass())) {
                 nodes.add(childTreeNode);
             }
@@ -204,7 +201,9 @@ public class ResultManager implements TestConstraint {
 
     public void reload(ResultTreeNode resultTreeNode){
         if(GateProps.isGuiMode()){
-            model.reload(resultTreeNode);
+            synchronized (model){
+                model.reload(resultTreeNode);
+            }
         }
     }
 

@@ -21,6 +21,7 @@ package org.gate.gui.details.results;
 import org.gate.common.config.GateProps;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.GuiUtils;
+import org.gate.gui.common.VerticalPanel;
 import org.gate.gui.details.results.elements.Result;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,15 +34,12 @@ import java.util.LinkedList;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-public class ResultTree extends JPanel {
+public class ResultTree extends VerticalPanel {
 
 	Logger log = LogManager.getLogger();
 
@@ -53,15 +51,13 @@ public class ResultTree extends JPanel {
 
 	private static final Border BLUE_BORDER = BorderFactory.createLineBorder(Color.blue);
 
-
 	DefaultTreeModel model = ResultManager.getIns().getModel();
 	JTree tree = new JTree(model);
 
+
 	public ResultTree(){
-		tree.setCellRenderer(new ResultsNodeRender());
 		setLayout(new BorderLayout());
-		add(tree, BorderLayout.CENTER);
-		tree.setRootVisible(false);
+		tree.setCellRenderer(new ResultsNodeRender());
 		model.addTreeModelListener(new TreeModelListener() {
 			@Override
 			public void treeNodesChanged(TreeModelEvent e) {}
@@ -71,7 +67,6 @@ public class ResultTree extends JPanel {
 					tree.scrollPathToVisible(e.getTreePath());
 				}
 			}
-
 			@Override
 			public void treeNodesRemoved(TreeModelEvent e) {}
 
@@ -94,6 +89,28 @@ public class ResultTree extends JPanel {
 				}
 			}
 		});
+
+		tree.setRootVisible(false);
+
+		JCheckBox autoScroll = new JCheckBox("Scroll automatically?");
+		autoScroll.setSelected(true);
+		autoScroll.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(((JCheckBox) e.getSource()).isSelected()){
+					GateProps.getProperty("gate.gui.result.scroll");
+					GateProps.getProperties().setProperty("gate.gui.result.scroll", "true");
+				}else{
+					GateProps.getProperties().setProperty("gate.gui.result.scroll", "false");
+				}
+			}
+		});
+		JScrollPane treePane = new JScrollPane(tree);
+		treePane.setPreferredSize(new Dimension(200, 200));
+
+		add(autoScroll, BorderLayout.NORTH);
+		add(treePane, BorderLayout.CENTER);
+
 	}
 
 	public JTree getTree(){

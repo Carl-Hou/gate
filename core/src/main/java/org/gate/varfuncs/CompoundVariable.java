@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.SubScene;
 import org.gate.gui.details.results.elements.graph.SamplerResult;
 import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;

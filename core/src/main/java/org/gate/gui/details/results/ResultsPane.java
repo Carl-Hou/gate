@@ -17,15 +17,16 @@
  */
 package org.gate.gui.details.results;
 
+
 import org.gate.common.config.GateUIDimensions;
-import org.gate.gui.MainFrame;
+
 import org.gate.gui.details.results.elements.Result;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.details.results.elements.test.TestResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.GridLayout;
+import java.awt.*;
 import javax.swing.*;
 
 public class ResultsPane extends JPanel {
@@ -43,7 +44,7 @@ public class ResultsPane extends JPanel {
 		setLayout(new GridLayout(1,1));
 		this.add(treeAndResults);
 		treeAndResults.setRightComponent(resultDetailsPane);
-		treeAndResults.setLeftComponent(new JScrollPane(resultTree));
+		treeAndResults.setLeftComponent(resultTree);
 		treeAndResults.setDividerLocation(GateUIDimensions.getInstance().getWorkspaceHorizontalDivider());
 	}
 

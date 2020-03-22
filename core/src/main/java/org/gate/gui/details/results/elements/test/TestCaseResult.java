@@ -23,11 +23,10 @@ import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
 
 public class TestCaseResult extends ModelContainerResult{
-    Logger log = LogManager.getLogger();
-    final static  String logFix = GateProps.LineSeparator + "=====================";
 
     private int loopIndex = -1;
     private int variableSetIndex = -1;
+    private boolean isLooping = false;
 
     public TestCaseResult(String suiteName, String testCaseName) {
         super(suiteName, testCaseName);
@@ -80,6 +79,22 @@ public class TestCaseResult extends ModelContainerResult{
         sb.append("Status: ").append(status).append(GateProps.LineSeparator);
         sb.append("Message: ").append(getMessage()).append(GateProps.LineSeparator);
         return sb.toString();
+    }
+
+    public void setLooping(){
+        isLooping = true;
+    }
+
+    public void endLooping(){
+        isLooping = false;
+    }
+
+    @Override
+    public String getStatus(){
+        if(isLooping){
+            return TS_PROCESSING;
+        }
+        return status;
     }
 
 

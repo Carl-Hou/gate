@@ -28,6 +28,7 @@ import org.gate.varfuncs.property.StringProperty;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -37,9 +38,9 @@ public class TestCaseRunner extends GateModelRunner {
     private int invocationCount = 1;
     private Instant startTime;
     private List<HashMap<String, String>> provideDataList;
-
-    TestCaseRuntime testCaseRuntime;
-    TestCaseResult testCaseResult;
+    private LinkedList<TestCaseResult> testCaseResults = new LinkedList<>();
+    private TestCaseRuntime testCaseRuntime;
+    private TestCaseResult testCaseResult;
 
     public TestCaseRunner(TestModelRuntime testModelRuntime, GateContext parentContext) {
         super(parentContext);
@@ -91,6 +92,8 @@ public class TestCaseRunner extends GateModelRunner {
             ListIterator<HashMap<String, String>> provideDataIterator = provideDataList.listIterator();
             do {
                 testCaseResult = (TestCaseResult) testCaseRuntime.createModelContainerResult();
+                testCaseResult.setLooping();
+                testCaseResults.add(testCaseResult);
                 if (invocationCount > 1) {
                     testCaseResult.setLoopIndex(loopIndex);
                 }
@@ -104,7 +107,10 @@ public class TestCaseRunner extends GateModelRunner {
                 runCase(testCaseResult);
             }while(provideDataIterator.hasNext() && testCaseResult.isSuccess());
         }
-
+        testCaseResults.forEach(tcr ->{
+            tcr.endLooping();
+        });
+        testCaseResults.clear();
     }
 
     void runCase(TestCaseResult testCaseResult){
@@ -119,8 +125,6 @@ public class TestCaseRunner extends GateModelRunner {
             context.modelShutdown();
         }
     }
-
-
 
     @Override
     public boolean isShutdown() {
