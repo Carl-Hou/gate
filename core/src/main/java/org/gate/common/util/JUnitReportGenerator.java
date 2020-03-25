@@ -29,6 +29,7 @@ import org.gate.gui.details.results.elements.test.TestSuitesResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.swing.tree.TreeNode;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -72,15 +73,15 @@ public class JUnitReportGenerator {
     public Document generate(File reportFile) throws GateException {
         Element testSuitesElement = appendTestSuitesElement();
 
-        Enumeration<ResultTreeNode> testSuitesChildren = ResultManager.getIns().getSuitesNode().children();
+        Enumeration<TreeNode> testSuitesChildren = ResultManager.getIns().getSuitesNode().children();
 
         while (testSuitesChildren.hasMoreElements()) {
-            ResultTreeNode testSuitesChild = testSuitesChildren.nextElement();
+            ResultTreeNode testSuitesChild = (ResultTreeNode) testSuitesChildren.nextElement();
             if (TestSuiteResult.class.isInstance(testSuitesChild.getResult())) {
                 Element testSuiteElement = appendTestSuite(testSuitesElement, (TestSuiteResult) testSuitesChild.getResult());
-                Enumeration<ResultTreeNode> testSuiteChildren = testSuitesChild.children();
+                Enumeration<TreeNode> testSuiteChildren = testSuitesChild.children();
                 while (testSuiteChildren.hasMoreElements()){
-                    ResultTreeNode testSuiteChild = testSuiteChildren.nextElement();
+                    ResultTreeNode testSuiteChild = (ResultTreeNode) testSuiteChildren.nextElement();
                     if(TestCaseResult.class.isInstance(testSuiteChild.getResult())){
                         appendTestCase(testSuiteElement, (TestCaseResult) testSuiteChild.getResult());
                     }

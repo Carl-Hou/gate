@@ -31,6 +31,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
 
+import javax.swing.tree.TreeNode;
+
 public class TreeModelSaver {
 	protected Logger log = LogManager.getLogger(this);
     String RootElementTagName = null;
@@ -50,10 +52,10 @@ public class TreeModelSaver {
 	}
 
     void saveTreeNode(Element parentElement, GateTreeNode treeNode) throws ConvertException {
-        Enumeration<GateTreeNode> enumNodes = treeNode.children();
+        Enumeration<TreeNode> enumNodes = treeNode.children();
         Element currentDocElement = encoder.appendElement(parentElement, treeNode.getGateTreeElement());
         while(enumNodes.hasMoreElements()){
-            GateTreeNode childTreeNode = enumNodes.nextElement();
+            GateTreeNode childTreeNode = (GateTreeNode) enumNodes.nextElement();
             saveTreeNode(currentDocElement, childTreeNode);
         }
     }

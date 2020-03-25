@@ -35,6 +35,7 @@ import org.gate.gui.tree.test.elements.fixture.TearDown;
 import org.gate.gui.tree.test.elements.fixture.SetUp;
 import org.gate.gui.tree.test.elements.fixture.FixtureElement;
 
+import javax.swing.tree.TreeNode;
 import java.sql.ResultSetMetaData;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -232,10 +233,10 @@ public class TestPlan implements TestConstraint {
     }
 
     void prepareTestSuites() {
-        Enumeration<GateTreeNode> childrenOfSuites = GateTreeSupport.getTestSuitesNode().children();
+        Enumeration<TreeNode> childrenOfSuites = GateTreeSupport.getTestSuitesNode().children();
         while (childrenOfSuites.hasMoreElements()) {
             // add enabled node only
-            GateTreeNode node = childrenOfSuites.nextElement();
+            GateTreeNode node = (GateTreeNode) childrenOfSuites.nextElement();
             if (!((TestTreeElement) node.getGateTreeElement()).isEnable()) {
                 continue;
             }
@@ -258,9 +259,9 @@ public class TestPlan implements TestConstraint {
     void prepareTestSuitesRuntime(Collection<GateTreeNode> testSuiteNodes) {
 
         testSuiteNodes.forEach(testSuiteNode -> {
-            Enumeration<GateTreeNode> childrenOfSuite = testSuiteNode.children();
+            Enumeration<TreeNode> childrenOfSuite = testSuiteNode.children();
             while (childrenOfSuite.hasMoreElements()) {
-                GateTreeNode node = childrenOfSuite.nextElement();
+                GateTreeNode node = (GateTreeNode) childrenOfSuite.nextElement();
                 TestTreeElement testTreeElement = (TestTreeElement) node.getGateTreeElement();
                 if (!testTreeElement.isEnable()) {
                     continue;

@@ -15,9 +15,9 @@
                 <Pattern>${pattern}</Pattern>
             </PatternLayout>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10 MB" />
+                <SizeBasedTriggeringPolicy size="50 MB" />
             </Policies>
-            <DefaultRolloverStrategy max="5" />
+            <DefaultRolloverStrategy max="20" />
         </RollingFile>
     </Appenders>
     <Loggers>
@@ -25,7 +25,7 @@
             <AppenderRef ref="Console"/>
         </Root>
         <Logger additivity="false" name = "org.gate" level="info">
-            <appender-ref ref="Console"/>
+<!--            <appender-ref ref="Console"/>-->
             <appender-ref ref="RollingFile"/>
         </Logger>
     </Loggers>

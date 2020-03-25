@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.logging.log4j.LogManager;
@@ -203,9 +204,9 @@ public class TestTreeTransferHandler extends TransferHandler {
          * not support dnd to target which include children which include same name with source
          * */
         if(!nodes[0].getParentGateTreeNode().equals(target)){
-            Enumeration<GateTreeNode> enumNodes = target.children();
+            Enumeration<TreeNode> enumNodes = target.children();
             while(enumNodes.hasMoreElements()){
-                GateTreeNode childTreeNode = enumNodes.nextElement();
+                GateTreeNode childTreeNode = (GateTreeNode) enumNodes.nextElement();
                 if(Stream.of(nodes).filter(n -> n.toString().equals(childTreeNode.toString())).count() > 0){
                     return false;
                 }

@@ -29,6 +29,7 @@ import org.gate.gui.tree.test.elements.TestCase;
 import org.gate.gui.tree.test.elements.TestSuite;
 import org.gate.gui.tree.test.elements.TestSuites;
 
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.util.*;
@@ -111,18 +112,19 @@ public class Start extends AbstractGateAction {
 
         //sort by tree order. add all cases to empty suite.
         for(HashMap.Entry<GateTreeNode, LinkedList<GateTreeNode>> testSuite: testSuites.entrySet()){
-            Enumeration<GateTreeNode> childrenNodes = testSuite.getKey().children();
+            Enumeration<TreeNode> childrenNodes = testSuite.getKey().children();
             if(testSuite.getValue().size() == 0){
                 Collections.list(childrenNodes).forEach(childrenNode -> {
-                    if(childrenNode.includeElement(TestCase.class)){
-                        testSuite.getValue().add(childrenNode);
+                    GateTreeNode gateTreeNode = (GateTreeNode) childrenNode;
+                    if(gateTreeNode.includeElement(TestCase.class)){
+                        testSuite.getValue().add(gateTreeNode);
                     }
                 });
 
             }else{
                 LinkedList<GateTreeNode> processedTestCases = new LinkedList<>();
                 while(childrenNodes.hasMoreElements()){
-                    GateTreeNode childrenNode = childrenNodes.nextElement();
+                    GateTreeNode childrenNode = (GateTreeNode) childrenNodes.nextElement();
                     if(testSuite.getValue().contains(childrenNode)){
                         processedTestCases.add(childrenNode);
                     }

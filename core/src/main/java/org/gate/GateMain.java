@@ -65,12 +65,7 @@ public class GateMain {
 			}
 		});
 
-		String testFile = "C:\\Users\\ThinkPad\\Documents\\TestSut_load.gmx";
-//		String[] myArgs = {"-n", "-Ga=b", "-Gc=d", "-t ".concat(testFile)};
-//		String[] myArgs = {"-n", "-S TS","-C TC","-Ga=b", "-Gc=d", "-t ".concat(testFile)};
-		String[] myArgs = {"-Ga=b", "-Gc=d", "-t ".concat(testFile)};
-
-		runGate(myArgs);
+		runGate(args);
 	}
 
 	static void runGate(String[] args)  {

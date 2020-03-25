@@ -24,6 +24,7 @@ import org.gate.gui.details.results.elements.test.TestResult;
 import org.gate.gui.tree.GateTreeNode;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -36,9 +37,9 @@ public class ResultTreeNode extends DefaultMutableTreeNode {
     }
 
     public ResultTreeNode findChild(String nodeName){
-        Enumeration<ResultTreeNode> enumNodes = children();
+        Enumeration<TreeNode> enumNodes = children();
         while(enumNodes.hasMoreElements()){
-            ResultTreeNode childTreeNode = enumNodes.nextElement();
+            ResultTreeNode childTreeNode = (ResultTreeNode) enumNodes.nextElement();
             if(childTreeNode.toString().equals(nodeName)){
                 return childTreeNode;
             }
@@ -47,10 +48,10 @@ public class ResultTreeNode extends DefaultMutableTreeNode {
     }
 
     public LinkedList<ResultTreeNode> findChildren(Class userObjectClass){
-        Enumeration<ResultTreeNode> enumNodes = children();
+        Enumeration<TreeNode> enumNodes = children();
         LinkedList<ResultTreeNode> nodes = new LinkedList<>();
         while(enumNodes.hasMoreElements()){
-            ResultTreeNode childTreeNode = enumNodes.nextElement();
+            ResultTreeNode childTreeNode = (ResultTreeNode) enumNodes.nextElement();
             if(userObjectClass.isInstance(childTreeNode.getResult())){
                 nodes.add(childTreeNode);
             }
@@ -60,10 +61,10 @@ public class ResultTreeNode extends DefaultMutableTreeNode {
 
     public LinkedList<ResultTreeNode> findChildren(Class userObjectClass, String nodeName){
         // TODO need to check if userObjectClass is a Result
-        Enumeration<ResultTreeNode> enumNodes = children();
+        Enumeration<TreeNode> enumNodes = children();
         LinkedList<ResultTreeNode> nodes = new LinkedList<>();
         while(enumNodes.hasMoreElements()){
-            ResultTreeNode childTreeNode = enumNodes.nextElement();
+            ResultTreeNode childTreeNode = (ResultTreeNode) enumNodes.nextElement();
             if(childTreeNode.getResult().getName().equals(nodeName) && userObjectClass.isInstance(childTreeNode.getResult())){
                 nodes.add(childTreeNode);
             }

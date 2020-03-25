@@ -41,7 +41,6 @@ public class MainFrame extends JFrame
 
     String testFile = null;
 
-    private MainFrame mainFrame = null;
 	GateMenuBar gateMenuBar = null;
 	GateToolBar gateToolBar = null;
 	JLabel statusBar = null;
@@ -59,9 +58,7 @@ public class MainFrame extends JFrame
 
 	TreePath currentModePath= null;
 
-
 	public MainFrame(){
-		mainFrame = this;
 		initGUI();
 	}
 	
@@ -201,8 +198,10 @@ public class MainFrame extends JFrame
 	}
 
 	public void setTestFile(String file){
-		LoadRecentProject.updateRecentFiles(file);
 		testFile = file;
+		if(file != null){
+			LoadRecentProject.updateRecentFiles(file);
+		}
 	}
 
 	public String getTestFile(){
@@ -227,7 +226,7 @@ public class MainFrame extends JFrame
 		}
 		sb.append("-").append(message);
 		sb.trimToSize();
-		mainFrame.setTitle(sb.toString());
+		setTitle(sb.toString());
 	}
 
 	public void setStatus(String message){

@@ -25,6 +25,7 @@ import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
 import org.gate.gui.details.properties.tree.TreeElementPropertiesGui;
+import org.gate.gui.details.properties.tree.TreeNamePane;
 import org.gate.gui.tree.action.ActionTree;
 import org.gate.gui.tree.test.TestTree;
 import org.gate.gui.tree.test.elements.TestCase;
@@ -77,9 +78,9 @@ public class GateTreeSupport {
     }
 
     public static GateTreeNode findFirstChild(GateTreeNode parent, String nodeName){
-        Enumeration<MutableTreeNode> enumNodes = parent.children();
+        Enumeration<TreeNode> enumNodes = parent.children();
         while(enumNodes.hasMoreElements()){
-            MutableTreeNode childTreeNode = enumNodes.nextElement();
+            MutableTreeNode childTreeNode = (MutableTreeNode) enumNodes.nextElement();
             if(childTreeNode.toString().equals(nodeName)){
                 return (GateTreeNode) childTreeNode;
             }
@@ -88,10 +89,10 @@ public class GateTreeSupport {
     }
 
     public static LinkedList<GateTreeNode> findChildren(GateTreeNode parent, Class userObjectClass){
-        Enumeration<GateTreeNode> enumNodes = parent.children();
+        Enumeration<TreeNode> enumNodes = parent.children();
         LinkedList<GateTreeNode> nodes = new LinkedList<>();
         while(enumNodes.hasMoreElements()){
-            GateTreeNode childTreeNode = enumNodes.nextElement();
+            GateTreeNode childTreeNode = (GateTreeNode) enumNodes.nextElement();
             if(userObjectClass.isAssignableFrom(childTreeNode.getGateTreeElement().getClass())){
                 nodes.add(childTreeNode);
             }

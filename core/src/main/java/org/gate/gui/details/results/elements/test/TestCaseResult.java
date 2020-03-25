@@ -57,18 +57,10 @@ public class TestCaseResult extends ModelContainerResult{
     }
 
     void postShutdown(){
-//        StringBuilder sb = new StringBuilder(logFix);
-//        sb.append("Test Case ");
-//        sb.append(getSuiteName()).append(".").append(getName()).append(" Shutdown ").append(logFix);
-//        log.info(sb.toString());
     }
 
     void postStart(){
         //TODO  start and stop time is record in result. Is this really needed?
-//        StringBuilder sb = new StringBuilder(logFix);
-//        sb.append("Test Case ");
-//        sb.append(getSuiteName()).append(".").append(getName()).append(" Start ").append(logFix);
-//        log.info(sb.toString());
     }
 
 
