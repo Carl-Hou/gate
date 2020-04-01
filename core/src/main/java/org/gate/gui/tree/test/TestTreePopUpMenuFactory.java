@@ -59,13 +59,14 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
 
     private final HashMap<String, LinkedList<MenuInfo>> menuMap = new HashMap<>();
 
-    private final static LinkedList<MenuInfo> configElements = new LinkedList<>();
-    private final static LinkedList<MenuInfo> fixtures = new LinkedList<>();
+    private final LinkedList<MenuInfo> configElements = new LinkedList<>();
+    private final LinkedList<MenuInfo> fixtures = new LinkedList<>();
 
-    public TestTreePopUpMenuFactory(){
+    public TestTreePopUpMenuFactory() {
 
         menuMap.put(FIXTURES, fixtures);
         menuMap.put(CONFIG_ELEMENTS, configElements);
+
         configElements.add(new MenuInfo("User Define Variables", UserDefineVariables.class.getName()));
         configElements.add(new MenuInfo("Selenium Defaults", SeleniumDefaults.class.getName()));
         configElements.add(new MenuInfo("Http Request Defaults", HTTPRequestDefaults.class.getName()));
@@ -89,7 +90,7 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
     @Override
     protected void appendPopupMenuItems(JPopupMenu jPopupMenu, GateTreeNode selectedNode) {
 
-        if(selectedNode.includeElement(TestSuites.class)){
+        if (selectedNode.includeElement(TestSuites.class)) {
             // add test suites only node here.
             JMenu addMenu = new JMenu("Add");
             addMenu.add(makeMenu(CONFIG_ELEMENTS, ActionNames.ADD_TO_TREE));
@@ -101,7 +102,7 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
             return;
         }
 
-        if(selectedNode.includeElement(TestSuite.class)){
+        if (selectedNode.includeElement(TestSuite.class)) {
             JMenu addMenu = new JMenu("Add");
             addMenu.add(makeMenu(CONFIG_ELEMENTS, ActionNames.ADD_TO_TREE));
             addMenu.add(makeMenu(FIXTURES, ActionNames.ADD_TO_TREE));
@@ -109,7 +110,7 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
             jPopupMenu.add(addMenu);
         }
 
-        if(selectedNode.includeElement(TestCase.class)){
+        if (selectedNode.includeElement(TestCase.class)) {
             // Add nodes to Tree
             JMenu addToTreeMenu = new JMenu("Add");
             JMenu configMenu = makeMenu(CONFIG_ELEMENTS, ActionNames.ADD_TO_TREE);
@@ -125,14 +126,14 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
 
     }
 
-    protected void appendEnableElementMenu(JPopupMenu jPopupMenu, GateTreeNode selectedTreeNode){
+    protected void appendEnableElementMenu(JPopupMenu jPopupMenu, GateTreeNode selectedTreeNode) {
         TestTreeElement testTreeElement = (TestTreeElement) selectedTreeNode.getGateTreeElement();
         JMenuItem disabled = makeMenuItem("Disable", "Gate.TestTree.Disable", ActionNames.DISABLE);// $NON-NLS-1$
         JMenuItem enabled = makeMenuItem("Enable", "Gate.TestTree.Enable", ActionNames.ENABLE);// $NON-NLS-1$
-        if(testTreeElement.isEnable()){
+        if (testTreeElement.isEnable()) {
             enabled.setEnabled(false);
             disabled.setEnabled(true);
-        }else{
+        } else {
             enabled.setEnabled(true);
             disabled.setEnabled(false);
         }
@@ -140,6 +141,7 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
         jPopupMenu.add(disabled);
 
     }
+
     @Override
     public boolean canAddTo(GateTreeNode target, GateTreeNode[] nodes) {
 

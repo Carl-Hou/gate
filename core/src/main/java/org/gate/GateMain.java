@@ -25,20 +25,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.gate.common.config.GateProps;
-import org.gate.common.util.GateException;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
-import org.gate.gui.MainFrame;
-import org.gate.gui.actions.Load;
 import org.gate.gui.common.OptionPane;
 import org.gate.gui.tree.GateTreeSupport;
-import org.gate.varfuncs.functions.TimeFunction;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 public class GateMain {
 

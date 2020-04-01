@@ -51,7 +51,7 @@ public class TestTree extends GateTree {
     private static final ImageIcon imageTeardown
             =  GuiUtils.getImage("/org/gate/images/document-export-4_custom.png");
 
-    private static TestTree testTree = new TestTree();
+
     private TestTreePopUpMenuFactory popUpMenuFactory = new TestTreePopUpMenuFactory();
 
     public TestTree(){

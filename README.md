@@ -1,6 +1,6 @@
 Introduction
 
-As far as I know that graph based logic represent is more human friendly than code based one. I think graph based test automation more efficent to develop and more ease maintain than code based automation. 
+As far as I know that graph based logic represent is more human friendly than code based one. I think graph based test automation more efficient to develop and more ease maintain than code based automation. 
 I create an all in one graphical test automation tool to verify this idea. It support user create、organize、run graphical based function test automation. It is named Gate. 
 
 Implementation:
