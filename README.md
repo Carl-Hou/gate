@@ -23,5 +23,4 @@ Build package:
 Clone the master then enter the folder. Use "mvn package" to assemble the package. The package could be find in the "dest" folder. 
 
 More:
-
 Thanks to contributor of JMeter and JGraphX. I will never be here without their great works. 

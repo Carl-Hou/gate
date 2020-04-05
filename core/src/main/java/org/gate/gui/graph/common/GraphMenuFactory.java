@@ -22,6 +22,7 @@ import org.gate.gui.actions.ActionNames;
 import org.gate.gui.actions.ActionRouter;
 import org.gate.gui.graph.elements.Comments;
 import org.gate.gui.graph.elements.asseration.ResponseAssert;
+import org.gate.gui.graph.elements.asseration.VariableAssert;
 import org.gate.gui.graph.elements.control.ConstantTimer;
 import org.gate.gui.graph.elements.control.Decide;
 import org.gate.gui.graph.elements.control.Start;
@@ -34,7 +35,6 @@ import org.gate.gui.graph.extractor.JSONExtractor;
 import org.gate.gui.graph.extractor.RegexExtractor;
 import org.gate.gui.graph.extractor.XPathExtractor;
 import org.gate.gui.tree.MenuInfo;
-import org.gate.varfuncs.functions.Variable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +57,7 @@ public final class GraphMenuFactory {
         graphLinkCells.add(new MenuInfo("Note", GateProps.Note));
 
         graphAssertionCells.add(new MenuInfo("Response Assertion", ResponseAssert.class.getName()));
-        graphAssertionCells.add(new MenuInfo("Variable Assertion", Variable.class.getName()));
+        graphAssertionCells.add(new MenuInfo("Variable Assertion", VariableAssert.class.getName()));
 
         graphConfigCells.add(new MenuInfo("User Defined Variables", org.gate.gui.graph.elements.config.UserDefineVariables.class.getName()));
 
