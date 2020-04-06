@@ -145,14 +145,14 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
             return;
         }
         // valid screen shot root location
-        File screenShotLocation = new File(GateProps.getProperty(ScreenShotLocationPropName), GateProps.getGateHome() + "/screenshots");
+        File screenShotLocation = new File(GateProps.getProperty(ScreenShotLocationPropName, GateProps.getGateHome() + GateProps.FileSeparator + "screenshots"));
+
         if(!screenShotLocation.canWrite() || !screenShotLocation.isDirectory()){
             result.setThrowable(new GateException("Gate property " + ScreenShotLocationPropName + " set to "
-                    + screenShotLocation.getAbsolutePath() + "is not exit nor a directory"));
+                    + screenShotLocation.getAbsolutePath() + " is not exit nor a directory"));
             return;
         }
         // create screen shot file
-
         SimpleDateFormat df = new SimpleDateFormat("_yyyy-MM-dd_HH-mm-ss-SS" );
         String screenShotName = getName() + df.format(new Date()) + ".png";
         ResultCollector resultCollector = GateContextService.getContext().getResultCollector();

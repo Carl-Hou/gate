@@ -15,6 +15,14 @@
                 <include>*.properties</include>
             </includes>
         </fileSet>
+        <!-- package screen shot folder-->
+        <fileSet>
+            <directory>${project.parent.basedir}</directory>
+            <outputDirectory>bin/screenshots</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
         <!-- package batch files -->
         <fileSet>
             <directory>${project.basedir}</directory>
