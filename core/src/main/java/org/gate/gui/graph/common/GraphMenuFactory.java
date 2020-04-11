@@ -20,7 +20,7 @@ package org.gate.gui.graph.common;
 import org.gate.common.config.GateProps;
 import org.gate.gui.actions.ActionNames;
 import org.gate.gui.actions.ActionRouter;
-import org.gate.gui.graph.elements.Comments;
+import org.gate.gui.graph.elements.comment.Comments;
 import org.gate.gui.graph.elements.asseration.ResponseAssert;
 import org.gate.gui.graph.elements.asseration.VariableAssert;
 import org.gate.gui.graph.elements.control.ConstantTimer;

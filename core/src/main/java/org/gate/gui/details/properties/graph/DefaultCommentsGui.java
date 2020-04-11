@@ -25,7 +25,7 @@ import org.gate.gui.common.TestElement;
 import org.gate.gui.common.VerticalLayout;
 import org.gate.gui.details.properties.PropertiesTable;
 import org.gate.gui.details.properties.PropertiesTableModel;
-import org.gate.gui.graph.elements.Comments;
+import org.gate.gui.graph.elements.comment.Comments;
 import org.gate.gui.graph.elements.GraphElement;
 
 import javax.swing.*;

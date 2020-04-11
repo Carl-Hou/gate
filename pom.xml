@@ -30,7 +30,9 @@
         <module>core</module>
         <!-- keep this since no 3.5.1.5 on maven central repo-->
         <module>jgraphx</module>
+        <module>fastclasspathscanner</module>
         <module>assembly</module>
+
     </modules>
 
 </project>

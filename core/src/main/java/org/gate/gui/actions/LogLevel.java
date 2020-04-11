@@ -18,37 +18,12 @@
 
 package org.gate.gui.actions;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxPoint;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.gate.common.config.GateProps;
-import org.gate.common.util.GateRuntimeExcepiton;
-import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
-import org.gate.gui.graph.editor.BasicGraphEditor;
-import org.gate.gui.graph.elements.Comments;
-import org.gate.gui.graph.elements.GraphElement;
-import org.gate.gui.graph.elements.asseration.Assert;
-import org.gate.gui.graph.elements.config.Config;
-import org.gate.gui.graph.elements.control.ActionReference;
-import org.gate.gui.graph.elements.control.ConstantTimer;
-import org.gate.gui.graph.elements.control.Controller;
-import org.gate.gui.graph.elements.sampler.Sampler;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.Timeouts;
-import org.gate.gui.graph.extractor.Extractor;
-import org.gate.gui.tree.GateTreeNode;
-import org.gate.gui.tree.GateTreeSupport;
-import org.gate.gui.tree.action.elements.Action;
 
-import javax.swing.*;
-import javax.swing.tree.TreePath;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 

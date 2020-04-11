@@ -16,13 +16,14 @@
  *
  */
 
-package org.gate.gui.graph.elements;
+package org.gate.gui.graph.elements.comment;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.util.GateRuntimeExcepiton;
 import org.gate.gui.details.properties.graph.DefaultCommentsGui;
 import org.gate.gui.details.results.elements.graph.ElementResult;
+import org.gate.gui.graph.elements.AbstractGraphElement;
 import org.gate.gui.graph.elements.sampler.Sampler;
 
 public class Comments extends AbstractGraphElement implements Sampler{

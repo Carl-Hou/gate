@@ -25,7 +25,10 @@
             <AppenderRef ref="Console"/>
         </Root>
         <Logger additivity="false" name = "org.gate" level="info">
-<!--            <appender-ref ref="Console"/>-->
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
+        </Logger>
+        <Logger additivity="false" name = "org.gate.gui.details.results.collector" level="info">
             <appender-ref ref="RollingFile"/>
         </Logger>
     </Loggers>

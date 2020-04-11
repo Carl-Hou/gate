@@ -29,6 +29,7 @@ import org.gate.gui.common.DefaultParameters;
 import org.gate.gui.details.properties.graph.DefaultPropertiesGui;
 import org.gate.gui.details.results.elements.graph.*;
 import org.gate.gui.graph.elements.asseration.Assert;
+import org.gate.gui.graph.elements.comment.Comments;
 import org.gate.gui.graph.elements.config.Config;
 import org.gate.gui.graph.elements.control.ActionReference;
 import org.gate.gui.graph.elements.control.Controller;

@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 public class ResultManager implements TestConstraint {
 

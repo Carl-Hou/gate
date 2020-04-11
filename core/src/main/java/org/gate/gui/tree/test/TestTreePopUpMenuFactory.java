@@ -18,21 +18,8 @@
 
 package org.gate.gui.tree.test;
 
-import org.gate.common.config.GateProps;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.actions.ActionNames;
-import org.gate.gui.graph.elements.Comments;
-import org.gate.gui.graph.elements.asseration.ResponseAssert;
-import org.gate.gui.graph.elements.control.ConstantTimer;
-import org.gate.gui.graph.elements.control.Decide;
-import org.gate.gui.graph.elements.control.Start;
-import org.gate.gui.graph.elements.sampler.DebugSampler;
-import org.gate.gui.graph.elements.sampler.JSR223Sampler;
-import org.gate.gui.graph.elements.sampler.protocol.http.HttpRequestSampler;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.*;
-import org.gate.gui.graph.extractor.JSONExtractor;
-import org.gate.gui.graph.extractor.RegexExtractor;
-import org.gate.gui.graph.extractor.XPathExtractor;
 import org.gate.gui.tree.*;
 import org.gate.gui.tree.test.elements.TestCase;
 import org.gate.gui.tree.test.elements.TestSuites;
@@ -45,7 +32,6 @@ import org.gate.gui.tree.test.elements.config.UserDefineVariables;
 import org.gate.gui.tree.test.elements.dataprovider.CSVDataProvider;
 import org.gate.gui.tree.test.elements.fixture.TearDown;
 import org.gate.gui.tree.test.elements.fixture.SetUp;
-import org.gate.varfuncs.functions.Variable;
 
 
 import javax.swing.*;

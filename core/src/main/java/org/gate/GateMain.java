@@ -19,15 +19,16 @@
 package org.gate;
 
 import org.apache.commons.cli.*;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.gate.common.config.GateProps;
+import org.gate.common.util.GateClassUtils;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
+import org.gate.gui.graph.elements.asseration.Assert;
 import org.gate.gui.tree.GateTreeSupport;
 
 import java.io.File;
@@ -46,11 +47,9 @@ public class GateMain {
 	private static final String OPT_SUITE_PREFIX = "S";// $NON-NLS-1$ need to be single char
 	private static final String OPT_CASE_PREFIX = "C";// $NON-NLS-1$
 
-	public GateMain(){
-	}
-
 	public static void main(String[] args)  {
 		initializeProperties();
+
 		GateProps.getProperties().stringPropertyNames().forEach(name ->{
 			if(name.startsWith("log_level")){
 				String logName=name.substring(10);
@@ -59,7 +58,6 @@ public class GateMain {
 				Configurator.setAllLevels(logName, Level.valueOf(logLevel));
 			}
 		});
-
 		runGate(args);
 	}
 

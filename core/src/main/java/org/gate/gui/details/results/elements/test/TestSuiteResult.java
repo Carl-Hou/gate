@@ -109,20 +109,6 @@ public class TestSuiteResult extends AbstractTestResult implements TestConstrain
         lastModelCompleteTime = testSuiteCreateTime;
     }
 
-    public void lockTestCase(String testCaseName){
-        lockedTestCaseRegistry.add(testCaseName);
-    }
-
-    public void unlockTestCase(String testCaseName){
-        lockedTestCaseRegistry.remove(testCaseName);
-    }
-
-    public boolean isTestCaseLocked(String testCaseName){
-        return lockedTestCaseRegistry.contains(testCaseName);
-    }
-
-
-
     @Override
     public String getResult(){
         StringBuffer sb = new StringBuffer();

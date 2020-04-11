@@ -18,7 +18,7 @@
 
 package org.gate.saveload.convert.graph;
 
-import org.gate.gui.graph.elements.Comments;
+import org.gate.gui.graph.elements.comment.Comments;
 import org.gate.gui.graph.elements.GraphElement;
 import org.gate.gui.graph.elements.asseration.ResponseAssert;
 import org.gate.gui.graph.elements.asseration.VariableAssert;
@@ -50,9 +50,9 @@ public class GraphElementConverterRegistry {
 
     private GraphElementConverterRegistry() {
         /*
-        * Take care. click node before save.
         * Some times Class name cause trouble when use mxCodec. e.g Timer. mxCodec will try java.util.Timer firstly.
         * */
+
         addDefualtConverter(Start.class);
         addDefualtConverter(DebugSampler.class);
         addDefualtConverter(Decide.class);
