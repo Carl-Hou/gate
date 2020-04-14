@@ -24,11 +24,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.gate.common.config.GateProps;
-import org.gate.common.util.GateClassUtils;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
-import org.gate.gui.graph.elements.asseration.Assert;
 import org.gate.gui.tree.GateTreeSupport;
 
 import java.io.File;

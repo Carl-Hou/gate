@@ -31,6 +31,11 @@ public class Timeouts extends AbstractSeleniumSampler {
 
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Timeouts";
+    }
+
     abstract class TimeoutsMethod implements MethodSupplier{
         @Override
         public void addArgumentsToProps(){

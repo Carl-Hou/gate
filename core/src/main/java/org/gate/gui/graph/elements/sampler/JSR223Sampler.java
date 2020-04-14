@@ -55,6 +55,11 @@ public class JSR223Sampler extends AbstractGraphElement implements Sampler{
 		addProp(NS_TEXT, PN_Script,"");
 	}
 
+	@Override
+	public String getStaticLabel() {
+		return "JSR223 Sampler";
+	}
+
 	private static class LazyHolder {
 		public static final ScriptEngineManager INSTANCE = new ScriptEngineManager();
 	}

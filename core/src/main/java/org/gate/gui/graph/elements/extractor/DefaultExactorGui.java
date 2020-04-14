@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.extractor;
+package org.gate.gui.graph.elements.extractor;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;

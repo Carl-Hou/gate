@@ -27,6 +27,11 @@ public class TargetLocator extends AbstractSeleniumSampler {
         // keep this for compile object
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium TargetLocator";
+    }
+
     abstract class AbstractTargetLocatorMethod implements MethodSupplier{
         @Override
         public void run(ElementResult result) {

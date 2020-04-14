@@ -27,6 +27,11 @@ public class Navigation extends AbstractSeleniumSampler {
 
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Navigation";
+    }
+
     abstract class NavigationMethod implements MethodSupplier{
         @Override
         public void addArgumentsToProps(){

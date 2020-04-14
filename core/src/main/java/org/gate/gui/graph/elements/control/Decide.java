@@ -36,6 +36,11 @@ public class Decide extends AbstractGraphElement implements Controller {
         return GUI_ClassName_DefaultPropertiesGUI;
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Decide";
+    }
+
     /**
      * Initialization On Demand Holder pattern
      */

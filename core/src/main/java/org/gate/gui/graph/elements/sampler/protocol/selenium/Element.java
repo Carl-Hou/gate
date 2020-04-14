@@ -33,6 +33,11 @@ public class Element extends AbstractSeleniumSampler implements SeleniumConstant
         addProp(NS_DEFAULT, PN_LocatorCondition, "Input Locator Conditions");
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Element";
+    }
+
     abstract class AbstractElementMethod implements MethodSupplier {
 
         @Override

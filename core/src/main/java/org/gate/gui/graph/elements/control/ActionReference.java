@@ -96,4 +96,9 @@ public class ActionReference extends AbstractGraphElement implements Controller 
     public String getGUI() {
         return GUI_ClassName_DefaultPropertiesGUI;
     }
+
+    @Override
+    public String getStaticLabel() {
+        return "Action reference";
+    }
 }

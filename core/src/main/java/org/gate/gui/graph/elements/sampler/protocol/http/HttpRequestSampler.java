@@ -690,6 +690,11 @@ public class HttpRequestSampler extends AbstractGraphElement implements HTTPCons
         return contentEncoding;
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Http Request";
+    }
+
     /**
      * Implementation that allows GET method to have a body
      */

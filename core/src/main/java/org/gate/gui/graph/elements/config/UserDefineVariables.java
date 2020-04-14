@@ -52,4 +52,8 @@ public class UserDefineVariables extends AbstractGraphElement implements Config 
         return GUI_ClassName;
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "User Defined Variables";
+    }
 }

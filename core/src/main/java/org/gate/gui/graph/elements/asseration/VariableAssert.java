@@ -49,4 +49,8 @@ public class VariableAssert extends TextAssert {
         return value;
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Variable Assertion";
+    }
 }

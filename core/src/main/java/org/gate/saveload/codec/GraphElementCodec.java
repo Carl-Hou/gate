@@ -66,14 +66,10 @@ public class GraphElementCodec {
                 Element element = (Element) value;
                 GraphElementConverter converter = GraphElementConverterRegistry.getInstance().getConverter(element);
                 converter.setDocumentHelper(documentHelper);
-
-
                 GraphElement graphElement = converter.unmarshal(element);
                 cell.setValue(graphElement);
             }
         }
-
-
     }
 
 }

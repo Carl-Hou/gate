@@ -18,9 +18,7 @@
 
 package org.gate.gui.graph.elements.control;
 
-import org.gate.gui.details.results.elements.graph.ControllerResult;
 import org.gate.gui.details.results.elements.graph.ElementResult;
-import org.gate.gui.details.results.elements.graph.SamplerResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
 
 public class Start extends AbstractGraphElement implements Controller {
@@ -37,5 +35,10 @@ public class Start extends AbstractGraphElement implements Controller {
 	@Override
 	public String getGUI() {
 		return GUI_ClassName_DefaultPropertiesGUI;
+	}
+
+	@Override
+	public String getStaticLabel() {
+		return "Start";
 	}
 }

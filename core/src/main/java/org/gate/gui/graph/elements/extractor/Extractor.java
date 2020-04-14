@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.extractor;
+package org.gate.gui.graph.elements.extractor;
 
 import org.gate.gui.graph.elements.GraphElement;
 

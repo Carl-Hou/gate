@@ -29,12 +29,12 @@ import org.gate.gui.common.DefaultParameters;
 import org.gate.gui.details.properties.graph.DefaultPropertiesGui;
 import org.gate.gui.details.results.elements.graph.*;
 import org.gate.gui.graph.elements.asseration.Assert;
-import org.gate.gui.graph.elements.comment.Comments;
+import org.gate.gui.graph.elements.comment.Comment;
 import org.gate.gui.graph.elements.config.Config;
 import org.gate.gui.graph.elements.control.ActionReference;
 import org.gate.gui.graph.elements.control.Controller;
 import org.gate.gui.graph.elements.sampler.Sampler;
-import org.gate.gui.graph.extractor.Extractor;
+import org.gate.gui.graph.elements.extractor.Extractor;
 import org.gate.runtime.GateContextService;
 import org.gate.varfuncs.ValueReplacer;
 import org.gate.varfuncs.functions.InvalidVariableException;
@@ -96,8 +96,8 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
         if(Extractor.class.isAssignableFrom(thisClazz)){
             return new ExtractorResult(getName());
         }
-        if(Comments.class.isAssignableFrom(thisClazz)){
-            throw new GateRuntimeExcepiton("Add condition link to Comments vertex is not support：" + getName());
+        if(Comment.class.isAssignableFrom(thisClazz)){
+            throw new GateRuntimeExcepiton("Only 'note' allow to link to Comments vertex：" + getName());
         }
         throw new GateRuntimeExcepiton("This element type is not support:" + thisClazz.getName());
     }

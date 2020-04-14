@@ -29,6 +29,11 @@ public class Window extends AbstractSeleniumSampler {
     public Window(){
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Window";
+    }
+
     abstract class WindowMethod implements MethodSupplier{
         @Override
         public void addArgumentsToProps(){

@@ -27,6 +27,7 @@ public interface GraphElement extends TestElement {
 //	void execute(SamplerResult sampeResult) throws InvalidVariableException;
 	ElementResult execute();
 
+	String getStaticLabel();
 	/**
 	 * reset graph elements to init status. is this needed?
 	 */

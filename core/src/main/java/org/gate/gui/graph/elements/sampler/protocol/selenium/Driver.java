@@ -42,6 +42,11 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
         // keep this for new instance on save/restore
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Driver";
+    }
+
     class Create implements MethodSupplier {
         @Override
         public void addArgumentsToProps() {

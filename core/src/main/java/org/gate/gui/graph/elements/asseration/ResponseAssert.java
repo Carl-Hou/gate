@@ -37,4 +37,8 @@ public class ResponseAssert extends TextAssert {
 	    return TextAssertGui.class.getName();
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Response Assertion";
+    }
 }

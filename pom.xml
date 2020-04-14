@@ -6,6 +6,7 @@
 
     <groupId>org.gate</groupId>
     <artifactId>gate</artifactId>
+    <name>Gate</name>
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <properties>

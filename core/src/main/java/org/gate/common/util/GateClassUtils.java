@@ -20,17 +20,17 @@ package org.gate.common.util;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gate.gui.graph.elements.GraphElement;
 import org.gate.gui.graph.elements.asseration.Assert;
+import org.gate.gui.graph.elements.comment.Comment;
 import org.gate.gui.graph.elements.config.Config;
 import org.gate.gui.graph.elements.control.Controller;
 import org.gate.gui.graph.elements.sampler.Sampler;
-import org.gate.gui.graph.extractor.Extractor;
+import org.gate.gui.graph.elements.extractor.Extractor;
+import org.gate.gui.graph.elements.timer.Timer;
 
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class GateClassUtils {
 
@@ -67,10 +67,22 @@ public class GateClassUtils {
 
     void findGraphElementImplementing(){
         graphElements.put(Assert.class.getName(), getClassesImplementing(Assert.class));
+        graphElements.put(Comment.class.getName(), getClassesImplementing(Comment.class));
         graphElements.put(Config.class.getName(), getClassesImplementing(Config.class));
         graphElements.put(Controller.class.getName(), getClassesImplementing(Controller.class));
-        graphElements.put(Sampler.class.getName(), getClassesImplementing(Sampler.class));
         graphElements.put(Extractor.class.getName(), getClassesImplementing(Extractor.class));
+        graphElements.put(Sampler.class.getName(), getClassesImplementing(Sampler.class));
+        graphElements.put(Timer.class.getName(), getClassesImplementing(Timer.class));
+
+    }
+
+    public GraphElement newGraphElementInstance(Class clazz){
+        try {
+            return (GraphElement) clazz.newInstance();
+        }  catch (InstantiationException | IllegalAccessException e) {
+            log.error("Could not instantiate " + clazz.getName(), e);
+        }
+        return null;
     }
 
     LinkedList<Class> getClasses(List<String> classNames){

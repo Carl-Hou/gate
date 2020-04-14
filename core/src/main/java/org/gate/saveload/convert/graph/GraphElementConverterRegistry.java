@@ -18,22 +18,9 @@
 
 package org.gate.saveload.convert.graph;
 
-import org.gate.gui.graph.elements.comment.Comments;
+import org.gate.common.util.GateClassUtils;
 import org.gate.gui.graph.elements.GraphElement;
-import org.gate.gui.graph.elements.asseration.ResponseAssert;
-import org.gate.gui.graph.elements.asseration.VariableAssert;
-import org.gate.gui.graph.elements.config.UserDefineVariables;
-import org.gate.gui.graph.elements.control.Decide;
-import org.gate.gui.graph.elements.control.Start;
-import org.gate.gui.graph.elements.control.ConstantTimer;
-import org.gate.gui.graph.elements.control.ActionReference;
-import org.gate.gui.graph.elements.sampler.DebugSampler;
-import org.gate.gui.graph.elements.sampler.JSR223Sampler;
-import org.gate.gui.graph.elements.sampler.protocol.http.HttpRequestSampler;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.*;
-import org.gate.gui.graph.extractor.JSONExtractor;
-import org.gate.gui.graph.extractor.RegexExtractor;
-import org.gate.gui.graph.extractor.XPathExtractor;
+
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -53,35 +40,15 @@ public class GraphElementConverterRegistry {
         * Some times Class name cause trouble when use mxCodec. e.g Timer. mxCodec will try java.util.Timer firstly.
         * */
 
-        addDefualtConverter(Start.class);
-        addDefualtConverter(DebugSampler.class);
-        addDefualtConverter(Decide.class);
-        addDefualtConverter(ConstantTimer.class);
-        addDefualtConverter(ResponseAssert.class);
-        addDefualtConverter(VariableAssert.class);
-        addDefualtConverter(XPathExtractor.class);
-        addDefualtConverter(JSONExtractor.class);
-        addDefualtConverter(RegexExtractor.class);
-        addDefualtConverter(UserDefineVariables.class);
-        addDefualtConverter(JSR223Sampler.class);
-        addDefualtConverter(HttpRequestSampler.class);
-        addDefualtConverter(ActionReference.class);
-        // comments
-        addDefualtConverter(Comments.class);
-
-        // Selenium element
-        addDefualtConverter(Driver.class);
-        addDefualtConverter(Element.class);
-        addDefualtConverter(ConditionChecker.class);
-        addDefualtConverter(Timeouts.class);
-        addDefualtConverter(Alert.class);
-        addDefualtConverter(Window.class);
-        addDefualtConverter(Navigation.class);
-        addDefualtConverter(TargetLocator.class);
+        GateClassUtils.getIns().getGraphElements().values().forEach( graphElementClasses -> {
+            graphElementClasses.forEach(graphElementClass ->{
+                addDefaultConverter(graphElementClass);
+            });
+        });
 
     }
 
-    void addDefualtConverter(Class graphElementClass){
+    void addDefaultConverter(Class graphElementClass){
         graphElementConverters.add(new DefaultGraphElementConverter(graphElementClass));
     }
 

@@ -21,12 +21,13 @@ package org.gate.gui.graph.elements.comment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.util.GateRuntimeExcepiton;
+import org.gate.gui.actions.Command;
 import org.gate.gui.details.properties.graph.DefaultCommentsGui;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
 import org.gate.gui.graph.elements.sampler.Sampler;
 
-public class Comments extends AbstractGraphElement implements Sampler{
+public class Comments extends AbstractGraphElement implements Comment {
 	final static Logger log = LogManager.getLogger();
 //	Test parameters
 	public final static String PN_Comments = "comments";
@@ -34,7 +35,6 @@ public class Comments extends AbstractGraphElement implements Sampler{
 	public Comments() {
 		addNameSpace(NS_TEXT);
 		addProp(NS_TEXT, PN_Comments, "");
-
 	}
 
 	@Override
@@ -47,5 +47,10 @@ public class Comments extends AbstractGraphElement implements Sampler{
 	@Override
 	public String getGUI() {
 		return DefaultCommentsGui.class.getName();
+	}
+
+	@Override
+	public String getStaticLabel() {
+		return "Comment";
 	}
 }

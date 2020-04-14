@@ -27,16 +27,17 @@ import org.gate.common.util.GateRuntimeExcepiton;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
 import org.gate.gui.graph.editor.BasicGraphEditor;
+import org.gate.gui.graph.elements.comment.Comment;
 import org.gate.gui.graph.elements.comment.Comments;
 import org.gate.gui.graph.elements.GraphElement;
 import org.gate.gui.graph.elements.asseration.Assert;
 import org.gate.gui.graph.elements.config.Config;
 import org.gate.gui.graph.elements.control.ActionReference;
-import org.gate.gui.graph.elements.control.ConstantTimer;
+import org.gate.gui.graph.elements.timer.ConstantTimer;
 import org.gate.gui.graph.elements.control.Controller;
 import org.gate.gui.graph.elements.sampler.Sampler;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.Timeouts;
-import org.gate.gui.graph.extractor.Extractor;
+import org.gate.gui.graph.elements.extractor.Extractor;
 import org.gate.gui.tree.GateTreeNode;
 import org.gate.gui.tree.GateTreeSupport;
 import org.gate.gui.tree.action.elements.Action;
@@ -165,11 +166,9 @@ public class AddToGraph extends AbstractGateAction {
         }
 
         GraphElement graphElement = createGraphElement(sourceName);
-        if(Comments.class.isInstance(graphElement)){
+        if(Comment.class.isInstance(graphElement)){
             return createVertex(geometry, graphElement, "/org/gate/images/rounded.png");
-        }else if(ConstantTimer.class.isInstance(graphElement)){
-            return createVertex(geometry, graphElement, "/org/gate/images/timer.png");
-        }else if(Timeouts.class.isInstance(graphElement)){
+        }else if(Timer.class.isInstance(graphElement)){
             return createVertex(geometry, graphElement, "/org/gate/images/timer.png");
         }else if(Assert.class.isAssignableFrom(graphElement.getClass())){
            return createVertex(geometry, graphElement, "/org/gate/images/terminate.png");

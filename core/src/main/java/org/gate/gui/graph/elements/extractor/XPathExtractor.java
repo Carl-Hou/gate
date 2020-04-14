@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.extractor;
+package org.gate.gui.graph.elements.extractor;
 
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
@@ -171,4 +171,8 @@ public class XPathExtractor extends AbstractGraphElement implements Extractor {
         return documentBuilderFactory.newDocumentBuilder().parse(in);
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "XPath Extractor";
+    }
 }

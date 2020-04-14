@@ -17,30 +17,31 @@
  */
 package org.gate.gui.graph.common;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
+import org.gate.common.util.GateClassUtils;
 import org.gate.gui.actions.ActionNames;
 import org.gate.gui.actions.ActionRouter;
-import org.gate.gui.graph.elements.comment.Comments;
-import org.gate.gui.graph.elements.asseration.ResponseAssert;
-import org.gate.gui.graph.elements.asseration.VariableAssert;
-import org.gate.gui.graph.elements.control.ConstantTimer;
-import org.gate.gui.graph.elements.control.Decide;
-import org.gate.gui.graph.elements.control.Start;
-import org.gate.gui.graph.elements.sampler.DebugSampler;
-import org.gate.gui.graph.elements.sampler.JSR223Sampler;
-import org.gate.gui.graph.elements.sampler.protocol.http.HttpRequestSampler;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.*;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.Window;
-import org.gate.gui.graph.extractor.JSONExtractor;
-import org.gate.gui.graph.extractor.RegexExtractor;
-import org.gate.gui.graph.extractor.XPathExtractor;
+import org.gate.gui.graph.elements.GraphElement;
+import org.gate.gui.graph.elements.asseration.Assert;
+import org.gate.gui.graph.elements.comment.Comment;
+import org.gate.gui.graph.elements.config.Config;
+import org.gate.gui.graph.elements.control.ActionReference;
+import org.gate.gui.graph.elements.control.Controller;
+import org.gate.gui.graph.elements.extractor.Extractor;
+import org.gate.gui.graph.elements.sampler.Sampler;
 import org.gate.gui.tree.MenuInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public final class GraphMenuFactory {
+
+    private static final Logger log = LogManager.getLogger();
+
     protected final static LinkedList<MenuInfo> graphLinkCells = new LinkedList<>();
     protected final static LinkedList<MenuInfo> graphAssertionCells = new LinkedList<>();
     protected final static LinkedList<MenuInfo> graphControlCells = new LinkedList<>();
@@ -56,33 +57,60 @@ public final class GraphMenuFactory {
         graphLinkCells.add(new MenuInfo("Next", GateProps.Next));
         graphLinkCells.add(new MenuInfo("Note", GateProps.Note));
 
-        graphAssertionCells.add(new MenuInfo("Response Assertion", ResponseAssert.class.getName()));
-        graphAssertionCells.add(new MenuInfo("Variable Assertion", VariableAssert.class.getName()));
+        GateClassUtils.getIns().getGraphElements().forEach((category, graphElementClasses) ->{
+            //deffer error handling to real issue comes.
 
-        graphConfigCells.add(new MenuInfo("User Defined Variables", org.gate.gui.graph.elements.config.UserDefineVariables.class.getName()));
-
-        graphControlCells.add(new MenuInfo("Start", Start.class.getName()));
-        graphControlCells.add(new MenuInfo("Decide", Decide.class.getName()));
-
-        graphTimerCells.add(new MenuInfo("ConstantTimer", ConstantTimer.class.getName()));
-        graphTimerCells.add(new MenuInfo("Selenium Timeouts", Timeouts.class.getName()));
-
-        graphSamplerCells.add(new MenuInfo("Debug Sampler", DebugSampler.class.getName()));
-        graphSamplerCells.add(new MenuInfo("JSR223 Sampler", JSR223Sampler.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Http Request", HttpRequestSampler.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium Driver", Driver.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium Element", Element.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium ConditionChecker", ConditionChecker.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium Alert", Alert.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium Window", Window.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium Navigation", Navigation.class.getName()));
-        graphSamplerCells.add(new MenuInfo("Selenium TargetLocator", TargetLocator.class.getName()));
-
-        graphExtractorCells.add(new MenuInfo("XPath Extractor", XPathExtractor.class.getName()));
-        graphExtractorCells.add(new MenuInfo("JSON Extractor", JSONExtractor.class.getName()));
-        graphExtractorCells.add(new MenuInfo("Regex Extractor", RegexExtractor.class.getName()));
-
-        graphCommentCells.add(new MenuInfo("Comment", Comments.class.getName()));
+            if(category.equals(Assert.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphAssertionCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+            }
+            else if(category.equals(Comment.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphCommentCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+            }
+            else if(category.equals(Config.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphConfigCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+            }
+            else if(category.equals(Controller.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    if(!graphElementClass.getName().equals(ActionReference.class.getName())){
+                        GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                        graphControlCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                    }
+                });
+            }
+            else if(category.equals(Extractor.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphExtractorCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+            }
+            else if(category.equals(Sampler.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphSamplerCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+                graphSamplerCells.sort(new Comparator<MenuInfo>() {
+                    @Override
+                    public int compare(MenuInfo o1, MenuInfo o2) {
+                        return o1.getLabel().compareTo(o2.getLabel());
+                    }
+                });
+            }
+            else if(category.equals(Timer.class.getName())){
+                graphElementClasses.forEach( graphElementClass ->{
+                    GraphElement item = GateClassUtils.getIns().newGraphElementInstance (graphElementClass);
+                    graphTimerCells.add(new MenuInfo(item.getStaticLabel(), graphElementClass.getName()));
+                });
+            }
+        });
     }
 
     /**

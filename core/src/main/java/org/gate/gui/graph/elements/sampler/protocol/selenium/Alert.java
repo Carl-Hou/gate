@@ -29,6 +29,11 @@ public class Alert extends AbstractSeleniumSampler {
 
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium Alert";
+    }
+
     abstract class TargetLocatorMethod implements MethodSupplier{
         @Override
         public void addArgumentsToProps(){

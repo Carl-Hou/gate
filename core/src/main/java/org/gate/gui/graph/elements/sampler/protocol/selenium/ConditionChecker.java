@@ -37,6 +37,11 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
         addProp(TestElement.NS_DEFAULT, PN_WaitPollingInterval, "500");
     }
 
+    @Override
+    public String getStaticLabel() {
+        return "Selenium ConditionChecker";
+    }
+
     /*
     * Implement condition checker from here
     * */

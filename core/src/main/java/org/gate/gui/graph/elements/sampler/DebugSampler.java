@@ -106,4 +106,9 @@ public class DebugSampler extends AbstractGraphElement implements Sampler{
 	public String getGUI() {
 		return GUI_ClassName_DefaultPropertiesGUI;
 	}
+
+	@Override
+	public String getStaticLabel() {
+		return "Debug Sampler";
+	}
 }
