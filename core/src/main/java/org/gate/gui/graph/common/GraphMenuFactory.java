@@ -31,6 +31,7 @@ import org.gate.gui.graph.elements.control.ActionReference;
 import org.gate.gui.graph.elements.control.Controller;
 import org.gate.gui.graph.elements.extractor.Extractor;
 import org.gate.gui.graph.elements.sampler.Sampler;
+import org.gate.gui.graph.elements.timer.Timer;
 import org.gate.gui.tree.MenuInfo;
 
 import javax.swing.*;

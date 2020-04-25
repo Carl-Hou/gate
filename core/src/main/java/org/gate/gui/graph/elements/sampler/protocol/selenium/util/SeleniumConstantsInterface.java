@@ -1,4 +1,4 @@
-package org.gate.gui.graph.elements.sampler.protocol.selenium;
+package org.gate.gui.graph.elements.sampler.protocol.selenium.util;
 
 
 import org.gate.gui.tree.test.elements.config.SeleniumDefaults;

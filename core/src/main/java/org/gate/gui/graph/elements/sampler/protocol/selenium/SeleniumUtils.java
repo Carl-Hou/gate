@@ -18,9 +18,8 @@
 package org.gate.gui.graph.elements.sampler.protocol.selenium;
 
 import org.gate.common.util.GateRuntimeExcepiton;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;

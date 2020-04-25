@@ -36,7 +36,7 @@ public class Window extends AbstractSeleniumSampler {
 
     abstract class WindowMethod implements MethodSupplier{
         @Override
-        public void addArgumentsToProps(){
+        public void addArguments(){
         }
 
         @Override
@@ -95,6 +95,11 @@ public class Window extends AbstractSeleniumSampler {
     }
 
     class SetSize extends WindowMethod {
+        @Override
+        public void addArguments(){
+            addProp(NS_ARGUMENT, "Dimension_Height", "");
+            addProp(NS_ARGUMENT, "Dimension_Width", "");
+        }
         @Override
         void action(WebDriver driver, ElementResult result) {
             int h = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "Dimension_Height"),result);

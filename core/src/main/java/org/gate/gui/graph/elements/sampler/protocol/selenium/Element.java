@@ -18,12 +18,12 @@
 
 package org.gate.gui.graph.elements.sampler.protocol.selenium;
 
-import net.minidev.json.JSONObject;
 import org.gate.gui.details.results.elements.graph.ElementResult;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.FluentWait;
 
-public class Element extends AbstractSeleniumSampler implements SeleniumConstantsInterface{
+public class Element extends AbstractSeleniumSampler implements SeleniumConstantsInterface {
 
     public Element(){
         addProp(NS_DEFAULT, PN_WaitExpectedCondition, SeleniumUtils.WaitExpectedConditionsForElements[0]);
@@ -38,12 +38,7 @@ public class Element extends AbstractSeleniumSampler implements SeleniumConstant
         return "Selenium Element";
     }
 
-    abstract class AbstractElementMethod implements MethodSupplier {
-
-        @Override
-        public void addArgumentsToProps(){
-
-        }
+    abstract class AbstractElementMethod extends AbstractMethodSupplier {
 
         @Override
         public void run(ElementResult result) {
@@ -82,140 +77,170 @@ public class Element extends AbstractSeleniumSampler implements SeleniumConstant
     }
 
     class SendKeys extends AbstractElementMethod {
-
+        final static String VN_Keys = "keys_to_sent";
         @Override
-        public void addArgumentsToProps(){
-            addProp(NS_ARGUMENT, "keys_to_sent", "Input keys to send");
+        public void addArguments(){
+            addArg(VN_Keys, "Input keys to send");
         }
         @Override
         void action(WebElement element, ElementResult result) {
-            element.sendKeys(getRunTimeProp(NS_ARGUMENT, "keys_to_sent"));
+            element.sendKeys(getRTArg(VN_Keys));
         }
     }
 
     class GetAttribute extends AbstractElementMethod {
-
+        final static String VN_AttributeName = "attribute_name";
+        final static String VN_AttributeValueName = "variable_name_attribute_value";
         @Override
-        public void addArgumentsToProps(){
-            addProp(NS_ARGUMENT, "attribute_name", "Input attribute name");
+        public void addArguments(){
+            addArg(VN_AttributeName, "Input attribute name");
+            addArg(VN_AttributeValueName, "attribute_value");
         }
         @Override
         void action(WebElement element, ElementResult result) {
-            String attribute = element.getAttribute(getRunTimeProp(NS_ARGUMENT, "attribute_name"));
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("attribute", attribute);
-            result.setResponseObject(getJSONString(returnValue));
+            String attribute = element.getAttribute(getRTArg(VN_AttributeName));
+            setGateVariable(VN_AttributeValueName, attribute);
         }
     }
 
     class GetCssValue extends AbstractElementMethod {
-
+        final static String VN_PropertyName = "property_name";
+        final static String VN_CssValueName = "variable_name_css_value";
         @Override
-        public void addArgumentsToProps(){
-            addProp(NS_ARGUMENT, "property_name", "Input attribute name");
+        public void addArguments(){
+            addArg(VN_PropertyName, "Input property name");
+            addArg(VN_CssValueName, "css_value");
         }
         @Override
         void action(WebElement element, ElementResult result) {
-            String cssValue = element.getCssValue(getRunTimeProp(NS_ARGUMENT, "property_name"));
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("cssValue", cssValue);
-            result.setResponseObject(getJSONString(returnValue));
+            String cssValue = element.getCssValue(getRTArg(VN_PropertyName));
+            setGateVariable(VN_CssValueName, cssValue);
         }
     }
 
     class GetLocation extends AbstractElementMethod {
+        final static String VN_X = "variable_name_x";
+        final static String VN_Y = "variable_name_y";
+        @Override
+        public void addArguments(){
+            addArg(VN_X, "location_x");
+            addArg(VN_Y, "location_y");
+        }
         @Override
         void action(WebElement element, ElementResult result) {
             Point point = element.getLocation();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("X", point.getX());
-            returnValue.put("Y", point.getY());
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_X, point.getX());
+            setGateVariable(VN_Y, point.getY());
         }
     }
 
     class GetRect extends AbstractElementMethod {
+        final static String VN_X = "variable_name_x";
+        final static String VN_Y = "variable_name_y";
+        final static String VN_Width = "variable_name_width";
+        final static String VN_Height = "variable_name_height";
+
+        @Override
+        public void addArguments(){
+            addArg(VN_X, "rec_x");
+            addArg(VN_Y, "rec_y");
+            addArg(VN_Width, "rec_width");
+            addArg(VN_Height, "rec_height");
+        }
 
         @Override
         void action(WebElement element, ElementResult result) {
             Rectangle rect = element.getRect();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("x", rect.getX());
-            returnValue.put("y", rect.getY());
-            returnValue.put("width", rect.getWidth());
-            returnValue.put("height", rect.getHeight());
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_X, rect.getX());
+            setGateVariable(VN_Y, rect.getY());
+            setGateVariable(VN_Width, rect.getWidth());
+            setGateVariable(VN_Height, rect.getHeight());
         }
     }
 
     class GetSize extends AbstractElementMethod {
+        final static String VN_Width = "variable_name_width";
+        final static String VN_Height = "variable_name_height";
+
+        @Override
+        public void addArguments(){
+            addArg(VN_Width, "element_width");
+            addArg(VN_Height, "element_height");
+        }
 
         @Override
         void action(WebElement element, ElementResult result) {
             Dimension dimension = element.getSize();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("width", dimension.getWidth());
-            returnValue.put("height", dimension.getHeight());
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_Width, dimension.getWidth());
+            setGateVariable(VN_Height, dimension.getHeight());
         }
     }
 
     class GetTagName extends AbstractElementMethod {
+        final static String VN_TagName = "variable_name_tag_name";
+
+        @Override
+        public void addArguments(){
+            addArg(VN_TagName, "tag_name");
+        }
 
         @Override
         void action(WebElement element, ElementResult result) {
             String tagName = element.getTagName();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("tagName", tagName);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_TagName, tagName);
         }
     }
 
     class GetText extends AbstractElementMethod {
+        final static String VN_Text = "variable_name_text";
+        @Override
+        public void addArguments(){
+            addArg(VN_Text, "text");
+        }
         @Override
         void action(WebElement element, ElementResult result) {
             String text = element.getText();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("text", text);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_Text, text);
         }
     }
 
     class IsDisplayed extends AbstractElementMethod {
+        final static String VN_IsDisplayed = "variable_name_is_displayed";
+        @Override
+        public void addArguments(){
+            addArg(VN_IsDisplayed, "is_displayed");
+        }
         @Override
         void action(WebElement element, ElementResult result) {
             boolean isDisplayed = element.isDisplayed();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("isDisplayed", isDisplayed);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_IsDisplayed, isDisplayed);
         }
     }
 
     class IsEnabled extends AbstractElementMethod {
+        final static String VN_IsEnabled = "variable_name_is_enabled";
+        @Override
+        public void addArguments(){
+            addArg(VN_IsEnabled, "is_enabled");
+        }
         @Override
         void action(WebElement element, ElementResult result) {
             boolean isEnabled = element.isEnabled();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("isEnabled", isEnabled);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_IsEnabled, isEnabled);
         }
     }
 
     class IsSelected extends AbstractElementMethod {
+        final static String VN_IsSelected = "variable_name_is_selected";
+        @Override
+        public void addArguments(){
+            addArg(VN_IsSelected, "is_selected");
+        }
         @Override
         void action(WebElement element, ElementResult result) {
             boolean isSelected = element.isSelected();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("isSelected", isSelected);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_IsSelected, isSelected);
         }
     }
-
-//	@Override
-//	public void reset(){
-//        super.reset();
-//        driver = null;
-//  }
-    // valid and set default value for RTP
 
 }

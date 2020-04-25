@@ -38,7 +38,7 @@ public class Timeouts extends AbstractSeleniumSampler {
 
     abstract class TimeoutsMethod implements MethodSupplier{
         @Override
-        public void addArgumentsToProps(){
+        public void addArguments(){
             addProp(NS_ARGUMENT, PN_Seconds, "30");
         }
 

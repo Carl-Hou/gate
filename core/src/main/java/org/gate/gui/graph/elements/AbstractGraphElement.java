@@ -34,6 +34,7 @@ import org.gate.gui.graph.elements.config.Config;
 import org.gate.gui.graph.elements.control.ActionReference;
 import org.gate.gui.graph.elements.control.Controller;
 import org.gate.gui.graph.elements.sampler.Sampler;
+import org.gate.gui.graph.elements.timer.Timer;
 import org.gate.gui.graph.elements.extractor.Extractor;
 import org.gate.runtime.GateContextService;
 import org.gate.varfuncs.ValueReplacer;
@@ -44,7 +45,6 @@ import org.gate.varfuncs.property.StringProperty;
 abstract public class AbstractGraphElement extends AbstractTestElement implements GraphElement, Serializable {
 
     protected final static String GUI_ClassName_DefaultPropertiesGUI = DefaultPropertiesGui.class.getName();
-    //    protected HashMap<String, HashMap<String,String>> runTimePropsMap = new HashMap();
     protected HashMap<String, LinkedList<GateProperty>> runTimePropsMap = new HashMap();
 
     //  what's use of this? try to comment it out. remove it later.
@@ -80,6 +80,11 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
         if(Sampler.class.isAssignableFrom(thisClazz)){
             return new SamplerResult(getName());
         }
+
+        if(Timer.class.isAssignableFrom(thisClazz)){
+            return new SamplerResult(getName());
+        }
+
         if(Config.class.isAssignableFrom(thisClazz)){
             return new ConfigureResult(getName());
         }

@@ -32,6 +32,7 @@ import org.gate.gui.details.properties.graph.GraphElementPropertiesGui;
 import org.gate.gui.details.properties.graph.GraphNamePane;
 import org.gate.gui.graph.elements.GraphElement;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.*;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;

@@ -17,7 +17,6 @@
  */
 package org.gate.gui.graph.elements.sampler.protocol.selenium;
 
-import net.minidev.json.JSONObject;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.openqa.selenium.WebDriver;
 
@@ -34,10 +33,7 @@ public class Alert extends AbstractSeleniumSampler {
         return "Selenium Alert";
     }
 
-    abstract class TargetLocatorMethod implements MethodSupplier{
-        @Override
-        public void addArgumentsToProps(){
-        }
+    abstract class AlertMethod extends AbstractMethodSupplier{
 
         @Override
         public void run(ElementResult result) {
@@ -48,41 +44,44 @@ public class Alert extends AbstractSeleniumSampler {
         abstract void action(WebDriver driver, ElementResult result);
     }
 
-    class Accept  extends TargetLocatorMethod{
+    class Accept  extends AlertMethod {
         @Override
         void action(WebDriver driver, ElementResult result) {
             driver.switchTo().alert().accept();
         }
     }
 
-    class Dismiss  extends TargetLocatorMethod{
+    class Dismiss  extends AlertMethod {
         @Override
         void action(WebDriver driver, ElementResult result) {
             driver.switchTo().alert().dismiss();
         }
     }
 
-    class GetText  extends TargetLocatorMethod{
+    class GetText  extends AlertMethod {
+        final static String VN_Text = "variable_name_text";
+        @Override
+        public void addArguments(){
+            addArg(VN_Text, "text");
+        }
         @Override
         void action(WebDriver driver, ElementResult result) {
             String text = driver.switchTo().alert().getText();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("text", text);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_Text, text);
         }
     }
 
-    class SendKeys  extends TargetLocatorMethod{
+    class SendKeys  extends AlertMethod {
+        final static String VN_KeysToSend = "keys_to_send";
         @Override
-        public void addArgumentsToProps(){
-            addProp(NS_ARGUMENT, "keys_to_send", "keys to send");
+        public void addArguments(){
+            addArg(VN_KeysToSend, "keys to send");
         }
 
         @Override
         void action(WebDriver driver, ElementResult result) {
-            driver.switchTo().alert().sendKeys(getRunTimeProp(NS_ARGUMENT, "keys_to_send"));
+            driver.switchTo().alert().sendKeys(getRTArg(VN_KeysToSend));
         }
     }
-
 
 }

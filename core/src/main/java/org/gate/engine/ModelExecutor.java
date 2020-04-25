@@ -99,7 +99,6 @@ public class ModelExecutor {
                     modelResult.setThrowable(samplerResult.getThrowable());
                     return;
                     // Fail on any Exception on Sampler Execution. Change it to RuntimeException like bellowing if needed.
-                    //if(RuntimeException.class.isAssignableFrom(samplerResult.getThrowable().getClass())){}
                 }
 
             } else if (AssertionResult.class.isInstance(currentResult) ||

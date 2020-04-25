@@ -19,6 +19,8 @@ package org.gate.gui.details.properties.graph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+import org.gate.common.util.GateClassUtils;
+import org.gate.gui.common.OptionPane;
 import org.gate.gui.graph.elements.GraphElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +65,16 @@ public class GraphNamePane extends JPanel {
     }
 
     public void setCell(mxGraph graph, mxCell cell){
-        label.setText( "Component Class Name: " + cell.getValue().getClass().getName() + " Component Name: ");
+        GraphElement graphElement = ((GraphElement)cell.getValue());
+        String elementCategory = GateClassUtils.getIns().getGraphElementCategory(graphElement);
+        if(elementCategory == null){
+            OptionPane.showErrorMessageDialog("Error", "Graph element is not in a supported category");
+        }
+        StringBuffer cellName = new StringBuffer("Component category: ");
+        cellName.append(elementCategory).append(" Component Name: ");
+        cellName.append(graphElement.getStaticLabel());
+        cellName.trimToSize();
+        label.setText(cellName.toString());
         this.nameTextField.setText(cell.getValue().toString());
         this.graph = graph;
         this.cell  = cell;

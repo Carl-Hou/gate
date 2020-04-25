@@ -21,6 +21,7 @@ package org.gate.gui.graph.elements.sampler.protocol.selenium;
 import net.minidev.json.JSONObject;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.common.ParameterUtils;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,7 +34,6 @@ import org.openqa.selenium.safari.SafariDriver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Driver extends AbstractSeleniumSampler implements SeleniumConstantsInterface {
@@ -49,7 +49,7 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
 
     class Create implements MethodSupplier {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addProp(NS_ARGUMENT, PN_BrowserName, BrowserName_Chrome);
         }
 
@@ -85,7 +85,7 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
 
     class CreateRemote implements MethodSupplier {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addProp(NS_ARGUMENT, PN_GridHubUrl, "");
             addProp(NS_ARGUMENT, PN_BrowserName, BrowserName_Chrome);
             addProp(NS_ARGUMENT, PN_Platform, "");
@@ -141,10 +141,7 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
         }
     }
 
-    abstract class AbstractDriverMethod implements MethodSupplier{
-        @Override
-        public void addArgumentsToProps() {}
-
+    abstract class AbstractDriverMethod extends AbstractMethodSupplier{
         @Override
         public void run(ElementResult result) {
             WebDriver driver = getDriver(result);
@@ -159,13 +156,25 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
 
     class Get extends AbstractDriverMethod {
         @Override
-        public void addArgumentsToProps() {
-            addProp(NS_ARGUMENT, PN_URL, "");
+        public void addArguments() {
+            addArg(PN_URL, "");
         }
 
         @Override
         void exec(WebDriver driver, ElementResult result) {
-            driver.get(getRunTimeProp(NS_ARGUMENT, PN_URL));
+            driver.get(getRTArg(PN_URL));
+        }
+    }
+
+    class SwitchTo extends AbstractDriverMethod {
+        @Override
+        public void addArguments() {
+            addArg(PN_URL, "");
+        }
+
+        @Override
+        void exec(WebDriver driver, ElementResult result) {
+            driver.get(getRTArg(PN_URL));
         }
     }
 
@@ -184,63 +193,57 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
     }
 
     class GetCurrentUrl extends AbstractDriverMethod {
+        final static String VN_CurrentUrl = "variable_name_current_url";
+        @Override
+        public void addArguments(){
+            addArg(VN_CurrentUrl, "currentUrl");
+        }
         @Override
         void exec(WebDriver driver, ElementResult result) {
             String currentURL = driver.getCurrentUrl();
             if(null == currentURL){
-                currentURL = "";
-                result.appendMessage("Current url is empty:");
+                result.setFailure("Current url is empty:");
+                return;
             }
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("currentUrl", currentURL);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_CurrentUrl, currentURL);
         }
     }
 
     class GetPageSource extends AbstractDriverMethod {
+        final static String VN_PageSource = "variable_name_page_source";
+
         @Override
         void exec(WebDriver driver, ElementResult result) {
-            String pageSource = driver.getCurrentUrl();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("pageSource", pageSource);
-            result.setResponseObject(getJSONString(returnValue));
+            String pageSource = driver.getPageSource();
+            result.setResponseObject(pageSource);
+
         }
     }
 
     class GetTitle extends AbstractDriverMethod {
+        final static String VN_Title = "variable_name_title";
+        @Override
+        public void addArguments(){
+            addArg(VN_Title, "title");
+        }
+
         @Override
         void exec(WebDriver driver, ElementResult result) {
             String title = driver.getTitle();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("title", title);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_Title,title);
         }
     }
 
     class GetWindowHandle extends AbstractDriverMethod {
+        final static String VN_WindowsHandle = "variable_name_windows_handle";
+        @Override
+        public void addArguments(){
+            addArg(VN_WindowsHandle, "windows_handle");
+        }
         @Override
         void exec(WebDriver driver, ElementResult result) {
             String windowHandle = driver.getWindowHandle();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("windowHandle", windowHandle);
-            result.setResponseObject(getJSONString(returnValue));
-        }
-    }
-
-    class GetWindowHandleByIndex extends AbstractDriverMethod {
-        @Override
-        public void addArgumentsToProps() {
-            addProp(NS_ARGUMENT, "window_handle_index", "0" );
-        }
-
-        @Override
-        void exec(WebDriver driver, ElementResult result) {
-            int index = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "window_handle_index"), result);
-            if(result.isFailure()) return;
-            String windowHandleOfIndex = driver.getWindowHandles().toArray(new String[0])[index];
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("windowHandleOfIndex", windowHandleOfIndex);
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_WindowsHandle, windowHandle);
         }
     }
 

@@ -65,6 +65,25 @@ public class GateClassUtils {
         return graphElements;
     }
 
+    public String getGraphElementCategory(GraphElement graphElement){
+        if(Assert.class.isInstance(graphElement)){
+            return "Assert";
+        }else if (Comment.class.isInstance(graphElement)) {
+            return "Comment";
+        }else if (Config.class.isInstance(graphElement)) {
+            return "Config";
+        }else if (Controller.class.isInstance(graphElement)) {
+            return "Controller";
+        }else if (Extractor.class.isInstance(graphElement)) {
+            return "Extractor";
+        }else if (Sampler.class.isInstance(graphElement)) {
+            return "Sampler";
+        }else if (Timer.class.isInstance(graphElement)) {
+            return "Timer";
+        }
+        return null;
+    }
+
     void findGraphElementImplementing(){
         graphElements.put(Assert.class.getName(), getClassesImplementing(Assert.class));
         graphElements.put(Comment.class.getName(), getClassesImplementing(Comment.class));

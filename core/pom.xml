@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.gate</groupId>
         <artifactId>gate</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>core</artifactId>

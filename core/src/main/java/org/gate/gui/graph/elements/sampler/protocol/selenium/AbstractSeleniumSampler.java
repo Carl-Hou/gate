@@ -28,6 +28,7 @@ import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.gui.DefaultSeleniumElementGui;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 import org.openqa.selenium.OutputType;
@@ -41,7 +42,7 @@ import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-abstract public class AbstractSeleniumSampler extends AbstractGraphElement implements SeleniumElement, SeleniumConstantsInterface{
+abstract public class AbstractSeleniumSampler extends AbstractGraphElement implements SeleniumElement, SeleniumConstantsInterface {
 
     public AbstractSeleniumSampler(){
         addNameSpace(NS_ARGUMENT);
@@ -50,7 +51,7 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
         if(!methodSuppliers.isEmpty() ){
             String  defaultMethodSupplierName = methodSuppliers.get(0);
             addProp(NS_NAME, PN_MethodSuppliersName, defaultMethodSupplierName);
-            getMethodSupplierInstance(defaultMethodSupplierName).addArgumentsToProps();
+            getMethodSupplierInstance(defaultMethodSupplierName).addArguments();
         }
     }
 
@@ -103,8 +104,33 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
     }
 
     interface MethodSupplier {
-        void addArgumentsToProps();
+        void addArguments();
         void run(ElementResult result);
+    }
+
+    abstract class AbstractMethodSupplier implements MethodSupplier{
+        @Override
+        public void addArguments() {}
+
+        void addArg(String name, String value){
+            addProp(NS_ARGUMENT, name, value);
+        }
+
+        String getRTArg(String name){
+            return getRunTimeProp(NS_ARGUMENT, name);
+        }
+
+        void setGateVariable(String name, int value){
+            setGateVariable(name, String.valueOf(value));
+        }
+
+        void setGateVariable(String name, boolean value){
+            setGateVariable(name, String.valueOf(value));
+        }
+
+        void setGateVariable(String name, String value){
+            GateContextService.getContext().getVariables().put(getRTArg(name), value);
+        }
     }
 
     List<Class> getSuppliersClasses(){
@@ -186,7 +212,7 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
     public void updateByMethodSupplier(String supplierName) {
         getProp(NS_NAME, PN_MethodSuppliersName).setObjectValue(supplierName);
         clearNameSpace(NS_ARGUMENT);
-        getMethodSupplierInstance(supplierName).addArgumentsToProps();
+        getMethodSupplierInstance(supplierName).addArguments();
     }
 
     @Override

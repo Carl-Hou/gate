@@ -8,7 +8,7 @@
     <artifactId>gate</artifactId>
     <name>Gate</name>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

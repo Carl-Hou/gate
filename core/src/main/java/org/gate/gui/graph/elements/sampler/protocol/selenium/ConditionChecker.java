@@ -20,6 +20,7 @@ package org.gate.gui.graph.elements.sampler.protocol.selenium;
 import org.gate.common.config.GateProps;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.common.TestElement;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -27,9 +28,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
-public class ConditionChecker extends AbstractSeleniumSampler implements SeleniumConstantsInterface{
-
-
+public class ConditionChecker extends AbstractSeleniumSampler implements SeleniumConstantsInterface {
 
     public ConditionChecker() {
         // Add shared properties
@@ -42,15 +41,8 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
         return "Selenium ConditionChecker";
     }
 
-    /*
-    * Implement condition checker from here
-    * */
-    interface WaitCondition extends MethodSupplier {
-        boolean isReachCondition(FluentWait<WebDriver> wait);
-    }
 
-    abstract class AbstractWaitConditions implements WaitCondition{
-        public abstract void addArgumentsToProps();
+    abstract class AbstractWaitConditions extends AbstractMethodSupplier{
         public abstract boolean isReachCondition(FluentWait<WebDriver> wait);
 
         @Override
@@ -65,8 +57,8 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
             fluentWait.withTimeout(Duration.ofSeconds(Integer.parseUnsignedInt(waitTimeOut)));
             fluentWait.pollingEvery(Duration.ofMillis(Long.parseUnsignedLong(waitFrequency)));
             // TODO probably no new object need to be created.
-            WaitCondition waitCondition = (WaitCondition) getMethodSupplierInstance(getCurrentMethodSupplier());
-
+//            WaitCondition waitCondition = (WaitCondition) getMethodSupplierInstance(getCurrentMethodSupplier());
+            AbstractWaitConditions waitCondition = (AbstractWaitConditions) getMethodSupplierInstance(getCurrentMethodSupplier());
             try {
                 boolean waitResult = waitCondition.isReachCondition(fluentWait);
                 if (waitResult == false) {
@@ -85,18 +77,18 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
         }
 
         By getLocatorFromRuntime(){
-            return SeleniumUtils.getLocator(getRunTimeProp(TestElement.NS_ARGUMENT, PN_LocatorType), getRunTimeProp(TestElement.NS_ARGUMENT, PN_LocatorCondition));
+            return SeleniumUtils.getLocator(getRTArg(PN_LocatorType), getRTArg(PN_LocatorCondition));
         }
 
         void addLocatorArguments() {
-            addProp(TestElement.NS_ARGUMENT, PN_LocatorType, LocatorTypes[0]);
-            addProp(TestElement.NS_ARGUMENT, PN_LocatorCondition, "Input location conditions");
+            addArg(PN_LocatorType, LocatorTypes[0]);
+            addArg(PN_LocatorCondition, "Input location conditions");
         }
     }
 
     abstract class AbstractElementWaiter extends AbstractWaitConditions{
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
         }
 
@@ -136,53 +128,52 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     public class AttributeContains extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_AttributeName, "Input Name of the argument");
-            addProp(TestElement.NS_ARGUMENT, PN_AttributeValue, "Input Value of the argument");
+            addArg(PN_AttributeName, "Input Name of the argument");
+            addArg(PN_AttributeValue, "Input Value of the argument");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
             return wait.until(ExpectedConditions.attributeContains(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_AttributeName), getRunTimeProp(TestElement.NS_ARGUMENT, PN_AttributeValue)));
+                    getRTArg(PN_AttributeName), getRTArg(PN_AttributeValue)));
         }
-
     }
 
     public class AttributeToBe extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_AttributeName, "Input Name of the argument");
-            addProp(TestElement.NS_ARGUMENT, PN_AttributeValue, "Input Value of the argument");
+            addArg(PN_AttributeName, "Input Name of the argument");
+            addArg(PN_AttributeValue, "Input Value of the argument");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
             return wait.until(ExpectedConditions.attributeToBe(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_AttributeName), getRunTimeProp(TestElement.NS_ARGUMENT, PN_AttributeValue)));
+                    getRTArg(PN_AttributeName), getRTArg(PN_AttributeValue)));
         }
 
     }
 
     public class ElementSelectionStateToBe extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Selected, GateProps.TRUE);
+            addArg(PN_Selected, GateProps.TRUE);
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
             return wait.until(ExpectedConditions.elementSelectionStateToBe(getLocatorFromRuntime(),
-                    Boolean.valueOf(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Selected))));
+                    Boolean.valueOf(getRTArg(PN_Selected))));
         }
     }
 
     public class ElementToBeSelected extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
         }
 
@@ -194,7 +185,7 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     public class InvisibilityOfElementLocated extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
         }
 
@@ -206,157 +197,153 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     public class InvisibilityOfElementWithText extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "");
+            addArg(PN_Text, "");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.invisibilityOfElementWithText(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+            return wait.until(ExpectedConditions.invisibilityOfElementWithText(getLocatorFromRuntime(), getRTArg(PN_Text)));
         }
     }
 
     public class JavaScriptThrowsNoExceptions extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_JavaScript, "");
+        public void addArguments() {
+            addArg(PN_JavaScript, "");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.javaScriptThrowsNoExceptions(getRunTimeProp(TestElement.NS_ARGUMENT, PN_JavaScript)));
+            return wait.until(ExpectedConditions.javaScriptThrowsNoExceptions(getRTArg(PN_JavaScript)));
         }
     }
 
-    public class NumberOfwindowsToBe extends AbstractWaitConditions {
+    public class NumberOfWindowsToBe extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Number, "1");
+        public void addArguments() {
+            addArg(PN_Number, "1");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.numberOfWindowsToBe(Integer.parseUnsignedInt(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Number))));
+            return wait.until(ExpectedConditions.numberOfWindowsToBe(Integer.parseUnsignedInt(getRTArg(PN_Number))));
         }
     }
 
     public class TextMatches extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Regex, "Input Regex Expression");
+            addArg(PN_Regex, "Input Regex Expression");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
             return wait.until(ExpectedConditions.textMatches(getLocatorFromRuntime(),
-                    Pattern.compile(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Regex))));
+                    Pattern.compile(getRTArg(PN_Regex))));
         }
     }
 
     public class TextToBe extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "Input text");
+            addArg(PN_Text, "Input text");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.textToBe(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+            return wait.until(ExpectedConditions.textToBe(getLocatorFromRuntime(), getRTArg(PN_Text)));
         }
     }
 
     public class TextToBePresentInElementLocated extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "Input text");
+            addArg(PN_Text, "Input text");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
             return wait.until(ExpectedConditions.textToBePresentInElementLocated(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+                    getRTArg(PN_Text)));
         }
     }
 
     public class TextToBePresentInElementValue extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
+        public void addArguments() {
             addLocatorArguments();
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "Input text");
+            addArg(PN_Text, "Input text");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.textToBePresentInElementValue(getLocatorFromRuntime(),
-                    getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+            return wait.until(ExpectedConditions.textToBePresentInElementValue(getLocatorFromRuntime(), getRTArg(PN_Text)));
         }
     }
 
     public class TitleContains extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Title, "Input title");
+        public void addArguments() {
+            addArg(PN_Title, "Input title");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.titleContains(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Title)));
+            return wait.until(ExpectedConditions.titleContains(getRTArg(PN_Title)));
         }
     }
 
     public class TitleIs extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Title, "Input title");
+        public void addArguments() {
+            addArg(PN_Title, "Input title");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.titleIs(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Title)));
+            return wait.until(ExpectedConditions.titleIs(getRTArg(PN_Title)));
         }
     }
 
     public class UrlContains extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "Input text");
+        public void addArguments() {
+            addArg(PN_Text, "Input text");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.urlContains(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+            return wait.until(ExpectedConditions.urlContains(getRTArg(PN_Text)));
         }
     }
 
     public class UrlMatches extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Regex, "Input regex expression");
+        public void addArguments() {
+            addArg(PN_Regex, "Input regex expression");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.urlMatches(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Regex)));
+            return wait.until(ExpectedConditions.urlMatches(getRTArg(PN_Regex)));
         }
     }
 
     public class UrlToBe extends AbstractWaitConditions {
         @Override
-        public void addArgumentsToProps() {
-            addProp(TestElement.NS_ARGUMENT, PN_Text, "Input expected Url");
+        public void addArguments() {
+            addArg(PN_Text, "Input expected Url");
         }
 
         @Override
         public boolean isReachCondition(FluentWait<WebDriver> wait) {
-            return wait.until(ExpectedConditions.urlToBe(getRunTimeProp(TestElement.NS_ARGUMENT, PN_Text)));
+            return wait.until(ExpectedConditions.urlToBe(getRTArg(PN_Text)));
         }
     }
-
 
 }

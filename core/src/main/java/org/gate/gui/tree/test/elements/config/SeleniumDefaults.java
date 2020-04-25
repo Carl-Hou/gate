@@ -17,7 +17,7 @@
  */
 package org.gate.gui.tree.test.elements.config;
 
-import org.gate.gui.graph.elements.sampler.protocol.selenium.SeleniumConstantsInterface;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 
 public class SeleniumDefaults extends DefaultsConfigElement implements SeleniumConstantsInterface {
 

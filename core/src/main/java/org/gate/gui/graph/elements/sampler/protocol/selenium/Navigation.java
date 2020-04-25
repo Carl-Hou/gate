@@ -32,10 +32,7 @@ public class Navigation extends AbstractSeleniumSampler {
         return "Selenium Navigation";
     }
 
-    abstract class NavigationMethod implements MethodSupplier{
-        @Override
-        public void addArgumentsToProps(){
-        }
+    abstract class NavigationMethod extends AbstractMethodSupplier{
 
         @Override
         public void run(ElementResult result) {
@@ -68,13 +65,14 @@ public class Navigation extends AbstractSeleniumSampler {
     }
 
     class To extends NavigationMethod {
+        final static String VN_Url = "url";
         @Override
-        public void addArgumentsToProps(){
-            addProp(TestElement.NS_ARGUMENT, "url", "url to navigate");
+        public void addArguments(){
+            addArg("url", "url to navigate");
         }
         @Override
         void action(WebDriver driver, ElementResult result) {
-            driver.navigate().to(getRunTimeProp(TestElement.NS_ARGUMENT, "url"));
+            driver.navigate().to(getRTArg(VN_Url));
         }
     }
 }
