@@ -39,7 +39,7 @@ public class TextAssertGui extends JPanel implements GraphElementPropertiesGui {
 
     Logger log = LogManager.getLogger(this.getName());
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     ValueListArgumentsPane valueListArgumentsPane = new ValueListArgumentsPane();
 

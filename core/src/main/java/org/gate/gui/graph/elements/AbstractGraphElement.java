@@ -128,9 +128,8 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
     }
 
     /*
-        this need to implement by graph elements which need to load the default before process variables.
-        not all graph elements need this so this is not abstract
-        TODO if this can be optimized
+        for load before process variables. Not all graph elements need this so this is not abstract
+
      */
 
     protected HashMap<String, LinkedList<GateProperty>> getPropertiesWithDefaults() {

@@ -40,7 +40,7 @@ public class DefaultScriptGui extends JPanel implements GraphElementPropertiesGu
 
     Logger log = LogManager.getLogger(this.getName());
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
     JComboBox<String> languageSelection;
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     RSyntaxTextArea rSyntaxTextArea = GuiUtils.getRSyntaxTextArea(15, 80);

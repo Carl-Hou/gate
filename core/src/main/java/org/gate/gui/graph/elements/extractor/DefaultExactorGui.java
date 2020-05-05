@@ -35,7 +35,7 @@ import java.awt.*;
 
 public class DefaultExactorGui extends JPanel implements GraphElementPropertiesGui {
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     ArgumentsPane argumentsPane = new ArgumentsPane();
 

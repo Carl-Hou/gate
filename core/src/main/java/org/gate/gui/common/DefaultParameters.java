@@ -22,16 +22,16 @@ import org.apache.logging.log4j.Logger;
 import org.gate.varfuncs.property.GateProperty;
 import org.gate.varfuncs.property.StringProperty;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Optional;
 
 /**
  * Use same data structure store parameters to keep compatible with TestElement
  */
 
-public class DefaultParameters {
+public class DefaultParameters implements Serializable {
     protected Logger log = LogManager.getLogger(this.getClass());
     protected HashMap<String, LinkedList<GateProperty>> defaultParameters = new HashMap();
 
@@ -54,7 +54,7 @@ public class DefaultParameters {
 
     public void modify(String nameSpace, LinkedList<GateProperty> parameters){
         if(!defaultParameters.containsKey(nameSpace)){
-            defaultParameters.put(nameSpace, new LinkedList<GateProperty>());
+            defaultParameters.put(nameSpace, new LinkedList<>());
         }
 
         for(GateProperty parameter : parameters){

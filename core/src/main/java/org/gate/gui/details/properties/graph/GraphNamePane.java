@@ -40,11 +40,12 @@ public class GraphNamePane extends JPanel {
 
     public GraphNamePane(){
         init();
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Name"));
     }
 
-    public GraphNamePane(String name){
+    public GraphNamePane(String borderName){
         init();
-        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),name));
+        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),borderName));
     }
 
     void init(){
@@ -70,8 +71,8 @@ public class GraphNamePane extends JPanel {
         if(elementCategory == null){
             OptionPane.showErrorMessageDialog("Error", "Graph element is not in a supported category");
         }
-        StringBuffer cellName = new StringBuffer("Component category: ");
-        cellName.append(elementCategory).append(" Component Name: ");
+        StringBuffer cellName = new StringBuffer(" Category: ");
+        cellName.append(elementCategory).append(" Type: ");
         cellName.append(graphElement.getStaticLabel());
         cellName.trimToSize();
         label.setText(cellName.toString());

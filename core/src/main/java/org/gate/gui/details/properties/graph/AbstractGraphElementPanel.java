@@ -28,7 +28,7 @@ import javax.swing.*;
 
 public abstract class AbstractGraphElementPanel extends JPanel implements GraphElementPropertiesGui {
     protected  Logger log = LogManager.getLogger(this.getName());
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
 
     public AbstractGraphElementPanel(){
         setLayout(new VerticalLayout());

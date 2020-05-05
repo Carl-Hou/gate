@@ -44,7 +44,7 @@ public class DefaultSeleniumElementGui extends JPanel implements GraphElementPro
 
     protected Logger log = LogManager.getLogger(this.getName());
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
     PropertiesTable argumentPropertiesTable = new PropertiesTable(new PropertiesTableModel());
 //    PropertiesTable returnValueVariablesNameTable = new PropertiesTable(new PropertiesTableModel());

@@ -43,7 +43,7 @@ public class CodeSnippetGui extends JPanel implements GraphElementPropertiesGui 
 
     Logger log = LogManager.getLogger(this.getName());
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
 
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     RSyntaxTextArea rSyntaxTextArea = GuiUtils.getRSyntaxTextArea(15, 80);

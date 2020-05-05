@@ -27,8 +27,8 @@ public class Element extends AbstractSeleniumSampler implements SeleniumConstant
 
     public Element(){
         addProp(NS_DEFAULT, PN_WaitExpectedCondition, SeleniumUtils.WaitExpectedConditionsForElements[0]);
-        addProp(NS_DEFAULT, PN_WaitTimeOut, "5");
-        addProp(NS_DEFAULT, PN_WaitPollingInterval, "200");
+        addProp(NS_DEFAULT, PN_WaitTimeOut, "");
+        addProp(NS_DEFAULT, PN_WaitPollingInterval, "");
         addProp(NS_DEFAULT, PN_LocatorType, SeleniumUtils.LocatorTypes[0]);
         addProp(NS_DEFAULT, PN_LocatorCondition, "Input Locator Conditions");
     }

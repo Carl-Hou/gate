@@ -50,7 +50,7 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
     class Create implements MethodSupplier {
         @Override
         public void addArguments() {
-            addProp(NS_ARGUMENT, PN_BrowserName, BrowserName_Chrome);
+            addProp(NS_ARGUMENT, PN_BrowserName, "");
         }
 
         @Override
@@ -87,7 +87,7 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
         @Override
         public void addArguments() {
             addProp(NS_ARGUMENT, PN_GridHubUrl, "");
-            addProp(NS_ARGUMENT, PN_BrowserName, BrowserName_Chrome);
+            addProp(NS_ARGUMENT, PN_BrowserName, "");
             addProp(NS_ARGUMENT, PN_Platform, "");
             addProp(NS_ARGUMENT, PN_BrowserVersion, "");
             addProp(NS_ARGUMENT, PN_JavascriptEnabled, "true");

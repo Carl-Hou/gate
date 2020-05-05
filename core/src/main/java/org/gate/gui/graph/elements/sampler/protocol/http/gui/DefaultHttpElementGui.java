@@ -57,7 +57,7 @@ public class DefaultHttpElementGui extends JPanel implements GraphElementPropert
     JComboBox methodsComboBox = new JComboBox(new String[]{
             POST ,GET ,PUT ,HEAD ,TRACE ,OPTIONS ,DELETE ,PATCH});
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
     JTextField pathField = new JTextField();
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
     JTabbedPane parametersTabbedPane = new JTabbedPane();

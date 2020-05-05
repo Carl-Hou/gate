@@ -36,7 +36,7 @@ public class DefaultCommentsGui extends JPanel implements GraphElementProperties
 
     final static Logger log = LogManager.getLogger();
 
-    GraphNamePane namePane = new GraphNamePane("Element identifier");
+    GraphNamePane namePane = new GraphNamePane();
 
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     JTextArea rSyntaxTextArea = new JTextArea(15, 80);

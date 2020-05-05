@@ -33,8 +33,8 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     public ConditionChecker() {
         // Add shared properties
-        addProp(TestElement.NS_DEFAULT, PN_WaitTimeOut, "5");
-        addProp(TestElement.NS_DEFAULT, PN_WaitPollingInterval, "500");
+        addProp(TestElement.NS_DEFAULT, PN_WaitTimeOut, "");
+        addProp(TestElement.NS_DEFAULT, PN_WaitPollingInterval, "");
     }
 
     @Override
