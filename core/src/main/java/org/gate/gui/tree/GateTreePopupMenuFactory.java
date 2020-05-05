@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.util.CopyUtils;
 
+import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
 import org.gate.gui.MainFrame;
@@ -164,7 +165,7 @@ public abstract class GateTreePopupMenuFactory {
 
     protected GateTreeNode cloneTreeNode(GateTreeNode node) {
         GateTreeNode treeNode = (GateTreeNode) node.clone();
-        treeNode.setUserObject(CopyUtils.deepCopy(treeNode.getGateTreeElement()).get());
+        treeNode.setUserObject(GateUtils.deepCopy(treeNode.getGateTreeElement()).get());
         cloneChildren(treeNode, node);
         return treeNode;
     }
@@ -229,7 +230,7 @@ public abstract class GateTreePopupMenuFactory {
         while (enumFrom.hasMoreElements()) {
             GateTreeNode child = (GateTreeNode) enumFrom.nextElement();
             GateTreeNode childClone = (GateTreeNode) child.clone();
-            childClone.setUserObject(CopyUtils.deepCopy(child.getGateTreeElement()).get());
+            childClone.setUserObject(GateUtils.deepCopy(child.getGateTreeElement()).get());
             to.add(childClone);
             cloneChildren((GateTreeNode) to.getLastChild(), child);
         }

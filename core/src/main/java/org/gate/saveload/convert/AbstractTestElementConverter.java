@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /*
-*  This class use to transform TestElement object to DocumentElement and Document Element to TestElement
-* */
+ *  This class use to transform TestElement object to DocumentElement and Document Element to TestElement
+ * */
 public abstract class AbstractTestElementConverter implements TestElementConverter {
 
 
@@ -42,82 +42,80 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
     final public static String Entry = "Entry";
     final public static String NAME = "name";
     final public static String VALUE = "value";
-    final public static String NAMESPACE="NameSpace";
-    final public static String PROPERTY="Property";
+    final public static String NAMESPACE = "NameSpace";
+    final public static String PROPERTY = "Property";
 
-//    protected Document doc = null;
+    //    protected Document doc = null;
     protected DocumentHelper documentHelper = null;
     String tagName;
     Class testElementClass;
 
     protected Logger log = LogManager.getLogger(this);
 
-    public AbstractTestElementConverter(Class testElementClass, String tagName){
+    public AbstractTestElementConverter(Class testElementClass, String tagName) {
         this.tagName = tagName;
         this.testElementClass = testElementClass;
     }
 
-    public AbstractTestElementConverter(Class testElementClass){
+    public AbstractTestElementConverter(Class testElementClass) {
         this.tagName = testElementClass.getSimpleName();
         this.testElementClass = testElementClass;
     }
 
-    public boolean is(TestElement testElement){
+    public boolean is(TestElement testElement) {
         return this.testElementClass.isInstance(testElement);
     }
 
-    public boolean is(String tagName){
+    public boolean is(String tagName) {
         return this.tagName.equals(tagName);
     }
 
-    public void setDocumentHelper(DocumentHelper documentHelper){
+    public void setDocumentHelper(DocumentHelper documentHelper) {
         this.documentHelper = documentHelper;
     }
 
-    public Element createObjectElement(){
+    public Element createObjectElement() {
         return documentHelper.createElement(tagName);
     }
 
 
-public Element getMap(TestElement testElement){
+    public Element getMap(TestElement testElement) {
 
+        HashMap<String, LinkedList<GateProperty>> propsMap = testElement.getPropsMap();
+        Element mapRoot = documentHelper.createElement(Properties);
 
-    HashMap<String, LinkedList<GateProperty>> propsMap = testElement.getPropsMap();
-    Element mapRoot = documentHelper.createElement(Properties);
-
-    for(Map.Entry<String, LinkedList<GateProperty>> entry : propsMap.entrySet()){
-        Element nameSpaceRoot = documentHelper.createElement(NAMESPACE);
-        nameSpaceRoot.setAttribute(NAME, entry.getKey());
-        for(GateProperty prop : entry.getValue()){
-            Element entryElement = documentHelper.createElement(PROPERTY);
-            entryElement.setAttribute(NAME, prop.getName());
-            entryElement.setAttribute(VALUE, prop.getStringValue());
-            nameSpaceRoot.appendChild(entryElement);
+        for (Map.Entry<String, LinkedList<GateProperty>> entry : propsMap.entrySet()) {
+            Element nameSpaceRoot = documentHelper.createElement(NAMESPACE);
+            nameSpaceRoot.setAttribute(NAME, entry.getKey());
+            for (GateProperty prop : entry.getValue()) {
+                Element entryElement = documentHelper.createElement(PROPERTY);
+                entryElement.setAttribute(NAME, prop.getName());
+                entryElement.setAttribute(VALUE, prop.getStringValue());
+                nameSpaceRoot.appendChild(entryElement);
+            }
+            mapRoot.appendChild(nameSpaceRoot);
         }
-        mapRoot.appendChild(nameSpaceRoot);
+
+        return mapRoot;
     }
 
-    return mapRoot;
-}
-
-    public HashMap<String, LinkedList<GateProperty>> getMap(Element element){
-        HashMap<String, LinkedList<GateProperty>> propsMap = new HashMap<>();
-
+    public HashMap<String, HashMap<String, String>> getSavedMap(Element element) {
+        HashMap<String, HashMap<String, String>> propsMap = new HashMap<>();
         Optional<Element> mapElementOptional = documentHelper.getChildrenElements(element).stream().
                 filter(e -> e.getNodeName().equals(Properties)).findFirst();
 
-        if(mapElementOptional.isPresent()){
-
+        if (mapElementOptional.isPresent()) {
             LinkedList<Element> elements = documentHelper.getChildrenElements(mapElementOptional.get());
-            for(Element nameSpaceElement : elements){
+            for (Element nameSpaceElement : elements) {
                 String nameSpace = nameSpaceElement.getAttribute(NAME);
-                LinkedList<GateProperty> props = new LinkedList<>();
+                HashMap<String, String> props = new HashMap<>();
                 LinkedList<Element> elementsOfNameSpace = documentHelper.getChildrenElements(nameSpaceElement);
-                elementsOfNameSpace.forEach( e ->{ props.add(new StringProperty(e.getAttribute(NAME), e.getAttribute(VALUE)));
+                elementsOfNameSpace.forEach(e -> {
+                    props.put(e.getAttribute(NAME), e.getAttribute(VALUE));
                 });
                 propsMap.put(nameSpace, props);
             }
-        }else{
+        } else {
             log.fatal("Element is not an Properties: " + element.getNodeName());
         }
         return propsMap;
@@ -136,8 +134,18 @@ public Element getMap(TestElement testElement){
         TestElement testElement = null;
         try {
             testElement = (TestElement) testElementClass.newInstance();
-            HashMap<String, LinkedList<GateProperty>> propsMap = getMap(element);
-            testElement.setPropsMap(propsMap);
+            HashMap<String, HashMap<String, String>> savedPropsMap = getSavedMap(element);
+
+            for (String nameSpace : savedPropsMap.keySet()) {
+                for (Map.Entry<String, String> prop : savedPropsMap.get(nameSpace).entrySet()) {
+                    if (nameSpace.equals(TestElement.NS_ARGUMENT)) {
+                        testElement.putProp(nameSpace, prop.getKey(), prop.getValue());
+                    } else {
+                        testElement.setProp(nameSpace, prop.getKey(), prop.getValue());
+                    }
+
+                }
+            }
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             throw new TestElementDecodeException(e);

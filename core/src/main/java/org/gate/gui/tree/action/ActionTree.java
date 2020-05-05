@@ -51,7 +51,8 @@ public class ActionTree extends GateTree {
     }
 
     public void reset(){
-        getActionSuites().removeAllChildren();
+        getTestTreeModel().getTestTreeRoot().removeAllChildren();
+        addGateElement(getTestTreeModel().getTestTreeRoot(), new ActionSuites());
         getTestTreeModel().reload();
     }
 

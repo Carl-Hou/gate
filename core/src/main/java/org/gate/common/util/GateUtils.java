@@ -57,6 +57,42 @@ public class GateUtils {
         return nameList;
     }
 
+    /*
+     * Use for deep copy isolate objects. A temp solution for clone.
+     * Don't use this if not have to.
+     * */
+    public static <T> Optional<T> deepCopy(T source)  {
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(); // this stream don't need to be closed
+            out = new ObjectOutputStream(bos);
+            out.writeObject(source);
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            in = new ObjectInputStream(bis);
+            T deepCopyClone = (T) in.readObject();
+            return Optional.of(deepCopyClone);
+        }catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            if(out !=null){
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(in !=null){
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     public static String getStackTrace(Throwable e) {
         StringWriter stringWriter = new StringWriter();
         e.printStackTrace(new PrintWriter(stringWriter));

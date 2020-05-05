@@ -33,6 +33,7 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
 
     public final static String NP_MatchingRule = "Matching Rule";
 	public final static String NP_Not = "Not";
+	public final static String NP_Trim = "Trim";
 
 	private final static String MR_Contains = "contains";
     private final static String MR_Equals = "equals";
@@ -44,6 +45,7 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
 	public TextAssert() {
 		addProp(NS_DEFAULT, NP_MatchingRule, "contains");
 		addProp(NS_DEFAULT, NP_Not, "false");
+        addProp(NS_DEFAULT, NP_Trim, "true");
 		addNameSpace(NS_ARGUMENT);
 	}
 
@@ -53,6 +55,7 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
 
 		assertionResult.setRunTimeProps(getRunTimePropsMap());
 		boolean not = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_Not));
+		boolean trim = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_Trim));
         LinkedList<GateProperty> patternsToTest = getRunTimeProps(NS_ARGUMENT);
         // start to work
         String input;
@@ -67,7 +70,9 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
             assertionResult.setFailure("input of assert is null");
             return;
         }
-
+        if(trim){
+            input = input.trim();
+        }
         switch (getRunTimeProp(NS_DEFAULT, NP_MatchingRule)){
 			case MR_Contains:
 			    for(GateProperty pattern : patternsToTest){

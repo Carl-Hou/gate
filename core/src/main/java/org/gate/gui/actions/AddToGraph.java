@@ -121,18 +121,11 @@ public class AddToGraph extends AbstractGateAction {
 
             GateTreeNode actionNode = (GateTreeNode) treePath.getLastPathComponent();
             String path = GateTreeSupport.getGateTreeNodePath(actionNode);
-            ActionReference actionReference = new ActionReference(actionNode.getName(), path);
+            ActionReference actionReference = new ActionReference();
+            actionReference.init(actionNode.getName(), path);
             mxGraphComponent graphComponent =  GuiPackage.getIns().getMainFrame().getGraphEditor().getGraphComponent();
             Rectangle rect = graphComponent.getViewport().getViewRect();
             double scale = graphComponent.getGraph().getView().getScale();
-//            HashMap info = new HashMap();
-//            info.put("rect.x", rect.x);
-//            info.put("rect.y", rect.y);
-//            info.put("rect.width", rect.width);
-//            info.put("rect.height", rect.height);
-//            info.put("scale", scale);
-//
-//            log.trace(info);
             actionCell = new mxCell(actionReference,
                     new mxGeometry(Math.round((rect.width/2+ rect.x)/scale) , Math.round((rect.height/2 + rect.y)/scale), 40, 40), "rhombusImage;image=/org/gate/images/inclusive.png");
             actionCell.setVertex(true);
@@ -144,11 +137,6 @@ public class AddToGraph extends AbstractGateAction {
         String sourceName = source.getName();
         BasicGraphEditor graphEditor = GuiPackage.getIns().getMainFrame().getGraphEditor();
         double scale = graphEditor.getGraphComponent().getGraph().getView().getScale();
-        HashMap info = new HashMap();
-//        info.put("graphEditor.getCursorLocationX()", graphEditor.getCursorLocationX());
-//        info.put("graphEditor.getCursorLocationY()", graphEditor.getCursorLocationY());
-//        info.put("scale", scale);
-//        log.trace(info);
 
         mxGeometry geometry = new mxGeometry((graphEditor.getCursorLocationX())/scale, (graphEditor.getCursorLocationY())/scale, 40, 40);
 

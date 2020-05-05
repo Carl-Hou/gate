@@ -30,7 +30,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class ResultsPane extends JPanel {
-    Logger log = LogManager.getLogger(this.getClass());
+    Logger log = LogManager.getLogger();
 
     JSplitPane treeAndResults = new JSplitPane();
 	JPanel resultDetailsPane = new JPanel(new GridLayout(1,1));
@@ -68,8 +68,7 @@ public class ResultsPane extends JPanel {
 
 	void updateResultDetailsPaneContent(JComponent content){
 		resultDetailsPane.removeAll();
-		resultDetailsPane.add(new JScrollPane(content));
-		resultDetailsPane.repaint();
+		resultDetailsPane.add(content);
 		resultDetailsPane.updateUI();
 	}
 

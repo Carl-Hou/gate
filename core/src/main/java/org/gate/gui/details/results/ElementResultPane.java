@@ -36,17 +36,17 @@ public class ElementResultPane extends JPanel{
 	JTextArea response;
 	
 	public ElementResultPane(){
-		result = new JTextArea(100, 100); // add config for this
+		result = new JTextArea(); // add config for this
 		result.setEditable(false);
 		result.setLineWrap(true);
 		result.setWrapStyleWord(true);
 
-		request = new JTextArea(100, 100); // add config for this
+		request = new JTextArea(); // add config for this
 		request.setEditable(false);
 		request.setLineWrap(true);
 		request.setWrapStyleWord(true);
 
-		response = new JTextArea(100, 100); // add config for this
+		response = new JTextArea(); // add config for this
 		response.setEditable(false);
 		response.setLineWrap(true);
 		response.setWrapStyleWord(true);

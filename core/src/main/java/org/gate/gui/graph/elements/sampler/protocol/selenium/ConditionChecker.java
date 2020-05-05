@@ -18,6 +18,7 @@
 package org.gate.gui.graph.elements.sampler.protocol.selenium;
 
 import org.gate.common.config.GateProps;
+import org.gate.common.util.GateUtils;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.common.TestElement;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
@@ -38,9 +39,8 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     @Override
     public String getStaticLabel() {
-        return "Selenium ConditionChecker";
+        return "Selenium ExpectedConditions";
     }
-
 
     abstract class AbstractWaitConditions extends AbstractMethodSupplier{
         public abstract boolean isReachCondition(FluentWait<WebDriver> wait);
@@ -57,22 +57,20 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
             fluentWait.withTimeout(Duration.ofSeconds(Integer.parseUnsignedInt(waitTimeOut)));
             fluentWait.pollingEvery(Duration.ofMillis(Long.parseUnsignedLong(waitFrequency)));
             // TODO probably no new object need to be created.
-//            WaitCondition waitCondition = (WaitCondition) getMethodSupplierInstance(getCurrentMethodSupplier());
             AbstractWaitConditions waitCondition = (AbstractWaitConditions) getMethodSupplierInstance(getCurrentMethodSupplier());
             try {
                 boolean waitResult = waitCondition.isReachCondition(fluentWait);
                 if (waitResult == false) {
                     result.setFailure("Not get expected condition before timeout");
-                    log.info("Not get expected condition before timeout");
                 }
             } catch (TimeoutException ex) {
-                result.appendMessage("Element not found before timeout");
-                result.setThrowable(ex);
+                result.setFailure(GateUtils.getStackTrace(ex));
+                log.error("Element not found before timeout", ex);
             } catch (Throwable t) {
-                result.appendMessage("Run into fatal error");
-                result.setThrowable(t);
+                result.setFailure(GateUtils.getStackTrace(t));
+                log.error("Run into fatal error", t);
             }
-
+            result.setResponseObject(result.isSuccess());
             return;
         }
 

@@ -34,8 +34,6 @@ public class PropertiesPane extends JPanel {
 
     public void setComponent(JComponent component) {
         removeAll();
-//        Use vertical layout
-//        add(new JScrollPane(component), BorderLayout.CENTER);
         add(component, BorderLayout.CENTER);
         // Update properties panel when click on the element
         updateUI();

@@ -34,13 +34,14 @@ import java.util.Arrays;
 
 public class ActionReference extends AbstractGraphElement implements Controller {
     public final  static String NP_PATH = "path";
-    // used by restore
-    public ActionReference(){}
+    // don't change this
+    public ActionReference(){
+        addProp(NS_DEFAULT, NP_PATH, "");
+    }
 
-    // used by Tree listener to add link to test action.
-    public ActionReference(String name, String path) {
+    public void init(String name, String path){
         setProp(NS_NAME, NP_NAME, name);
-        addProp(NS_DEFAULT, NP_PATH, path);
+        setProp(NS_DEFAULT, NP_PATH, path);
     }
 
     @Override
@@ -64,7 +65,6 @@ public class ActionReference extends AbstractGraphElement implements Controller 
             log.fatal("Fail to execute action", t);
         }
         GateContextService.getContext().getResultCollector().endModel();
-
     }
 
     String[] getTreeNodePath(String treeNodePath){

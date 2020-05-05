@@ -53,9 +53,9 @@ public final class GraphMenuFactory {
     protected final static LinkedList<MenuInfo> graphCommentCells = new LinkedList<>();
 
     static {
+        graphLinkCells.add(new MenuInfo("Next", GateProps.Next));
         graphLinkCells.add(new MenuInfo("Success", GateProps.Success));
         graphLinkCells.add(new MenuInfo("Fail", GateProps.Fail));
-        graphLinkCells.add(new MenuInfo("Next", GateProps.Next));
         graphLinkCells.add(new MenuInfo("Note", GateProps.Note));
 
         GateClassUtils.getIns().getGraphElements().forEach((category, graphElementClasses) ->{

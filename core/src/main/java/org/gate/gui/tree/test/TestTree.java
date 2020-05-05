@@ -69,7 +69,8 @@ public class TestTree extends GateTree {
     }
 
     public void reset(){
-        getTestSuitesNode().removeAllChildren();
+        getTestTreeModel().getTestTreeRoot().removeAllChildren();
+        addGateElement(getTestTreeModel().getTestTreeRoot(), new TestSuites());
         getTestTreeModel().reload();
     }
 

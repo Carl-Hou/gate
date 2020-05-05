@@ -24,6 +24,7 @@ import java.util.LinkedList;
 
 import org.gate.common.util.CopyUtils;
 import org.gate.common.util.GateRuntimeExcepiton;
+import org.gate.common.util.GateUtils;
 import org.gate.gui.common.AbstractTestElement;
 import org.gate.gui.common.DefaultParameters;
 import org.gate.gui.details.properties.graph.DefaultPropertiesGui;
@@ -145,7 +146,7 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
             return getPropsMap();
         }
 
-        HashMap<String, LinkedList<GateProperty>> propsMapCopy = CopyUtils.deepCopy(getPropsMap()).get();
+        HashMap<String, LinkedList<GateProperty>> propsMapCopy = GateUtils.deepCopy(getPropsMap()).get();
         for(String nameSpace : getNameSpacesToApplyDefault()){
             defaultSeleniumParameters.applyDefaultsInNameSpace(propsMapCopy.get(nameSpace));
         }

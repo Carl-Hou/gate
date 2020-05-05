@@ -59,7 +59,7 @@ public class ModelExecutor {
         GateContext context = GateContextService.getContext();
 
         try {
-            Optional<mxCell> entryOptional = getModelEntry(CopyUtils.deepCopy(mxModel).get());
+            Optional<mxCell> entryOptional = getModelEntry(GateUtils.deepCopy(mxModel).get());
             if (!entryOptional.isPresent()) {
                 modelResult.setFailure("Entry point not found. Check if Start element exist in the model");
                 return;

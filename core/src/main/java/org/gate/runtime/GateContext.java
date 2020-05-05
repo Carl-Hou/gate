@@ -19,6 +19,7 @@
 package org.gate.runtime;
 
 import org.gate.common.util.CopyUtils;
+import org.gate.common.util.GateUtils;
 import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.graph.SamplerResult;
 
@@ -86,8 +87,8 @@ public class GateContext {
     }
     // deepCopy variables and configs from a context
     public void copy(GateContext context){
-        variables = CopyUtils.deepCopy(context.getVariables()).get();
-        configs = CopyUtils.deepCopy(context.getConfigs()).get();
+        variables = GateUtils.deepCopy(context.getVariables()).get();
+        configs = GateUtils.deepCopy(context.getConfigs()).get();
         testSuitesName = context.getTestSuitesName();
     }
 
