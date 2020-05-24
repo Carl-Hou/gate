@@ -47,7 +47,6 @@ public class GateCMDLauncher implements TestStopListener {
         }
 
         HashMap<GateTreeNode, LinkedList<GateTreeNode>> selectedTestCases =
-//                getSelectedTestCases(testSuiteNamePrefix, testCaseNamePrefix);
                 GateTreeSupport.getFilteredTestCases(testSuiteNamePrefix, testCaseNamePrefix);
 
         TestEngine engine = new TestEngine();

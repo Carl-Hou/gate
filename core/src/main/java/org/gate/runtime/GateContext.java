@@ -18,7 +18,6 @@
 
 package org.gate.runtime;
 
-import org.gate.common.util.CopyUtils;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.graph.SamplerResult;
@@ -40,14 +39,12 @@ public class GateContext {
     private SamplerResult previousResult;
     private ResultCollector resultCollector;
 
-    private Thread thread;
     private String testSuitesName;
     private volatile boolean isModelShutdown;
 
     public GateContext() {
         clear();
         isModelShutdown = false;
-        thread = null;
         testSuitesName = null;
         variables = new GateVariables();
 
@@ -59,14 +56,6 @@ public class GateContext {
 
     public String getTestSuitesName(){
         return testSuitesName;
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public void setThread(Thread thread){
-        this.thread = thread;
     }
 
     public boolean isModelShutdown() {

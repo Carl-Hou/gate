@@ -20,7 +20,6 @@ package org.gate.engine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
-import org.gate.gui.details.results.ResultManager;
 import org.gate.gui.details.results.elements.test.ModelContainerResult;
 import org.gate.gui.graph.elements.ElementContext;
 import org.gate.gui.tree.test.elements.config.ConfigElement;
@@ -49,13 +48,6 @@ public abstract class GateModelRunner implements Runnable, TestConstraint {
         getModelContainerResult().setFailure("stop externally");
         context.modelShutdown();
         getModelContainerResult().modelShutdown();
-//        keep this currently for timeout any sleeping function.
-        try {
-            context.getThread().interrupt();
-        }catch(Throwable t){
-            log.warn("Got some issue when interrupt model runner:" + GateProps.LineSeparator, t);
-        }
-
     }
 
     public boolean isShutdown() {

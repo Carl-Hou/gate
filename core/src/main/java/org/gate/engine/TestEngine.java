@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.gate.common.config.GateProps;
+import org.gate.common.util.FileServer;
 import org.gate.gui.details.results.ResultManager;
 import org.gate.gui.details.results.ResultTree;
 import org.gate.gui.details.results.collector.ResultCollector;
@@ -33,12 +34,11 @@ import org.gate.gui.tree.test.elements.fixture.FixtureElement;
 import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class TestEngine implements Runnable{
@@ -56,7 +56,8 @@ public class TestEngine implements Runnable{
 	TestPlan testPlan = null;
     ModelExecutor fixtureExecutor = null;
 
-	LinkedList<GateModelRunner> workingRunner = new LinkedList<>();
+    Map<GateModelRunner, Thread> workingRunner = new ConcurrentHashMap<>();
+
 	LinkedList<TestStopListener> stopListeners = new LinkedList<>();
 
 	public String prepare(HashMap<GateTreeNode, LinkedList<GateTreeNode>> testSuites){
@@ -95,9 +96,9 @@ public class TestEngine implements Runnable{
         // current implementation will looks like single thread when test case complete very fast (5 million seconds)
         while (isNotTimeout(startTime) && !testPlan.isComplete() && !context.isModelShutdown()) {
             try {
-                Iterator<GateModelRunner> it = workingRunner.iterator();
+                Iterator<Map.Entry<GateModelRunner, Thread>> it = workingRunner.entrySet().iterator();
                 while (it.hasNext()) {
-                    GateModelRunner gateModelRunner = it.next();
+                    GateModelRunner gateModelRunner = it.next().getKey();
                     if (gateModelRunner.isShutdown()) {
                         testPlan.setTestCaseComplete(gateModelRunner.getTestModelRuntime());
                         it.remove();
@@ -117,11 +118,14 @@ public class TestEngine implements Runnable{
                     }
                     for(TestModelRuntime testModelRuntime : modelsToBeExecute){
                         testPlan.setTestCaseRunning(testModelRuntime);
-                        workingRunner.add(execute(testModelRuntime));
+                        GateModelRunner gateModelRunner = getModelRunner(testModelRuntime);
+                        Thread thread = new Thread(gateModelRunner, testModelRuntime.getID());
+                        workingRunner.put(gateModelRunner, thread);
+                        thread.start();
                     }
 
                 }
-                pause(10);
+                pause(100);
             } catch (Throwable t) {
                 log.fatal("Engine Exception:", t);
                 context.modelShutdown();
@@ -130,10 +134,10 @@ public class TestEngine implements Runnable{
         }
         // wait for running test case complete hence test case mange it's repeating
         while (isNotTimeout(startTime) && !context.isModelShutdown() && workingRunner.size() != 0){
-            Iterator<GateModelRunner> it = workingRunner.iterator();
+            Iterator<Map.Entry<GateModelRunner,Thread>> it = workingRunner.entrySet().iterator();
             while (it.hasNext()) {
                 try {
-                    GateModelRunner gateModelRunner = it.next();
+                    GateModelRunner gateModelRunner = it.next().getKey();
                     if (gateModelRunner.isShutdown()) {
                         it.remove();
                     }
@@ -153,6 +157,17 @@ public class TestEngine implements Runnable{
             executeFixture(afterSuites, collector, afterSuitesResult);
         }
         stopTest();
+        ResultManager.getIns().testEnd();
+        //TODO anyway update test suite, suites by test case result here. is thi need?
+        stopListeners.forEach(stopListener ->{
+            stopListener.testStop();
+        });
+        stopListeners.clear();
+        try {
+            FileServer.getFileServer().closeFiles();
+        }catch (IOException e){
+            log.error("Problem closing files at end of test", e);
+        }
     }
 
     void executeFixture(FixtureElement fixture, ResultCollector collector, ModelContainerResult fixtureResult){
@@ -182,22 +197,41 @@ public class TestEngine implements Runnable{
     public synchronized void stopTest(){
         testPlan.skipAllQueued();
         context.modelShutdown();
-        workingRunner.forEach(runner -> {
-            if(!runner.isShutdown()){
-                runner.stopRunner();
-            }
-        });
-        while(workingRunner.size()!= 0){
-            pause(100);
-            workingRunner.removeIf(runner -> runner.isShutdown());
-        }
 
-        ResultManager.getIns().testEnd();
-        //TODO anyway update test suite, suites by test case result here. is thi need?
-        stopListeners.forEach(stopListener ->{
-            stopListener.testStop();
-        });
-        stopListeners.clear();
+        for(Map.Entry<GateModelRunner, Thread> runner : workingRunner.entrySet()){
+            if(!runner.getKey().isShutdown()){
+                runner.getKey().stopRunner();
+            }
+            if(runner.getValue().getState() == Thread.State.TIMED_WAITING || runner.getValue().getState() == Thread.State.WAITING){
+                try {
+                    runner.getValue().interrupt();
+                }catch(Throwable t){
+                    log.warn("Error on interrupt model runner", t);
+                }
+            }
+        }
+    }
+
+    public synchronized boolean isAllRunnerStopped(){
+        if(workingRunner.size()!= 0){
+            Iterator<Map.Entry<GateModelRunner, Thread>> it=workingRunner.entrySet().iterator();
+            while(it.hasNext()){
+                Map.Entry<GateModelRunner, Thread> runner = it.next();
+                if(runner.getKey().isShutdown()){
+                    it.remove();
+                }
+                if(runner.getValue().getState() == Thread.State.TIMED_WAITING || runner.getValue().getState() == Thread.State.WAITING){
+                    try {
+                        runner.getValue().interrupt();
+                    }catch(Throwable t){
+                        log.warn("Error on interrupt model runner", t);
+                    }
+                }
+            }
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public void addStopTestListener(TestStopListener testStopListener){
@@ -216,18 +250,18 @@ public class TestEngine implements Runnable{
         try {
             TimeUnit.MILLISECONDS.sleep(ms);
         } catch (InterruptedException e) {
-            log.error("Unexpected interruption: ", e);
+            // interrupt by stop in most cases
+            log.debug("interruption: ", e);
         }
     }
 
-	private GateModelRunner execute(TestModelRuntime testModelRuntime){
+	private GateModelRunner getModelRunner(TestModelRuntime testModelRuntime){
         GateModelRunner gateModelRunner;
 	    if(TestCaseRuntime.class.isInstance(testModelRuntime)){
             gateModelRunner = new TestCaseRunner(testModelRuntime, GateContextService.getContext());
         }else{
 	        gateModelRunner = new TestModelRunner(testModelRuntime, GateContextService.getContext());
         }
-		new Thread(gateModelRunner, testModelRuntime.getID()).start();
 		return gateModelRunner;
 	}
 }

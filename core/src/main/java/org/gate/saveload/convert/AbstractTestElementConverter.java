@@ -38,12 +38,11 @@ import java.util.Optional;
 public abstract class AbstractTestElementConverter implements TestElementConverter {
 
 
-    final public static String Properties = "Properties";
-    final public static String Entry = "Entry";
+    final public static String Properties = "ElementProperties";
     final public static String NAME = "name";
     final public static String VALUE = "value";
     final public static String NAMESPACE = "NameSpace";
-    final public static String PROPERTY = "Property";
+    final public static String PROPERTY = "ElementProperty";
 
     //    protected Document doc = null;
     protected DocumentHelper documentHelper = null;

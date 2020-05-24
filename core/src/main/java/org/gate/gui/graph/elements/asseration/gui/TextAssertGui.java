@@ -59,8 +59,6 @@ public class TextAssertGui extends JPanel implements GraphElementPropertiesGui {
         add(propsPattern);
         int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.3);
         propsPattern.setDividerLocation(divider);
-
-
     }
 
     @Override

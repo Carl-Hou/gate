@@ -100,13 +100,16 @@ public class ResultManager implements TestConstraint {
         }
     }
 
-    public void testEnd(){
+    public synchronized void testEnd(){
         ResultTreeNode testSuitesNode = getSuitesNode();
         TestSuitesResult testSuitesResult = (TestSuitesResult) testSuitesNode.getResult();
         LinkedList<ResultTreeNode> testSuiteNodes = testSuitesNode.findChildren(TestSuiteResult.class);
-        testSuiteNodes.forEach(testSuiteNode -> {
+        for(ResultTreeNode testSuiteNode : testSuiteNodes){
             testSuitesResult.addTestSuiteSummary((TestSuiteResult) testSuiteNode.getResult());
-        });
+        }
+//        testSuiteNodes.forEach(testSuiteNode -> {
+//            testSuitesResult.addTestSuiteSummary((TestSuiteResult) testSuiteNode.getResult());
+//        });
         stop();
         StringBuilder sb = new StringBuilder(GateProps.LineSeparator);
         sb.append("==========================Test Summary==========================").append(GateProps.LineSeparator);
@@ -206,9 +209,11 @@ public class ResultManager implements TestConstraint {
         }
     }
 
-    public synchronized ResultTreeNode addResult(ResultTreeNode parent, Result result){
+    public ResultTreeNode addResult(ResultTreeNode parent, Result result){
         ResultTreeNode child = new ResultTreeNode(result);
-        model.insertNodeInto(child, parent, parent.getChildCount());
+        synchronized (model){
+            model.insertNodeInto(child, parent, parent.getChildCount());
+        }
         return child;
     }
 

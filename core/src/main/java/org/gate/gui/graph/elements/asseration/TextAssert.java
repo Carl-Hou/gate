@@ -19,13 +19,11 @@
 package org.gate.gui.graph.elements.asseration;
 
 import org.gate.common.util.GateException;
-import org.gate.gui.details.results.elements.graph.AssertionResult;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
 import org.gate.gui.graph.elements.asseration.gui.TextAssertGui;
 import org.gate.varfuncs.property.GateProperty;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.PatternSyntaxException;
 
@@ -52,20 +50,20 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
 
 	@Override
 	protected void exec(ElementResult assertionResult) {
-
 		assertionResult.setRunTimeProps(getRunTimePropsMap());
 		boolean not = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_Not));
 		boolean trim = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_Trim));
         LinkedList<GateProperty> patternsToTest = getRunTimeProps(NS_ARGUMENT);
         // start to work
-        String input;
-        try {
-            input = getInput();
-        }catch(Throwable t){
-            assertionResult.setThrowable(t);
+        String input = preExec(assertionResult);
+        if(assertionResult.isFailure()){
             return;
         }
 
+        if(patternsToTest.isEmpty()){
+            assertionResult.appendMessage("patterns to test is empty. skip assert input by pattern");
+            return;
+        }
         if (input == null) {
             assertionResult.setFailure("input of assert is null");
             return;
@@ -73,6 +71,7 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
         if(trim){
             input = input.trim();
         }
+
         switch (getRunTimeProp(NS_DEFAULT, NP_MatchingRule)){
 			case MR_Contains:
 			    for(GateProperty pattern : patternsToTest){
@@ -120,13 +119,24 @@ public abstract class TextAssert extends AbstractGraphElement implements Assert 
 				log.error("Matching Rule not found");
 				break;
 		}
-		return;
+		if(assertionResult.isSuccess()){
+		    postExec(assertionResult);
+        }
 	}
+
+    // for subclass to override
+    abstract String preExec(ElementResult assertionResult);
+
+	// for subclass to override
+	void postExec(ElementResult assertionResult){
+
+    }
+
 
     @Override
     public String getGUI(){
 	    return TextAssertGui.class.getName();
     }
 
-    abstract String getInput() throws GateException;
+//    abstract String getInput() throws GateException;
 }

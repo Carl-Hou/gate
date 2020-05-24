@@ -20,12 +20,10 @@ package org.gate.gui.tree;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gate.common.util.CopyUtils;
 
 import org.gate.common.util.GateUtils;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
-import org.gate.gui.MainFrame;
 import org.gate.gui.actions.ActionRouter;
 
 

@@ -68,10 +68,6 @@ public class TreeElementDecoder {
         if(treeElementConverterOptional.isPresent()){
             TreeElementConverter converter = treeElementConverterOptional.get();
             converter.setDocumentHelper(documentHelper);
-//            TestElement testElement = converter.unmarshal(docElement);
-//            if(testElement instanceof GateTreeElement){
-//                return Optional.of((GateTreeElement) testElement);
-//            }
             return Optional.of( converter.unmarshal(docElement));
         }
         return Optional.empty();

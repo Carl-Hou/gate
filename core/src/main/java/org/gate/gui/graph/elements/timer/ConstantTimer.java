@@ -48,7 +48,7 @@ public class ConstantTimer extends AbstractGraphElement implements Timer {
             controllerResult.setRunTimeProps(getRunTimePropsMap());
             return;
         }catch (InterruptedException e) {
-            log.fatal("Interrupted:", e);
+            log.trace("Interrupted:", e);
             controllerResult.setThrowable(e);
             return;
         }

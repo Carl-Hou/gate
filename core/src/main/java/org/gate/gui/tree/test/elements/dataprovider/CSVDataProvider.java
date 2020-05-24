@@ -45,6 +45,12 @@ public class CSVDataProvider extends DataProviderElement {
         File csvFile = new File(getProp(NS_DEFAULT, PN_FileName).getStringValue().trim());
         String fileEncoding = getProp(NS_DEFAULT, PN_FileEncoding).getStringValue().trim();
         String delimiter = getProp(NS_DEFAULT, PN_Delimiter).getStringValue().trim();
+        if (delimiter.equals("\\t")) { // $NON-NLS-1$
+            delimiter = "\t";// Make it easier to enter a Tab // $NON-NLS-1$
+        } else if (delimiter.isEmpty()){
+            log.warn("Empty delimiter converted to ','");
+            delimiter=",";
+        }
         if(fileEncoding.isEmpty()){
             fileEncoding = System.getProperty("file.encoding");
         }

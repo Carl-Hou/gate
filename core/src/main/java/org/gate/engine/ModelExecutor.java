@@ -23,8 +23,8 @@ import com.mxgraph.model.mxICell;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
-import org.gate.common.util.CopyUtils;
 import org.gate.common.util.GateUtils;
+import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.graph.ActionReferenceResult;
 import org.gate.gui.details.results.elements.graph.AssertionResult;
 import org.gate.gui.details.results.elements.graph.ElementResult;
@@ -80,7 +80,7 @@ public class ModelExecutor {
      * */
     void executeBranch(GateContext context, mxICell entry) {
         mxICell nextVertex = entry;
-
+        ResultCollector resultCollector = context.getResultCollector();
         while (hasNextLoop && modelResult.isSuccess() && !context.isModelShutdown()) {
 //            prepare for current vertex and execute
             mxICell currentVertex = nextVertex;
@@ -89,7 +89,7 @@ public class ModelExecutor {
             graphElement.reset();
             // ActionReference will handel result collect itself to avoid duplicate mode node.
             if(!ActionReferenceResult.class.isInstance(currentResult)){
-                context.getResultCollector().collect(currentResult);
+                resultCollector.collect(currentResult);
             }
 
             if (SamplerResult.class.isInstance(currentResult)) {

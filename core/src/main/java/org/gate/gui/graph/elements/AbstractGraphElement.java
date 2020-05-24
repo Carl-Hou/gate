@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.gate.common.util.CopyUtils;
 import org.gate.common.util.GateRuntimeExcepiton;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.common.AbstractTestElement;
@@ -48,7 +47,6 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
     protected final static String GUI_ClassName_DefaultPropertiesGUI = DefaultPropertiesGui.class.getName();
     protected HashMap<String, LinkedList<GateProperty>> runTimePropsMap = new HashMap();
 
-    //  what's use of this? try to comment it out. remove it later.
     public AbstractGraphElement() {
         super();
     }
@@ -57,8 +55,6 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
      *   reset the GraphElement's status for engine execute. This is method each time after the cell execute completely
      * */
     public void reset() {
-        // TODO thinks about if this is needed
-        // clear each value HashMap
         runTimePropsMap.values().forEach(v -> v.clear());
         runTimePropsMap.clear();
     }

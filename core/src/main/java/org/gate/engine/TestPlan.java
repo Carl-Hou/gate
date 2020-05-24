@@ -161,12 +161,12 @@ public class TestPlan implements TestConstraint {
         }
 
         for (Map.Entry<String, HashMap<String, LinkedList<TestModelRuntime>>> testSuiteRuntime : testSuitesRuntime.entrySet()) {
-            testSuiteRuntime.getValue().values().forEach(testModelContainerRuntimes -> {
-                testModelContainerRuntimes.forEach(testModelContainerRuntime -> {
+            for(LinkedList<TestModelRuntime> testModelContainerRuntimes: testSuiteRuntime.getValue().values()){
+                for(TestModelRuntime testModelContainerRuntime: testModelContainerRuntimes){
                     ResultManager.getIns().skipTestModel(testModelContainerRuntime);
-                });
+                }
                 testModelContainerRuntimes.clear();
-            });
+            }
         }
 
         while (hasAfterSuites()){

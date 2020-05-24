@@ -62,7 +62,6 @@ public class ModelContainerConverter extends AbstractTreeElementConverter {
         GateTreeElement gateTreeElement = unmarshalTreeElementByDefault(element);
         ModelContainer modelContainer = (ModelContainer) gateTreeElement;
         Node mxGraphModelNode =  element.getElementsByTagName("mxGraphModel").item(0);
-//        log.info(DocumentHelper.nodeToString(mxGraphModelNode));
         mxCodec codec = new mxCodec(mxGraphModelNode.getOwnerDocument());
         mxGraphModel mxModel = new mxGraphModel();
         codec.decode(mxGraphModelNode, mxModel);

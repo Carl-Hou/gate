@@ -18,19 +18,34 @@
 
 package org.gate.gui.graph.elements.asseration;
 
-import org.gate.common.util.GateException;
-import org.gate.gui.details.results.elements.graph.AssertionResult;
 import org.gate.gui.details.results.elements.graph.ElementResult;
+import org.gate.gui.details.results.elements.graph.SamplerResult;
 import org.gate.gui.graph.elements.asseration.gui.TextAssertGui;
 
 import org.gate.runtime.GateContextService;
 
+public class ResultAssert extends TextAssert {
 
-public class ResponseAssert extends TextAssert {
+    public final static String NP_IgnoreException = "Ignore Exceptions";
+    public final static String NP_IgnoreResult = "Ignore Result";
+
+    public ResultAssert(){
+        addProp(NS_DEFAULT, NP_IgnoreException, "false");
+        addProp(NS_DEFAULT, NP_IgnoreResult, "false");
+    }
 
     @Override
-    String getInput() throws GateException {
-        return GateContextService.getContext().getPreviousResult().getResponseAsString();
+    String preExec(ElementResult assertionResult) {
+        SamplerResult samplerResult = GateContextService.getContext().getPreviousResult();
+        if(!Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_IgnoreException)) && samplerResult.getThrowable() != null){
+            assertionResult.setFailure("previous result throw Exception");
+            return samplerResult.getResponseAsString();
+        }
+        if(!Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, NP_IgnoreResult)) && samplerResult.isFailure()){
+            assertionResult.setFailure("previous result is failure");
+            return samplerResult.getResponseAsString();
+        }
+        return samplerResult.getResponseAsString();
     }
     @Override
     public String getGUI(){
@@ -39,6 +54,6 @@ public class ResponseAssert extends TextAssert {
 
     @Override
     public String getStaticLabel() {
-        return "Response Assertion";
+        return "Result Assertion";
     }
 }

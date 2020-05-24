@@ -17,14 +17,14 @@
  */
 package org.gate.gui.actions;
 
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.gate.engine.TestStopListener;
 import org.gate.gui.GuiPackage;
 import org.gate.gui.common.OptionPane;
 import org.gate.engine.TestEngine;
-import org.gate.gui.MainFrame;
 import org.gate.gui.tree.GateTreeNode;
 import org.gate.gui.tree.GateTreeSupport;
-import org.gate.gui.tree.test.TestTree;
 import org.gate.gui.tree.test.elements.TestCase;
 import org.gate.gui.tree.test.elements.TestSuite;
 import org.gate.gui.tree.test.elements.TestSuites;
@@ -33,6 +33,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Start extends AbstractGateAction {
 
@@ -43,7 +44,7 @@ public class Start extends AbstractGateAction {
         commands.add(ActionNames.ACTION_STOP);
     }
 
-    private TestEngine engine;
+    private ImmutablePair<TestEngine, Thread> enginePair;
 
     @Override
     public void doAction(ActionEvent e) throws IllegalUserActionException {
@@ -51,9 +52,9 @@ public class Start extends AbstractGateAction {
         if(e.getActionCommand().equals(ActionNames.ACTION_START)){
             runCase();
         } else if(e.getActionCommand().equals(ActionNames.ACTION_STOP)){
-            if (engine != null) {
+            if(enginePair != null){
                 log.info("Stopping test");
-                engine.stopTest();
+                stopTest();
             }
         }
     }
@@ -64,34 +65,62 @@ public class Start extends AbstractGateAction {
     }
 
     void runCase(){
-
         HashMap testSuites = getPreprocessedSelectedTestNodes();
         GateTreeSupport.syncGui();
-        engine = new TestEngine();
+        TestEngine engine = new TestEngine();
         String result = engine.prepare(testSuites);
         if(!result.isEmpty()){
             OptionPane.showErrorMessageDialog("Error", result);
             return;
         }
-
         engine.addStopTestListener(new TestStopListener() {
             @Override
             public void testStop() {
                 GuiPackage.getIns().getMainFrame().stopTest();
             }
         });
-        engine.runTest();
+        Thread runningThread = new Thread(engine, "TestEngine");
+        enginePair = ImmutablePair.of(engine, runningThread);
+        try {
+            runningThread.start();
+        } catch (Exception err) {
+            stopTest();
+            OptionPane.showErrorMessageDialog("Fail to start test",err);
+        }
         GuiPackage.getIns().getMainFrame().testStarted();
     }
 
+    void stopTest(){
+        enginePair.getKey().stopTest();
+        for(int i=0; i< 20; i++){
+            if(enginePair.getKey().isAllRunnerStopped() && enginePair.getValue().getState() == Thread.State.TERMINATED){
+                return;
+            }
+            if(enginePair.getValue().getState() == Thread.State.WAITING || enginePair.getValue().getState() == Thread.State.TIMED_WAITING){
+                try {
+                    enginePair.getValue().interrupt();
+                }catch (Throwable t){
+                    log.fatal(t);
+                    OptionPane.showErrorMessageDialog("Fail to stop test", t);
+                    return;
+                }
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                log.info("Unexpected", e);
+            }
+        }
+        OptionPane.showErrorMessageDialog("Fail to stop test", "Fail to stop test after retry many times");
+    }
+
     HashMap<GateTreeNode, LinkedList<GateTreeNode>> getPreprocessedSelectedTestNodes(){
+        HashMap<GateTreeNode, LinkedList<GateTreeNode>> testSuites = new HashMap<>();
         TreePath[] treePaths = GuiPackage.getIns().getTestTree().getSelectionPaths();
         if(treePaths == null){
             OptionPane.showErrorMessageDialog("Error", "No test suites or cases selected");
-            // TODO why don't return an empty list here.
+            return testSuites;
         }
-
-        HashMap<GateTreeNode, LinkedList<GateTreeNode>> testSuites = new HashMap<>();
 
         for(TreePath treePath : treePaths){
             GateTreeNode node = (GateTreeNode) treePath.getLastPathComponent();

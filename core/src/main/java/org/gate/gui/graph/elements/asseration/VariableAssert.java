@@ -35,7 +35,7 @@ public class VariableAssert extends TextAssert {
     }
 
     @Override
-    String getInput() throws GateException {
+    String preExec(ElementResult assertionResult){
         String variableName = getRunTimeProp(NS_DEFAULT, NP_VariableName);
         GateVariables vars = GateContextService.getContext().getVariables();
         String value = vars.get(variableName);
@@ -44,7 +44,7 @@ public class VariableAssert extends TextAssert {
             sb.append("Variable not found. name : ".concat(variableName)).append(GateProps.LineSeparator);
             sb.append("Variables: ").append(GateProps.LineSeparator).append(GateUtils.dumpToString(vars));
             sb.trimToSize();
-            throw new GateVariableNotFoundException(sb.toString());
+            assertionResult.setFailure(sb.toString());
         }
         return value;
     }

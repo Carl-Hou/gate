@@ -63,22 +63,21 @@ public class LoadRecentProject extends AbstractGateAction{
         File file = getRecentFile(e);
         // load file
         load(file.getAbsolutePath());
-        updateRecentFiles(file.getAbsolutePath());
+
     }
 
     void load(String modelFile) {
         File testFile = new File(modelFile);
         if (!testFile.exists()) {
             OptionPane.showErrorMessageDialog("Error on load project: ", "File not found: ".concat(testFile.getAbsolutePath()));
+            return;
         }
 
         GuiPackage.getIns().getMainFrame().setTestFile(modelFile);
         GuiPackage.getIns().getMainFrame().closeModelEditor();
         GuiPackage.getIns().getMainFrame().updateTitle();
-
-
         GateTreeSupport.load(new File(modelFile));
-
+        updateRecentFiles(modelFile);
     }
 
     private static LinkedList<String> getRecentFiles(){
