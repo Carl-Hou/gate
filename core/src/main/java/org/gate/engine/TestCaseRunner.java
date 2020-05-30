@@ -20,6 +20,7 @@ package org.gate.engine;
 import org.gate.gui.details.results.ResultManager;
 import org.gate.gui.details.results.elements.test.ModelContainerResult;
 import org.gate.gui.details.results.elements.test.TestCaseResult;
+import org.gate.gui.tree.test.elements.dataprovider.DataProviderElement;
 import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 import org.gate.varfuncs.ValueReplacer;
@@ -35,9 +36,7 @@ import java.util.ListIterator;
 public class TestCaseRunner extends GateModelRunner {
 
     private int timeout = -1;
-    private int invocationCount = 1;
     private Instant startTime;
-    private List<HashMap<String, String>> provideDataList;
     private LinkedList<TestCaseResult> testCaseResults = new LinkedList<>();
     private TestCaseRuntime testCaseRuntime;
     private TestCaseResult testCaseResult;
@@ -70,16 +69,6 @@ public class TestCaseRunner extends GateModelRunner {
             if (!testCaseRuntime.getTimeout().isEmpty()) {
                 timeout = vc.replaceValue(new StringProperty("timeout", testCaseRuntime.getTimeout())).getIntValue();
             }
-
-            if (!testCaseRuntime.getInvocationCount().isEmpty()) {
-                invocationCount = vc.replaceValue(new StringProperty("invocationCount", testCaseRuntime.getInvocationCount())).getIntValue();
-                if(invocationCount < 1){
-                    log.warn("invocationCount is not valid:" + invocationCount);
-                }
-            }
-
-            provideDataList = testCaseRuntime.getDataProviderVariables();
-
         } catch (Exception e) {
             log.error("Fail to start test case", e);
             testCaseResult = (TestCaseResult) testCaseRuntime.createModelContainerResult();
@@ -88,43 +77,70 @@ public class TestCaseRunner extends GateModelRunner {
             return;
         }
 
-        for(int loopIndex=0; loopIndex< invocationCount && !context.isModelShutdown(); loopIndex++){
-            ListIterator<HashMap<String, String>> provideDataIterator = provideDataList.listIterator();
-            do {
-                testCaseResult = (TestCaseResult) testCaseRuntime.createModelContainerResult();
-                testCaseResult.setLooping();
-                testCaseResults.add(testCaseResult);
-                if (invocationCount > 1) {
-                    testCaseResult.setLoopIndex(loopIndex);
+        boolean hasDataProvider = !testCaseRuntime.getDataProviderElements().isEmpty();
+        int count = 0;
+        do {
+            resetContext();
+            if(hasDataProvider){
+                if(!loadVars()){
+                    if(count == 0){
+                        testCaseResult = (TestCaseResult) testCaseRuntime.createModelContainerResult();
+                        preExecute(testCaseResult);
+                        testCaseResult.setFailure("Fail to load variables from CSV file");
+                        postExecute(testCaseResult);
+                    }
+                    break;
                 }
-                resetContext();
-                if(provideDataIterator.hasNext()){
-                    testCaseResult.setVariableSetIndex(provideDataIterator.nextIndex());
-                    provideDataIterator.next().forEach((name,value) ->{
-                        context.getVariables().put(name, value);
-                    });
-                }
-                runCase(testCaseResult);
-            }while(provideDataIterator.hasNext() && testCaseResult.isSuccess());
-        }
+            }
+            testCaseResult = (TestCaseResult) testCaseRuntime.createModelContainerResult();
+            testCaseResult.setLooping();
+            if(hasDataProvider){
+                testCaseResult.setVariableSetIndex(count);
+            }
+            testCaseResults.add(testCaseResult);
+            preExecute(testCaseResult);
+            ModelExecutor modelExecutor = new ModelExecutor(getTestModelRuntime().getTestModel(),testCaseResult);
+            modelExecutor.execute();
+            postExecute(testCaseResult);
+            count ++;
+        }while(hasDataProvider && testCaseResult.isSuccess() && !context.isModelShutdown());
+
         testCaseResults.forEach(tcr ->{
             tcr.endLooping();
         });
         testCaseResults.clear();
     }
 
-    void runCase(TestCaseResult testCaseResult){
+    boolean loadVars() {
+        for(DataProviderElement dataProviderElement : testCaseRuntime.getDataProviderElements()){
+            try {
+                if(!dataProviderElement.loadVars()){
+                    return false;
+                }
+            } catch (Exception e) {
+                log.error(testCaseResult);
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    void preExecute(TestCaseResult testCaseResult){
         GateContext context = GateContextService.getContext();
         context.setResultCollector(ResultManager.getIns().createResultCollector(
                 ResultManager.getIns().createResultNode(testCaseResult.getSuiteName(), testCaseResult)));
-        ModelExecutor modelExecutor = new ModelExecutor(getTestModelRuntime().getTestModel(),testCaseResult);
-        modelExecutor.execute();
+    }
+
+    void postExecute(TestCaseResult testCaseResult){
         testCaseResult.modelShutdown();
         ResultManager.getIns().modelComplete(testCaseResult);
         if(testCaseResult.isFailure()){
             context.modelShutdown();
         }
     }
+
+
 
     @Override
     public boolean isShutdown() {

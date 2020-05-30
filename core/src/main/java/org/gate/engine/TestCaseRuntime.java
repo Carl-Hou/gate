@@ -37,14 +37,13 @@ public class TestCaseRuntime extends TestModelRuntime {
     LinkedList<DataProviderElement> dataProviderElements = new LinkedList<>();
 
     String timeout;
-    String invocationCount;
 
     public TestCaseRuntime(GateTreeNode testCaseNode){
         super(testCaseNode);
         TestCase testCase = (TestCase) testCaseNode.getGateTreeElement();
         this.dependency = GateUtils.getParameterList(testCase.getDepends().trim());
         timeout = testCase.getTimeout().trim();
-        invocationCount = testCase.getInvocationCount().trim();
+
         Enumeration children = testCaseNode.children();
         while (children.hasMoreElements()){
             GateTreeNode child = (GateTreeNode) children.nextElement();
@@ -66,19 +65,8 @@ public class TestCaseRuntime extends TestModelRuntime {
         dataProviderElements.add(dataProviderElement);
     }
 
-    public List<HashMap<String, String>> getDataProviderVariables() throws IOException {
-        List<HashMap<String, String>> dataProviderVariables = new LinkedList<>();
-        for(DataProviderElement dataProviderElement : dataProviderElements){
-            List<HashMap<String, String>> tmpDataProviderVariables = dataProviderElement.loadData();
-            for(int i=0; i< tmpDataProviderVariables.size(); i++){
-                if(i < dataProviderVariables.size()){
-                    dataProviderVariables.get(i).putAll(tmpDataProviderVariables.get(i));
-                }else{
-                    dataProviderVariables.add(tmpDataProviderVariables.get(i));
-                }
-            }
-        }
-        return dataProviderVariables;
+    public LinkedList<DataProviderElement> getDataProviderElements(){
+        return dataProviderElements;
     }
 
     public LinkedList<String> getDependency(){
@@ -89,8 +77,6 @@ public class TestCaseRuntime extends TestModelRuntime {
         return timeout;
     }
 
-    public String getInvocationCount(){
-        return invocationCount;
-    }
+
 
 }

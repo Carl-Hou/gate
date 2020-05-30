@@ -15,16 +15,18 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.tree.test.elements.dataprovider;
+package org.gate.gui.graph.elements.timer.gui;
 
-import org.gate.gui.tree.test.elements.TestTreeElement;
+import org.gate.gui.details.properties.graph.DefaultPropertiesGui;
+import org.gate.gui.graph.elements.timer.ConstantTimer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import javax.swing.*;
 
-public abstract class DataProviderElement extends TestTreeElement {
+public class ConstantTimerGui extends DefaultPropertiesGui {
 
-    public abstract boolean loadVars() throws Exception;
+    private final static String[] timeUnits = {ConstantTimer.Seconds, ConstantTimer.Milliseconds, ConstantTimer.Minutes};
+    @Override
+    protected void updateTableEditors() {
+        defaultPropertiesTable.setComboBox(ConstantTimer.NP_TimeUnit, new JComboBox(timeUnits));
+    }
 }

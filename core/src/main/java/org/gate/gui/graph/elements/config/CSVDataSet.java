@@ -17,12 +17,12 @@
  */
 package org.gate.gui.graph.elements.config;
 
+import javafx.beans.value.ObservableBooleanValue;
 import org.gate.common.config.GateProps;
 import org.gate.common.util.FileServer;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
-import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 import org.gate.runtime.GateVariables;
 
@@ -36,8 +36,8 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
 
 
     public final static String PN_FileName = "file name";
-    public final static String PN_FileEncoding = "file encoding";
     public final static String PN_VariableNames = "variable names";
+    public final static String PN_FileEncoding = "file encoding";
     public final static String PN_Delimiter = "delimiter";
     public final static String PN_Quoted = "Quoted";
 
@@ -56,10 +56,10 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
     protected void exec(ElementResult result) {
         result.setRunTimeProps(getRunTimePropsMap());
 
-        String _fileName = getProp(NS_DEFAULT, PN_FileName).getStringValue().trim();
-        String fileEncoding = getProp(NS_DEFAULT, PN_FileEncoding).getStringValue().trim();
-        String delimiter = getProp(NS_DEFAULT, PN_Delimiter).getStringValue().trim();
-        boolean isQuoted = getProp(NS_DEFAULT, PN_Quoted).getBooleanValue();
+        String _fileName = getRunTimeProp(NS_DEFAULT, PN_FileName);
+        String fileEncoding = getRunTimeProp(NS_DEFAULT, PN_FileEncoding);
+        String delimiter = getRunTimeProp(NS_DEFAULT, PN_Delimiter);
+        boolean isQuoted = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_Quoted));
         LinkedList<String> variableNames = GateUtils.getParameterList(getProp(NS_DEFAULT, PN_VariableNames).getStringValue());
 
         if (delimiter.equals("\\t")) { // $NON-NLS-1$

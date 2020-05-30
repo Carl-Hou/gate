@@ -17,14 +17,12 @@
  */
 package org.gate.gui.tree.test.elements.dataprovider;
 
-import org.apache.commons.io.FileUtils;
+import org.gate.common.util.FileServer;
 import org.gate.common.util.GateUtils;
+import org.gate.runtime.GateContextService;
+import org.gate.runtime.GateVariables;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 public class CSVDataProvider extends DataProviderElement {
 
@@ -32,19 +30,24 @@ public class CSVDataProvider extends DataProviderElement {
     public final static String PN_FileEncoding = "file encoding";
     public final static String PN_VariableNames = "variable names";
     public final static String PN_Delimiter = "delimiter";
+    public final static String PN_Quoted = "Quoted";
 
     public CSVDataProvider(){
         addProp(NS_DEFAULT, PN_FileName, "");
-        addProp(NS_DEFAULT, PN_FileEncoding, "");
         addProp(NS_DEFAULT, PN_VariableNames, "");
+        addProp(NS_DEFAULT, PN_FileEncoding, "");
         addProp(NS_DEFAULT, PN_Delimiter, ",");
+        addProp(NS_DEFAULT, PN_Quoted, "false");
     }
 
     @Override
-    public List<HashMap<String, String>> loadData() throws IOException {
-        File csvFile = new File(getProp(NS_DEFAULT, PN_FileName).getStringValue().trim());
+    public boolean loadVars() throws Exception {
+        String _fileName = getProp(NS_DEFAULT, PN_FileName).getStringValue().trim();
         String fileEncoding = getProp(NS_DEFAULT, PN_FileEncoding).getStringValue().trim();
         String delimiter = getProp(NS_DEFAULT, PN_Delimiter).getStringValue().trim();
+        boolean isQuoted = getProp(NS_DEFAULT, PN_Quoted).getBooleanValue();
+        LinkedList<String> variableNames = GateUtils.getParameterList(getProp(NS_DEFAULT, PN_VariableNames).getStringValue());
+
         if (delimiter.equals("\\t")) { // $NON-NLS-1$
             delimiter = "\t";// Make it easier to enter a Tab // $NON-NLS-1$
         } else if (delimiter.isEmpty()){
@@ -54,19 +57,31 @@ public class CSVDataProvider extends DataProviderElement {
         if(fileEncoding.isEmpty()){
             fileEncoding = System.getProperty("file.encoding");
         }
-        List<String> lines = FileUtils.readLines(csvFile, fileEncoding);
-        LinkedList<String> variableNames = GateUtils.getParameterList(getProp(NS_DEFAULT, PN_VariableNames).getStringValue());
-        List<HashMap<String, String>> variableMaps = new LinkedList<>();
-        for(String line : lines){
-            LinkedList<String> variables = GateUtils.getParameterList(line, delimiter);
-            HashMap<String, String> variableMap = new HashMap<>();
-            for(String variableName : variableNames){
-                if(!variables.isEmpty()){
-                    variableMap.put(variableName, variables.remove());
-                }
+        String alias = _fileName+"#" + getName() +"@"+System.identityHashCode(Thread.currentThread());
+        FileServer server = FileServer.getFileServer();
+        server.reserveFile(_fileName, fileEncoding, alias);
+
+        GateVariables threadVars = GateContextService.getContext().getVariables();
+        String[] lineValues = {};
+
+        if (isQuoted) {
+            lineValues = server.getParsedLine(alias, false, false, delimiter.charAt(0));
+        } else {
+            String line = server.readLine(alias, false, false);
+            if(line != null){
+                lineValues = line.split(delimiter);
+            }else{
+                lineValues = new String[0];
             }
-            variableMaps.add(variableMap);
         }
-        return variableMaps;
+        for (int a = 0; a < variableNames.size() && a < lineValues.length; a++) {
+            threadVars.put(variableNames.get(a), lineValues[a]);
+        }
+
+        if (lineValues.length == 0) {// i.e. EOF
+            return false;
+        }else{
+            return true;
+        }
     }
 }

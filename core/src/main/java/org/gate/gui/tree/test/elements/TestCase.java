@@ -26,13 +26,11 @@ public class TestCase extends TestTreeElement implements ModelContainer, TestCon
 
     public static final String Depends = "depends";
     public static final String TestCaseTimeout = "test case timeout";
-    public static final String InvocationCount = "invocation count";
     protected mxGraphModel mxModel= null;
 
     public TestCase(){
         addProp(NS_DEFAULT, Depends, "");
         addProp(NS_DEFAULT, TestCaseTimeout, ""); // no timeout if this set to empty
-        addProp(NS_DEFAULT, InvocationCount, ""); // execute once if this set to empty
     }
 
     public String getDepends(){
@@ -43,9 +41,7 @@ public class TestCase extends TestTreeElement implements ModelContainer, TestCon
         return getProp(NS_DEFAULT, TestCaseTimeout).getStringValue();
     }
 
-    public String getInvocationCount(){
-        return getProp(NS_DEFAULT, InvocationCount).getStringValue();
-    }
+
 
     @Override
     public mxGraphModel getMxModel() {

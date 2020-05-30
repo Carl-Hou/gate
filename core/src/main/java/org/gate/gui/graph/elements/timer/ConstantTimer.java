@@ -19,6 +19,7 @@ package org.gate.gui.graph.elements.timer;
 
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
+import org.gate.gui.graph.elements.timer.gui.ConstantTimerGui;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +27,9 @@ public class ConstantTimer extends AbstractGraphElement implements Timer {
     public final static String NP_WaitTime = "Time to wait";
     public final static String NP_TimeUnit = "Time unit";
 
-    final static String Seconds = "seconds";
-    final static String Milliseconds = "milliseconds";
+    public final static String Milliseconds = "milliseconds";
+    public final static String Seconds = "seconds";
+    public final static String Minutes = "minutes";
 
     public ConstantTimer(){
         addProp(NS_DEFAULT, NP_WaitTime, "1");
@@ -36,27 +38,32 @@ public class ConstantTimer extends AbstractGraphElement implements Timer {
 
     @Override
     protected void exec(ElementResult controllerResult)  {
+        controllerResult.setRunTimeProps(getRunTimePropsMap());
         long time = Long.valueOf(getRunTimeProp(NS_DEFAULT, NP_WaitTime));
         try {
             switch (getRunTimeProp(NS_DEFAULT, NP_TimeUnit).toLowerCase()) {
                 case Seconds:
                     TimeUnit.SECONDS.sleep(time);
                     break;
+                case Milliseconds:
+                    TimeUnit.MILLISECONDS.sleep(time);
+                    break;
+                case Minutes:
+                    TimeUnit.MINUTES.sleep(time);
+                    break;
                 default:
+                    log.warn(getName() + ": Time Unit is not set correctly. Use milliseconds");
                     TimeUnit.MILLISECONDS.sleep(time);
             }
-            controllerResult.setRunTimeProps(getRunTimePropsMap());
-            return;
         }catch (InterruptedException e) {
             log.trace("Interrupted:", e);
             controllerResult.setThrowable(e);
-            return;
         }
     }
 
     @Override
     public String getGUI() {
-        return GUI_ClassName_DefaultPropertiesGUI;
+        return ConstantTimerGui.class.getName();
     }
 
     @Override

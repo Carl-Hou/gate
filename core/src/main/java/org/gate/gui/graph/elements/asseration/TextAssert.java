@@ -18,7 +18,6 @@
 
 package org.gate.gui.graph.elements.asseration;
 
-import org.gate.common.util.GateException;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
 import org.gate.gui.graph.elements.asseration.gui.TextAssertGui;

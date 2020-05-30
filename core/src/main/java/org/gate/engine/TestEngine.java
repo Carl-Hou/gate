@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
 import org.gate.common.util.FileServer;
 import org.gate.gui.details.results.ResultManager;
-import org.gate.gui.details.results.ResultTree;
 import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.test.ModelContainerResult;
 import org.gate.gui.details.results.elements.test.TeardownResult;
@@ -57,7 +56,6 @@ public class TestEngine implements Runnable{
     ModelExecutor fixtureExecutor = null;
 
     Map<GateModelRunner, Thread> workingRunner = new ConcurrentHashMap<>();
-
 	LinkedList<TestStopListener> stopListeners = new LinkedList<>();
 
 	public String prepare(HashMap<GateTreeNode, LinkedList<GateTreeNode>> testSuites){
@@ -157,17 +155,16 @@ public class TestEngine implements Runnable{
             executeFixture(afterSuites, collector, afterSuitesResult);
         }
         stopTest();
-        ResultManager.getIns().testEnd();
-        //TODO anyway update test suite, suites by test case result here. is thi need?
-        stopListeners.forEach(stopListener ->{
-            stopListener.testStop();
-        });
-        stopListeners.clear();
         try {
             FileServer.getFileServer().closeFiles();
         }catch (IOException e){
             log.error("Problem closing files at end of test", e);
         }
+        ResultManager.getIns().testEnd();
+        stopListeners.forEach(stopListener ->{
+            stopListener.testStop();
+        });
+        stopListeners.clear();
     }
 
     void executeFixture(FixtureElement fixture, ResultCollector collector, ModelContainerResult fixtureResult){
