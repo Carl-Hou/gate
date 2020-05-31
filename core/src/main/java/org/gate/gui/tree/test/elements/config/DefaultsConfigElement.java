@@ -26,14 +26,14 @@ abstract public class DefaultsConfigElement extends ConfigElement{
 
     @Override
     public void update(GateContext context){
-        updateDefualtsInContext(context);
+        updateDefaultsInContext(context);
     }
 
     protected void addConfigProperty(String name, String defaultValue){
         addProp(NS_DEFAULT, name, defaultValue);
     }
 
-    void updateDefualtsInContext(GateContext context){
+    void updateDefaultsInContext(GateContext context){
         String defaultConfigName = getContextConfigKey();
         if(defaultConfigName.isEmpty()){
             throw new GateRuntimeExcepiton("Config element key should not be empty");

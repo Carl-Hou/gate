@@ -95,8 +95,7 @@ public class TestPlan implements TestConstraint {
             return result;
         }
         prepareTestSuites();
-//        prepareTestSuitesRuntime(selectedTestCases.keySet());
-        ;
+
         prepareTestSuitesRuntime(selectedTestCases.keySet().stream().filter(node ->
                 testSuitesRuntime.containsKey(node.getName())).collect(Collectors.toList()));
         return "";
@@ -257,8 +256,23 @@ public class TestPlan implements TestConstraint {
 
     // prepare test models of test suite runtime.
     void prepareTestSuitesRuntime(Collection<GateTreeNode> testSuiteNodes) {
-
-        testSuiteNodes.forEach(testSuiteNode -> {
+        for(GateTreeNode testSuiteNode : testSuiteNodes){
+            Enumeration<TreeNode> childrenOfSuite = testSuiteNode.children();
+            while (childrenOfSuite.hasMoreElements()) {
+                GateTreeNode node = (GateTreeNode) childrenOfSuite.nextElement();
+                TestTreeElement testTreeElement = (TestTreeElement) node.getGateTreeElement();
+                if (!testTreeElement.isEnable()) {
+                    continue;
+                } else if (SetUp.class.isInstance(testTreeElement)) {
+                    testSuitesRuntime.get(testSuiteNode.getName()).get(BEFORE_SUITE)
+                            .add(new SetupRuntime(node));
+                } else if (TearDown.class.isInstance(testTreeElement)){
+                    testSuitesRuntime.get(testSuiteNode.getName()).get(AFTER_SUITE)
+                            .add(new TeardownRuntime(node));
+                }
+            }
+        }
+        for(GateTreeNode testSuiteNode : testSuiteNodes){
             Enumeration<TreeNode> childrenOfSuite = testSuiteNode.children();
             while (childrenOfSuite.hasMoreElements()) {
                 GateTreeNode node = (GateTreeNode) childrenOfSuite.nextElement();
@@ -272,16 +286,13 @@ public class TestPlan implements TestConstraint {
                             testModelContainerRuntime.addConfigElement((ConfigElement) testTreeElement);
                         });
                     });
-                } else if (SetUp.class.isInstance(testTreeElement)) {
-                    testSuitesRuntime.get(testSuiteNode.getName()).get(BEFORE_SUITE)
-                            .add(new SetupRuntime(node));
-                } else if (TearDown.class.isInstance(testTreeElement)){
-                    testSuitesRuntime.get(testSuiteNode.getName()).get(AFTER_SUITE)
-                            .add(new TeardownRuntime(node));
                 }
             }
-        });
+        }
+
     }
+
+
 
     public TestModelRuntime getExecutableTestModelRuntime() {
         skipTestModelByResults();
@@ -291,13 +302,16 @@ public class TestPlan implements TestConstraint {
             String testSuiteName = testSuiteRuntime.getKey();
             SetupResult lastSetupResult = ResultManager.getIns().findLastTestResult(testSuiteName, SetupResult.class);
             // return before suite by condition.
-            if (!testSuiteRuntime.getValue().get(BEFORE_SUITE).isEmpty()) {
+            if (testSuiteRuntime.getValue().get(BEFORE_SUITE).isEmpty()) {
+                if (lastSetupResult != null && !lastSetupResult.getStatus().equals(TS_SUCCESS)) {
+                    continue; // check next suite if pre fixture not complete
+                }
+            } else {
                 if (lastSetupResult == null || lastSetupResult.getStatus().equals(TS_SUCCESS)) {
                     TestModelRuntime beforeFixtureRuntime = testSuiteRuntime.getValue().get(BEFORE_SUITE).remove();
                     return beforeFixtureRuntime;
                 }
-                // check next suite if pre fixture not complete
-//                continue;
+
             }
             // return executable test case if before suite is empty
             LinkedList<TestModelRuntime> testCaseRuntimes = testSuiteRuntime.getValue().get(TEST_CASE);
@@ -306,7 +320,6 @@ public class TestPlan implements TestConstraint {
                 if (isTestCasesNodeExecutable(testCaseRuntime)) {
                     return testCaseRuntimes.remove();
                 }
-//                continue;
             }
             if (!testSuiteRuntime.getValue().get(AFTER_SUITE).isEmpty()) {
                 TestModelRuntime afterFixtureRuntime = testSuiteRuntime.getValue().get(AFTER_SUITE).remove();
@@ -368,15 +381,15 @@ public class TestPlan implements TestConstraint {
             SetupResult lastSetupResult = ResultManager.getIns()
                     .findLastTestResult(testSuiteRuntime.getKey(), SetupResult.class);
             // skip all if any before suite fixture fail.
-            if (!testSuiteRuntime.getValue().get(BEFORE_SUITE).isEmpty()) {
-                if (lastSetupResult != null && lastSetupResult.isFailure()) {
-                    testSuiteRuntime.getValue().values().forEach(testModelRuntimes -> {
-                        testModelRuntimes.forEach(testModelRuntime -> {
-                            ResultManager.getIns().skipTestModel(testModelRuntime);
-                        });
+
+            if (lastSetupResult != null && lastSetupResult.isFailure()) {
+                testSuiteRuntime.getValue().values().forEach(testModelRuntimes -> {
+                    testModelRuntimes.forEach(testModelRuntime -> {
+                        ResultManager.getIns().skipTestModel(testModelRuntime);
                     });
-                }
+                });
             }
+
             //skip test case
             if (!testSuiteRuntime.getValue().get(BEFORE_SUITE).isEmpty()) {
                 SetupResult lastTestResult = ResultManager.getIns()

@@ -15,27 +15,16 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.tree.test.elements.config;
+package org.gate.gui.tree.test.elements.config.gui;
 
+import org.gate.gui.details.properties.tree.DefaultPropertiesGui;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
-import org.gate.gui.tree.test.elements.config.gui.SeleniumDefaultsGui;
 
-public class SeleniumDefaults extends DefaultsConfigElement implements SeleniumConstantsInterface {
+import javax.swing.*;
 
-    public SeleniumDefaults(){
-        addConfigProperty(PN_BrowserName, BrowserName_Chrome);
-        addConfigProperty(PN_WaitTimeOut, "5");
-        addConfigProperty(PN_WaitPollingInterval, "200");
-    }
-
+public class SeleniumDefaultsGui extends DefaultPropertiesGui implements SeleniumConstantsInterface {
     @Override
-    protected String getContextConfigKey(){
-        return DefaultConfigName;
+    protected void updateTableEditors() {
+        defaultPropertiesTable.setComboBox(PN_BrowserName, new JComboBox(BrowserNames));
     }
-
-    @Override
-    public String getGUI(){
-        return SeleniumDefaultsGui.class.getName();
-    }
-
 }

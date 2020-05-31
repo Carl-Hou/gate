@@ -21,7 +21,6 @@ public interface SeleniumConstantsInterface {
     String Locator_TagName = "tagName";
     String Locator_XPath = "xpath";
 
-//    String[] LocatorTypes = {"className", "cssSelector", "id", "linkText", "name", "partialLinkText", "tagName", "xpath"};
     String[] LocatorTypes = {Locator_XPath, Locator_ClassName, Locator_CssSelector, Locator_Id, Locator_LinkText, Locator_Name, Locator_PartialLinkText, Locator_TagName};
     String PN_LocatorCondition = "locator_condition";
     String PN_AttributeName = "attribute_name";

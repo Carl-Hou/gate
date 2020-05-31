@@ -44,10 +44,11 @@ public class DefaultPropertiesGui extends AbstractTreeElementPanel {
     @Override
     protected void setTestElement(GateTreeElement element) {
         defaultPropertiesTable.setTestElement(element);
+        defaultPropertiesTable.constraintReadOnly(TestTreeElement.PN_ENABLE);
         updateTableEditors();
     }
 
     protected void updateTableEditors() {
-        defaultPropertiesTable.constraintReadOnly(TestTreeElement.PN_ENABLE);
+
     }
 }

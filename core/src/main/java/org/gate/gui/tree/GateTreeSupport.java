@@ -31,6 +31,7 @@ import org.gate.gui.tree.test.TestTree;
 import org.gate.gui.tree.test.elements.TestCase;
 import org.gate.gui.tree.test.elements.TestSuite;
 import org.gate.gui.tree.test.elements.TestSuites;
+import org.gate.gui.tree.test.elements.config.ConfigElement;
 import org.gate.gui.tree.test.elements.dataprovider.DataProviderElement;
 import org.gate.saveload.utils.DocumentHelper;
 import org.gate.saveload.utils.GateLoader;
@@ -127,19 +128,26 @@ public class GateTreeSupport {
         if (parent instanceof TestSuites) {
             if (foundClass(nodes,new Class[]{TestCase.class})){
                 return false;
+            }else if(foundClass(nodes,new Class[]{DataProviderElement.class})){
+                return false;
             }
+
             return true;
         }
         // case only allowed under testsuite
         if(parent instanceof TestSuite){
             if (foundClass(nodes,new Class[]{TestSuite.class})){
                 return false;
+            }else if(foundClass(nodes,new Class[]{DataProviderElement.class})){
+                return false;
             }
             return true;
         }
-        // case only allowed under testsuite
-        if(parent instanceof TestCase){
-            if (foundClass(nodes,new Class[]{DataProviderElement.class})){
+        // case only allowed under model container
+        if(ModelContainer.class.isAssignableFrom(parent.getClass())){
+            if (foundClass(nodes,new Class[]{ConfigElement.class})){
+                return true;
+            }else if(foundClass(nodes,new Class[]{DataProviderElement.class}) && parent instanceof TestCase){
                 return true;
             }
             return false;

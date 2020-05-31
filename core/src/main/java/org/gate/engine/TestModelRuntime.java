@@ -27,8 +27,10 @@ import org.gate.gui.tree.GateTreeNode;
 import org.gate.gui.tree.ModelContainer;
 import org.gate.gui.tree.test.elements.TestCase;
 import org.gate.gui.tree.test.elements.config.ConfigElement;
+import org.gate.gui.tree.test.elements.dataprovider.DataProviderElement;
 import org.gate.runtime.GateContext;
 
+import java.util.Enumeration;
 import java.util.LinkedList;
 
 /*
@@ -49,6 +51,17 @@ public abstract class TestModelRuntime {
         modelName = testCaseNode.getName();
         ModelContainer modelContainer = (ModelContainer) testCaseNode.getGateTreeElement();
         testModel = modelContainer.getMxModel();
+        // TODO add config here.
+        Enumeration children = testCaseNode.children();
+        while (children.hasMoreElements()){
+            GateTreeNode child = (GateTreeNode) children.nextElement();
+            if(child.includeElement(ConfigElement.class)){
+                ConfigElement configElement = (ConfigElement) child.getUserObject();
+                if(configElement.isEnable()){
+                    addConfigElement(configElement);
+                }
+            }
+        }
     }
 
     public ModelContainerResult createModelContainerResult(){

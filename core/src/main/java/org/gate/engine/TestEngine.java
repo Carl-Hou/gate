@@ -107,8 +107,11 @@ public class TestEngine implements Runnable{
                     LinkedList<TestModelRuntime> modelsToBeExecute = new LinkedList<>();
                     while(modelsToBeExecute.size() < (runnerNumber - workingRunner.size())){
                         TestModelRuntime testModelRuntime = testPlan.getExecutableTestModelRuntime();
-                        if(testModelRuntime != null){
+                        if(testModelRuntime != null ){
                             modelsToBeExecute.add(testModelRuntime);
+                            if(SetupRuntime.class.isAssignableFrom(testModelRuntime.getClass())){
+                                break;
+                            }
                         }else {
                             break;
                         }

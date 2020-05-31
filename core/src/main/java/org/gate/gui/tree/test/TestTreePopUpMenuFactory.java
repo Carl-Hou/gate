@@ -30,6 +30,7 @@ import org.gate.gui.tree.test.elements.config.HTTPRequestDefaults;
 import org.gate.gui.tree.test.elements.config.SeleniumDefaults;
 import org.gate.gui.tree.test.elements.config.UserDefineVariables;
 import org.gate.gui.tree.test.elements.dataprovider.CSVDataProvider;
+import org.gate.gui.tree.test.elements.fixture.FixtureElement;
 import org.gate.gui.tree.test.elements.fixture.TearDown;
 import org.gate.gui.tree.test.elements.fixture.SetUp;
 
@@ -42,24 +43,30 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
 
     private final static String FIXTURES = "Fixture";
     private final static String CONFIG_ELEMENTS = "Config";
+    private final static String DataProvider_ELEMENTS = "Data Provider";
 
     private final HashMap<String, LinkedList<MenuInfo>> menuMap = new HashMap<>();
 
-    private final LinkedList<MenuInfo> configElements = new LinkedList<>();
+
     private final LinkedList<MenuInfo> fixtures = new LinkedList<>();
+    private final LinkedList<MenuInfo> configElements = new LinkedList<>();
+    private final LinkedList<MenuInfo> dataProviderElements = new LinkedList<>();
 
     public TestTreePopUpMenuFactory() {
 
         menuMap.put(FIXTURES, fixtures);
         menuMap.put(CONFIG_ELEMENTS, configElements);
+        menuMap.put(DataProvider_ELEMENTS, dataProviderElements);
+
+        fixtures.add(new MenuInfo("SetUp", SetUp.class.getName()));
+        fixtures.add(new MenuInfo("TearDown", TearDown.class.getName()));
 
         configElements.add(new MenuInfo("User Define Variables", UserDefineVariables.class.getName()));
         configElements.add(new MenuInfo("Selenium Defaults", SeleniumDefaults.class.getName()));
         configElements.add(new MenuInfo("Http Request Defaults", HTTPRequestDefaults.class.getName()));
         configElements.add(new MenuInfo("Http Header Manager", HTTPHeaderManager.class.getName()));
 
-        fixtures.add(new MenuInfo("SetUp", SetUp.class.getName()));
-        fixtures.add(new MenuInfo("TearDown", TearDown.class.getName()));
+        dataProviderElements.add(new MenuInfo("CSV Data Provider", CSVDataProvider.class.getName()));
 
     }
 
@@ -100,11 +107,22 @@ public class TestTreePopUpMenuFactory extends GateTreePopupMenuFactory {
             // Add nodes to Tree
             JMenu addToTreeMenu = new JMenu("Add");
             JMenu configMenu = makeMenu(CONFIG_ELEMENTS, ActionNames.ADD_TO_TREE);
+            addToTreeMenu.add(configMenu);
+            JMenu dataProviderMenu = makeMenu(DataProvider_ELEMENTS, ActionNames.ADD_TO_TREE);
+            addToTreeMenu.add(dataProviderMenu);
+            // add to popup
+            jPopupMenu.add(addToTreeMenu);
 
-            configMenu.add(makeMenuItem("CSV Data Provider", CSVDataProvider.class.getName(), ActionNames.ADD_TO_TREE));
+        }
+
+        if (selectedNode.includeElement(FixtureElement.class)) {
+            // Add nodes to Tree
+            JMenu addToTreeMenu = new JMenu("Add");
+            JMenu configMenu = makeMenu(CONFIG_ELEMENTS, ActionNames.ADD_TO_TREE);
             addToTreeMenu.add(configMenu);
             // add to popup
             jPopupMenu.add(addToTreeMenu);
+
         }
 
         appendDefaultItems(jPopupMenu, selectedNode);
