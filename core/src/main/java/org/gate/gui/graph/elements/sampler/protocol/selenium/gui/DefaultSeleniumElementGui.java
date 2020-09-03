@@ -143,5 +143,6 @@ public class DefaultSeleniumElementGui extends JPanel implements GraphElementPro
         defaultPropertiesTable.setComboBox(PN_WaitExpectedCondition, webElementWaitConditionComboBox);
         argumentPropertiesTable.setComboBox(SeleniumUtils.PN_WaitExpectedCondition, webElementWaitConditionComboBox);
         argumentPropertiesTable.setComboBox(SeleniumUtils.PN_BrowserName, browserNamesComboBox);
+        argumentPropertiesTable.setBooleanOnCell(PN_Selected);
     }
 }

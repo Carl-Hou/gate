@@ -145,8 +145,13 @@ public class GateMain {
 	}
 
 	static void initializeProperties(){
-		loadProperties(System.getProperties(), new File("system.properties"));
-		loadProperties(GateProps.getProperties(), new File("gate.properties"));
+		String gateHomePath = System.getProperty("gate.home","");
+		if (gateHomePath.isEmpty()) {
+			log.error("gate.home is not set.");
+			System.exit(1);
+		}
+		loadProperties(System.getProperties(), new File(gateHomePath +"system.properties"));
+		loadProperties(GateProps.getProperties(), new File(gateHomePath + "gate.properties"));
 	}
 
 	static void loadProperties(Properties properties, File file){

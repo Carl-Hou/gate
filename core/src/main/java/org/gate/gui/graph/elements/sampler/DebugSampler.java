@@ -24,6 +24,7 @@ import org.gate.common.util.GateRuntimeExcepiton;
 import org.gate.common.util.GateUtils;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.AbstractGraphElement;
+import org.gate.gui.graph.elements.sampler.gui.DebugGui;
 import org.gate.runtime.GateContextService;
 
 public class DebugSampler extends AbstractGraphElement implements Sampler{
@@ -104,7 +105,7 @@ public class DebugSampler extends AbstractGraphElement implements Sampler{
 
 	@Override
 	public String getGUI() {
-		return GUI_ClassName_DefaultPropertiesGUI;
+		return DebugGui.class.getName();
 	}
 
 	@Override

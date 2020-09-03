@@ -25,7 +25,7 @@ import org.gate.gui.tree.ModelContainer;
 public class TestCase extends TestTreeElement implements ModelContainer, TestConstraint {
 
     public static final String Depends = "depends";
-    public static final String TestCaseTimeout = "test case timeout";
+    public static final String TestCaseTimeout = "timeout";
     protected mxGraphModel mxModel= null;
 
     public TestCase(){

@@ -47,12 +47,17 @@ public class HttpFileUploaderGui extends JPanel implements GraphElementPropertie
     JTextField pathField = new JTextField();
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
     JComboBox methodsComboBox = new JComboBox(new String[]{POST});
+    JComboBox protocolComboBox = new JComboBox( new String[]{"http", "https"});
 
     ArgumentsPane argumentsPane = new ArgumentsPane();
     GraphElement graphElement;
 
     public HttpFileUploaderGui(){
         setLayout(new VerticalLayout());
+
+        methodsComboBox.setEditable(true);
+        protocolComboBox.setEditable(true);
+
         add(namePane);
         pathField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -79,8 +84,9 @@ public class HttpFileUploaderGui extends JPanel implements GraphElementPropertie
         propertiesPanel.add(defaultPropertiesTable.getTableHeader(), BorderLayout.NORTH);
 
         propertiesParameters.setLeftComponent(propertiesPanel);
-
-        propertiesParameters.setRightComponent(argumentsPane);
+        JPanel parameterPanel = GuiUtils.getPanel("Request Parameters :", new BorderLayout());
+        parameterPanel.add(argumentsPane, BorderLayout.CENTER);
+        propertiesParameters.setRightComponent(parameterPanel);
         int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.4);
         propertiesParameters.setDividerLocation(divider);
         add(propertiesParameters);
@@ -99,6 +105,7 @@ public class HttpFileUploaderGui extends JPanel implements GraphElementPropertie
     void updateParamterTabbedPane() {
         defaultPropertiesTable.setComboBox(PN_Method, methodsComboBox);
         defaultPropertiesTable.setBooleanOnCell(PN_UseKeepAlive);
+        defaultPropertiesTable.setComboBox(PN_Protocol,protocolComboBox);
     }
 
 }

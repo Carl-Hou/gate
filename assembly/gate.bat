@@ -123,5 +123,6 @@ if not defined DDRAW (
 rem Collect the settings defined above
 set ARGS=%JAVA9_OPTS% %DUMP% %HEAP% %VERBOSE_GC% %GC_ALGO% %DDRAW% %SYSTEM_PROPS% %RUN_IN_DOCKER%
 
+if .%GATE_HOME% == . set GATE_HOME=%~dp0
 
-java %ARGS% -Duser.language=en -Duser.region=EN -Dfile.encoding=UTF-8 -cp .;%CLASSPATH%;%~dp0/../lib/* org.gate.GateMain %GATE_CMD_LINE_ARGS%
+java %ARGS% -Duser.language=en -Duser.region=EN -Dfile.encoding=UTF-8 -cp .;%CLASSPATH%;%GATE_HOME%../lib/* -Dgate.home=%GATE_HOME% org.gate.GateMain %GATE_CMD_LINE_ARGS%

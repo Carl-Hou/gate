@@ -34,11 +34,13 @@ public class Window extends AbstractSeleniumSampler {
         return "Selenium Window";
     }
 
-    abstract class WindowMethod implements MethodSupplier{
+    abstract class WindowMethod extends AbstractMethodSupplier{
         @Override
         public void addArguments(){
         }
-
+        void addArg(String name, String value){
+            addProp(NS_ARGUMENT, name, value);
+        }
         @Override
         public void run(ElementResult result) {
             WebDriver driver = getDriver(result);
@@ -57,24 +59,35 @@ public class Window extends AbstractSeleniumSampler {
     }
 
     class GetPosition extends WindowMethod {
+        final static String VN_X = "variable_name_x";
+        final static String VN_Y = "variable_name_y";
+        @Override
+        public void addArguments(){
+            addArg(VN_X, "position_x");
+            addArg(VN_Y, "position_y");
+        }
         @Override
         void action(WebDriver driver, ElementResult result) {
+
             Point point = driver.manage().window().getPosition();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("x", point.getX());
-            returnValue.put("y", point.getY());
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_X, point.getX());
+            setGateVariable(VN_Y, point.getY());
         }
     }
 
     class GetSize extends WindowMethod {
+        final static String VN_Width = "variable_name_width";
+        final static String VN_Height = "variable_name_height";
+        @Override
+        public void addArguments(){
+            addArg(VN_Width, "size_width");
+            addArg(VN_Height, "size_height");
+        }
         @Override
         void action(WebDriver driver, ElementResult result) {
             Dimension dimension = driver.manage().window().getSize();
-            JSONObject returnValue = new JSONObject();
-            returnValue.put("height", dimension.getHeight());
-            returnValue.put("width", dimension.getWidth());
-            result.setResponseObject(getJSONString(returnValue));
+            setGateVariable(VN_Width, dimension.getWidth());
+            setGateVariable(VN_Height, dimension.getHeight());
         }
     }
 
@@ -86,24 +99,33 @@ public class Window extends AbstractSeleniumSampler {
     }
 
     class SetPosition extends WindowMethod {
+        final static String VN_X = "point_x";
+        final static String VN_Y = "point_y";
+        @Override
+        public void addArguments(){
+            addArg(VN_X, "0");
+            addArg(VN_Y, "0");
+        }
         @Override
         void action(WebDriver driver, ElementResult result) {
-            int x = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "Point_X"),result);
-            int y = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "Point_Y"),result);
+            int x = ParameterUtils.getInt(getRTArg(VN_X),result);
+            int y = ParameterUtils.getInt(getRTArg(VN_Y),result);
             driver.manage().window().setPosition(new Point(x, y));
         }
     }
 
     class SetSize extends WindowMethod {
+        final static String VN_Width = "width";
+        final static String VN_Height = "height";
         @Override
         public void addArguments(){
-            addProp(NS_ARGUMENT, "Dimension_Height", "");
-            addProp(NS_ARGUMENT, "Dimension_Width", "");
+            addArg(VN_Width, "");
+            addArg(VN_Height, "");
         }
         @Override
         void action(WebDriver driver, ElementResult result) {
-            int h = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "Dimension_Height"),result);
-            int w = ParameterUtils.getInt(getRunTimeProp(NS_ARGUMENT, "Dimension_Width"),result);
+            int h = ParameterUtils.getInt(getRTArg(VN_Height),result);
+            int w = ParameterUtils.getInt(getRTArg(VN_Width),result);
             driver.manage().window().setSize(new Dimension(w, h));
         }
     }

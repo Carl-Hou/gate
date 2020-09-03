@@ -55,7 +55,7 @@ public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui,
 
     JComboBox methodsComboBox = new JComboBox(new String[]{
             POST ,GET ,PUT ,HEAD ,TRACE ,OPTIONS ,DELETE ,PATCH});
-
+    JComboBox protocolComboBox = new JComboBox( new String[]{"http", "https"});
     GraphNamePane namePane = new GraphNamePane();
     JTextField pathField = new JTextField();
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
@@ -68,6 +68,8 @@ public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui,
 
     public HttpRequestGui(){
         setLayout(new VerticalLayout());
+        methodsComboBox.setEditable(true);
+        protocolComboBox.setEditable(true);
         add(namePane);
         pathField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -115,7 +117,6 @@ public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui,
                 }else{
                     graphElement.putProp(TestElement.NS_ARGUMENT, "", bodyDataTextArea.getText());
                 }
-
             }
         });
         parametersTabbedPane.add(Parameters, argumentsPane);
@@ -180,8 +181,10 @@ public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui,
             parametersTabbedPane.setSelectedIndex(ParametersIndex);
         }
 
+        defaultPropertiesTable.setComboBox(PN_Protocol, protocolComboBox);
         defaultPropertiesTable.setComboBox(PN_Method, methodsComboBox);
         defaultPropertiesTable.setBooleanOnCell(PN_UseKeepAlive);
+
 
     }
 

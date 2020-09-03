@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
 public class HttpFileUploader extends HTTPHCAbstractImpl {
 
     public static final String PN_FilePath = "file_path";
-    public static final String PN_ParameterName = "parameter_nam";
+    public static final String PN_ParameterName = "parameter_name";
     public static final String PN_MIMEType = "mime_type";
     public static final String PN_BrowserCompatibleHeaders = "browser-compatible_headers";
 

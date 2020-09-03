@@ -39,7 +39,7 @@ public class ConditionChecker extends AbstractSeleniumSampler implements Seleniu
 
     @Override
     public String getStaticLabel() {
-        return "Selenium ExpectedConditions";
+        return "Selenium Expected Conditions";
     }
 
     abstract class AbstractWaitConditions extends AbstractMethodSupplier{

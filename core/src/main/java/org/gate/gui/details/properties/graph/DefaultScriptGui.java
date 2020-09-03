@@ -80,7 +80,6 @@ public class DefaultScriptGui extends JPanel implements GraphElementPropertiesGu
                 }
             }
         });
-
         languagePanel.add(languageSelection);
         leftPanel.add(languagePanel);
 
@@ -101,9 +100,10 @@ public class DefaultScriptGui extends JPanel implements GraphElementPropertiesGu
                 namePane.getGraphElement().setProp(TestElement.NS_TEXT, JSR223Sampler.PN_Script, rSyntaxTextArea.getText());
             }
         });
-        propsScript.setRightComponent(GuiUtils.getRTextScrollPane(rSyntaxTextArea));
+        JPanel scriptPanel = GuiUtils.getPanel("Script(log Label Parameters SampleResult ctx vars props OUT args[])", new BorderLayout());
+        scriptPanel.add(GuiUtils.getRTextScrollPane(rSyntaxTextArea), BorderLayout.CENTER);
+        propsScript.setRightComponent(scriptPanel);
         add(propsScript);
-
         int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.3);
         propsScript.setDividerLocation(divider);
     }
@@ -114,7 +114,6 @@ public class DefaultScriptGui extends JPanel implements GraphElementPropertiesGu
         element = (GraphElement) cell.getValue();
         rSyntaxTextArea.setText(element.getProp(TestElement.NS_TEXT, JSR223Sampler.PN_Script).getStringValue());
         defaultPropertiesTable.setTestElement(element);
-
     }
 
 }

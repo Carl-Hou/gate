@@ -15,17 +15,17 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.tree.test.elements.config.gui;
+package org.gate.gui.graph.elements.sampler.gui;
 
-import org.gate.gui.details.properties.tree.DefaultPropertiesGui;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
+import org.gate.gui.details.properties.graph.DefaultPropertiesGui;
+import org.gate.gui.graph.elements.sampler.DebugSampler;
 
-import javax.swing.*;
-
-public class SeleniumDefaultsGui extends DefaultPropertiesGui implements SeleniumConstantsInterface {
+public class DebugGui extends DefaultPropertiesGui {
     @Override
     protected void updateTableEditors() {
-        defaultPropertiesTable.setComboBox(PN_BrowserName, new JComboBox(BrowserNames));
-
+        defaultPropertiesTable.setBooleanOnCell(DebugSampler.PN_GateProperties);
+        defaultPropertiesTable.setBooleanOnCell(DebugSampler.PN_SystemProperties);
+        defaultPropertiesTable.setBooleanOnCell(DebugSampler.PN_ThrowException);
+        defaultPropertiesTable.setBooleanOnCell(DebugSampler.PN_GateVariables);
     }
 }

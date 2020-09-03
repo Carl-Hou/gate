@@ -166,18 +166,6 @@ public class Driver extends AbstractSeleniumSampler implements SeleniumConstants
         }
     }
 
-    class SwitchTo extends AbstractDriverMethod {
-        @Override
-        public void addArguments() {
-            addArg(PN_URL, "");
-        }
-
-        @Override
-        void exec(WebDriver driver, ElementResult result) {
-            driver.get(getRTArg(PN_URL));
-        }
-    }
-
     class Close extends AbstractDriverMethod {
         @Override
         void exec(WebDriver driver, ElementResult result) {
