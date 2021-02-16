@@ -150,8 +150,8 @@ public class GateMain {
 			log.error("gate.home is not set.");
 			System.exit(1);
 		}
-		loadProperties(System.getProperties(), new File(gateHomePath +"system.properties"));
-		loadProperties(GateProps.getProperties(), new File(gateHomePath + "gate.properties"));
+		loadProperties(System.getProperties(), new File(gateHomePath + GateProps.FileSeparator +"system.properties"));
+		loadProperties(GateProps.getProperties(), new File(gateHomePath + GateProps.FileSeparator + "gate.properties"));
 	}
 
 	static void loadProperties(Properties properties, File file){

@@ -23,8 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
 import org.gate.gui.GuiPackage;
-import org.gate.gui.common.OptionPane;
 import org.gate.gui.common.GuiUtils;
+import org.gate.gui.common.OptionPane;
 import org.gate.gui.common.TestElement;
 import org.gate.gui.common.VerticalLayout;
 import org.gate.gui.details.properties.ArgumentsPane;
@@ -44,20 +44,24 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.LinkedList;
 
-public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui, HTTPConstantsInterface {
+public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui, HTTPConstantsInterface {
 
     protected Logger log = LogManager.getLogger(this.getName());
 
-    private final static String Parameters = "Parameters";
-    private final static String BodyData = "Body Data";
-    private final static int ParametersIndex = 0;
-    private final static int BodyDataIndex = 1;
+    protected final static String Parameters = "Parameters";
+    protected final static String BodyData = "Body Data";
+    protected final static int ParametersIndex = 0;
+    protected final static int BodyDataIndex = 1;
 
     JComboBox methodsComboBox = new JComboBox(new String[]{
             POST ,GET ,PUT ,HEAD ,TRACE ,OPTIONS ,DELETE ,PATCH});
+
     JComboBox protocolComboBox = new JComboBox( new String[]{"http", "https"});
+
     GraphNamePane namePane = new GraphNamePane();
+
     JTextField pathField = new JTextField();
+
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
     JTabbedPane parametersTabbedPane = new JTabbedPane();
     ArgumentsPane argumentsPane = new ArgumentsPane();
@@ -65,7 +69,7 @@ public class HttpRequestGui extends JPanel implements GraphElementPropertiesGui,
 
     GraphElement graphElement;
 
-    public HttpRequestGui(){
+    public HttpAbstractGui(){
         setLayout(new VerticalLayout());
         methodsComboBox.setEditable(true);
         protocolComboBox.setEditable(true);

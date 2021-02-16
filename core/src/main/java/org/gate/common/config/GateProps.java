@@ -26,6 +26,7 @@ public class GateProps {
     public final static String LineSeparator = System.getProperty("line.separator");
 	public final static String FileSeparator = System.getProperty("file.separator");
 
+
     //test model
 	public final static String Success = "success";
 	public final static String Fail = "fail";
