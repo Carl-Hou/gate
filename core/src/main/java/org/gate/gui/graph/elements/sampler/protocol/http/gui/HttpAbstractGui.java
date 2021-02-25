@@ -44,7 +44,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.LinkedList;
 
-public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui, HTTPConstantsInterface {
+public abstract class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui, HTTPConstantsInterface {
 
     protected Logger log = LogManager.getLogger(this.getName());
 
@@ -53,47 +53,34 @@ public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui
     protected final static int ParametersIndex = 0;
     protected final static int BodyDataIndex = 1;
 
-    JComboBox methodsComboBox = new JComboBox(new String[]{
+    private JComboBox methodsComboBox = new JComboBox(new String[]{
             POST ,GET ,PUT ,HEAD ,TRACE ,OPTIONS ,DELETE ,PATCH});
 
-    JComboBox protocolComboBox = new JComboBox( new String[]{"http", "https"});
+    private JComboBox protocolComboBox = new JComboBox( new String[]{"http", "https"});
 
-    GraphNamePane namePane = new GraphNamePane();
+    private GraphNamePane namePane = new GraphNamePane();
 
-    JTextField pathField = new JTextField();
+    private PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
+    private JTabbedPane parametersTabbedPane = new JTabbedPane();
+    private ArgumentsPane argumentsPane = new ArgumentsPane();
+    private JTextArea bodyDataTextArea = new JTextArea();
 
-    PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
-    JTabbedPane parametersTabbedPane = new JTabbedPane();
-    ArgumentsPane argumentsPane = new ArgumentsPane();
-    JTextArea bodyDataTextArea = new JTextArea();
-
-    GraphElement graphElement;
+    private GraphElement graphElement;
 
     public HttpAbstractGui(){
         setLayout(new VerticalLayout());
+        add(namePane);
         methodsComboBox.setEditable(true);
         protocolComboBox.setEditable(true);
-        add(namePane);
-        pathField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {updateElement();}
+    }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {updateElement();}
+    JSplitPane buildRequestPropertiesAndParametersPanel(){
+        int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.4);
+        return buildRequestPropertiesAndParametersPanel(divider);
+    }
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {updateElement();}
-            void updateElement(){
-                graphElement.setProp(TestElement.NS_NAME, PN_Path, pathField.getText());
-            }
-        });
-        JPanel pathPanel = new JPanel();
-        pathPanel.setLayout(new BoxLayout(pathPanel, BoxLayout.LINE_AXIS));
-        pathPanel.add(new JLabel("Path: "));
-        pathPanel.add(pathField);
-        add(pathPanel);
+    JSplitPane buildRequestPropertiesAndParametersPanel(int divider){
         JSplitPane propertiesParameters = new JSplitPane();
-
         JPanel propertiesPanel = GuiUtils.getPanel("Request Properties :", new BorderLayout());
         propertiesPanel.add(defaultPropertiesTable, BorderLayout.CENTER);
         propertiesPanel.add(defaultPropertiesTable.getTableHeader(), BorderLayout.NORTH);
@@ -150,9 +137,8 @@ public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui
             }
         });
         propertiesParameters.setRightComponent(parametersTabbedPane);
-        int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.4);
         propertiesParameters.setDividerLocation(divider);
-        add(propertiesParameters);
+        return propertiesParameters;
     }
 
     boolean isBodyData(){
@@ -167,15 +153,16 @@ public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui
     public void setCell(mxGraph graph, mxCell cell) {
         namePane.setCell(graph, cell);
         this.graphElement = namePane.getGraphElement();
-        pathField.setText(graphElement.getProp(TestElement.NS_NAME, PN_Path).getStringValue());
         defaultPropertiesTable.setTestElement(graphElement);
         argumentsPane.setTestElement(graphElement);
-        updateParamterTabbedPane();
+        updateParameterTabbedPane();
+
+        setGraphElement(graphElement);
     }
 
+    abstract void setGraphElement(GraphElement graphElement);
 
-
-    void updateParamterTabbedPane() {
+    void updateParameterTabbedPane() {
         if (isBodyData()) {
             bodyDataTextArea.setText(graphElement.getProps(TestElement.NS_ARGUMENT).getFirst().getStringValue());
             parametersTabbedPane.setSelectedIndex(BodyDataIndex);
@@ -187,8 +174,6 @@ public class HttpAbstractGui extends JPanel implements GraphElementPropertiesGui
         defaultPropertiesTable.setComboBox(PN_Protocol, protocolComboBox);
         defaultPropertiesTable.setComboBox(PN_Method, methodsComboBox);
         defaultPropertiesTable.setBooleanOnCell(PN_UseKeepAlive);
-
-
     }
 
 }

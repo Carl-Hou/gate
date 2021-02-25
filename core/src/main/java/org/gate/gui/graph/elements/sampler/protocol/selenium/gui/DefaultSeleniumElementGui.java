@@ -47,7 +47,6 @@ public class DefaultSeleniumElementGui extends JPanel implements GraphElementPro
     GraphNamePane namePane = new GraphNamePane();
     PropertiesTable defaultPropertiesTable = new PropertiesTable(new PropertiesTableModel());
     PropertiesTable argumentPropertiesTable = new PropertiesTable(new PropertiesTableModel());
-//    PropertiesTable returnValueVariablesNameTable = new PropertiesTable(new PropertiesTableModel());
 
     JComboBox locatorTypeComboBox = new JComboBox(SeleniumUtils.LocatorTypes);
     JComboBox methodSuppliesComboBox = new JComboBox();

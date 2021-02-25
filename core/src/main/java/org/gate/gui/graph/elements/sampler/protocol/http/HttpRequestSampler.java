@@ -22,6 +22,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.sampler.protocol.http.gui.HttpRequestGui;
 import org.gate.varfuncs.property.GateProperty;
 
@@ -47,64 +48,9 @@ public class HttpRequestSampler extends HTTPHCAbstractImpl {
     }
 
 
-    /**
-     * @param post {@link HttpPost}
-     * @return String posted body if computable
-     * @throws IOException if sending the data fails due to I/O
-     */
-    protected String sendPostData(HttpPost post) throws IOException {
-        // Buffer to hold the post body, except file content
-        StringBuilder postedBody = new StringBuilder(1000);
+    @Override
+    void postRequest(ElementResult result) {
 
-        final String contentEncoding = getEncoding();
-        final boolean haveContentEncoding = !contentEncoding.isEmpty();
-
-
-        // In a post request which is not multipart, we only support
-        // parameters, no file upload is allowed
-
-        // If none of the arguments have a name specified, we
-        // just send all the values as the post body
-        if (getSendParameterValuesAsPostBody()) {
-            // Just append all the parameter values, and use that as the post body
-            StringBuilder postBody = new StringBuilder();
-            for (GateProperty argument : getRunTimeProps(NS_ARGUMENT)) {
-                postBody.append(URLEncoder.encode(argument.getStringValue(), getEncoding()));
-            }
-
-            // Let StringEntity perform the encoding
-            StringEntity requestEntity;
-            if (haveContentEncoding) {
-                requestEntity = new StringEntity(postBody.toString(), contentEncoding);
-            } else {
-                requestEntity = new StringEntity(postBody.toString(), Default_URL_ARGUMENT_ENCODING);
-            }
-
-            post.setEntity(requestEntity);
-            postedBody.append(postBody.toString());
-        } else {
-            // It is a normal post request, with parameter names and values
-            List<NameValuePair> nvps = new ArrayList<>();
-            for (GateProperty argument : getRunTimeProps(NS_ARGUMENT)) {
-                if (argument.getName().trim().isEmpty()) {
-                    continue;
-                }
-                nvps.add(new BasicNameValuePair(argument.getName(), argument.getStringValue()));
-            }
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, contentEncoding);
-            post.setEntity(entity);
-            if (entity.isRepeatable()) {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                post.getEntity().writeTo(bos);
-                bos.flush();
-                // We get the posted bytes using the encoding used to create it
-                postedBody.append(bos.toString(getEncoding()));
-                bos.close();
-            } else {
-                postedBody.append("<RequestEntity was not repeatable, cannot view what was sent>");
-            }
-        }
-        return postedBody.toString();
     }
 
     @Override

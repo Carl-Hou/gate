@@ -42,18 +42,9 @@ public abstract class AbstractElementResult extends DefaultResult implements Ele
     @Override
     public void setResponseObject(Object responseObject){
         this.responseObject = responseObject;
-//        if(responseObject == null){
-//            this.responseObject = "null";
-//            appendMessage("Response is null");
-//        }else {
-//            this.responseObject = responseObject;
-//        }
     }
 
-    @Override
-    public Object getResponseObject(){
-        return responseObject;
-    }
+
     @Override
     public String getResponseAsString(){
         if(responseObject != null){

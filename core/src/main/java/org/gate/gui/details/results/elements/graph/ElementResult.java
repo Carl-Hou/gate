@@ -30,7 +30,7 @@ public interface ElementResult extends Result {
     void setRunTimeProps(HashMap<String, LinkedList<GateProperty>> props);
     void setResponseObject(Object responseObject);
     // for functions ?
-    Object getResponseObject();
+//    Object getResponseObject();
     String getResponseAsString();
 
     void setThrowable(Throwable t);

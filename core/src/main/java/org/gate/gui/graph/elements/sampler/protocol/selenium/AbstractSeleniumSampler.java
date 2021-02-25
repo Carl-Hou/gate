@@ -62,7 +62,7 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
 
     @Override
     protected LinkedList<String> getNameSpacesToApplyDefault(){
-        LinkedList<String> nameSpaces = new LinkedList<String>();
+        LinkedList<String> nameSpaces = new LinkedList();
         nameSpaces.add(NS_DEFAULT);
         nameSpaces.add(NS_ARGUMENT);
         return nameSpaces;

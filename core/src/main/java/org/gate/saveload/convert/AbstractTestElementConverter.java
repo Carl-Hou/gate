@@ -49,7 +49,7 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
     String tagName;
     Class testElementClass;
 
-    protected Logger log = LogManager.getLogger(this);
+    protected Logger log = LogManager.getLogger();
 
     public AbstractTestElementConverter(Class testElementClass, String tagName) {
         this.tagName = tagName;
@@ -137,12 +137,12 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
 
             for (String nameSpace : savedPropsMap.keySet()) {
                 for (Map.Entry<String, String> prop : savedPropsMap.get(nameSpace).entrySet()) {
-                    if (nameSpace.equals(TestElement.NS_ARGUMENT)) {
-                        testElement.putProp(nameSpace, prop.getKey(), prop.getValue());
-                    } else {
-                        testElement.setProp(nameSpace, prop.getKey(), prop.getValue());
-                    }
-
+//                    if (nameSpace.equals(TestElement.NS_ARGUMENT)) {
+//                        testElement.putProp(nameSpace, prop.getKey(), prop.getValue());
+//                    } else {
+//                        testElement.setProp(nameSpace, prop.getKey(), prop.getValue());
+//                    }
+                    testElement.putProp(nameSpace, prop.getKey(), prop.getValue());
                 }
             }
         } catch (InstantiationException | IllegalAccessException e) {

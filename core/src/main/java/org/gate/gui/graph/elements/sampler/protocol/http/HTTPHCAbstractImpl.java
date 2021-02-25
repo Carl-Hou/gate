@@ -20,6 +20,7 @@ package org.gate.gui.graph.elements.sampler.protocol.http;
 import org.apache.http.*;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
@@ -28,6 +29,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.BufferedHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -55,6 +57,7 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,6 +77,7 @@ public abstract class HTTPHCAbstractImpl extends AbstractGraphElement implements
         addProp(NS_DEFAULT, PN_Protocol, "");
         addProp(NS_DEFAULT, PN_ServerNameIP, "");
         addProp(NS_DEFAULT, PN_PortNumber, "");
+        addProp(NS_DEFAULT, PN_Path, "");
         addProps();
         addProp(NS_DEFAULT, PN_Method, "");
         addProp(NS_DEFAULT, PN_ContentEncoding, "");
@@ -84,7 +88,65 @@ public abstract class HTTPHCAbstractImpl extends AbstractGraphElement implements
 
     abstract void addProps();
 
-    abstract protected String sendPostData(HttpPost post) throws IOException;
+    /**
+     * @param post {@link HttpPost}
+     * @return String posted body if computable
+     * @throws IOException if sending the data fails due to I/O
+     */
+    protected String sendPostData(HttpPost post) throws IOException {
+        // Buffer to hold the post body, except file content
+        StringBuilder postedBody = new StringBuilder(1000);
+
+        final String contentEncoding = getEncoding();
+        final boolean haveContentEncoding = !contentEncoding.isEmpty();
+
+
+        // In a post request which is not multipart, we only support
+        // parameters, no file upload is allowed
+
+        // If none of the arguments have a name specified, we
+        // just send all the values as the post body
+        if (getSendParameterValuesAsPostBody()) {
+            // Just append all the parameter values, and use that as the post body
+            StringBuilder postBody = new StringBuilder();
+            for (GateProperty argument : getRunTimeProps(NS_ARGUMENT)) {
+                postBody.append(new String(argument.getStringValue().getBytes(), getEncoding()));
+            }
+
+            // Let StringEntity perform the encoding
+            StringEntity requestEntity;
+            if (haveContentEncoding) {
+                requestEntity = new StringEntity(postBody.toString(), contentEncoding);
+            } else {
+                requestEntity = new StringEntity(postBody.toString(), Default_URL_ARGUMENT_ENCODING);
+            }
+
+            post.setEntity(requestEntity);
+            postedBody.append(postBody.toString());
+        } else {
+            // It is a normal post request, with parameter names and values
+            List<NameValuePair> nvps = new ArrayList<>();
+            for (GateProperty argument : getRunTimeProps(NS_ARGUMENT)) {
+                if (argument.getName().trim().isEmpty()) {
+                    continue;
+                }
+                nvps.add(new BasicNameValuePair(argument.getName(), argument.getStringValue()));
+            }
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, contentEncoding);
+            post.setEntity(entity);
+            if (entity.isRepeatable()) {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                post.getEntity().writeTo(bos);
+                bos.flush();
+                // We get the posted bytes using the encoding used to create it
+                postedBody.append(bos.toString(getEncoding()));
+                bos.close();
+            } else {
+                postedBody.append("<RequestEntity was not repeatable, cannot view what was sent>");
+            }
+        }
+        return postedBody.toString();
+    }
 
     // key for get properties copy with defaults
     @Override
@@ -164,7 +226,9 @@ public abstract class HTTPHCAbstractImpl extends AbstractGraphElement implements
             }
             result.appendMessage("Response headers:");
             result.appendMessage(getResponseHeaders(httpResponse, httpContext));
-
+            if(result.isSuccess()){
+                postRequest(result);
+            }
         } catch (Exception e) {
             log.error("Fail to execute http request:", e);
             result.setThrowable(e);
@@ -173,14 +237,17 @@ public abstract class HTTPHCAbstractImpl extends AbstractGraphElement implements
         }
     }
 
-    @Override
-    public String getGUI() {
-        return HttpRequestGui.class.getName();
-    }
+    abstract void postRequest(ElementResult result);
+
+//    @Override
+//    public String getGUI() {
+//        return HttpRequestGui.class.getName();
+//    }
 
     URL getUrl() throws MalformedURLException, UnsupportedEncodingException {
         StringBuilder pathAndQuery = new StringBuilder(100);
-        String path = getRunTimeProp(NS_NAME, PN_Path);
+//        String path = getRunTimeProp(NS_NAME, PN_Path);
+        String path = getRunTimeProp(NS_DEFAULT, PN_Path);
         // Hack to allow entire URL to be provided in host field
         if (path.startsWith(HTTP_PREFIX)
                 || path.startsWith(HTTPS_PREFIX)) {
@@ -429,7 +496,7 @@ public abstract class HTTPHCAbstractImpl extends AbstractGraphElement implements
             hasEntityBody = true;
             StringBuilder entityBodyContent = new StringBuilder();
             for(GateProperty argument : getRunTimeProps(NS_ARGUMENT)){
-                entityBodyContent.append(URLEncoder.encode(argument.getStringValue(), charset));
+                entityBodyContent.append(new String(argument.getStringValue().getBytes(), charset));
             }
 
             StringEntity requestEntity = new StringEntity(entityBodyContent.toString(), charset);

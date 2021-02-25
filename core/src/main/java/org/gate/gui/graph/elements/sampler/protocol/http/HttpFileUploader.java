@@ -26,6 +26,7 @@ import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.elements.sampler.protocol.http.gui.HttpFileUploaderGui;
 import org.gate.varfuncs.property.GateProperty;
 
@@ -107,6 +108,11 @@ public class HttpFileUploader extends HTTPHCAbstractImpl {
             postedBody.append("<Multipart was not repeatable, cannot view what was sent>"); // $NON-NLS-1$
         }
         return postedBody.toString();
+    }
+
+    @Override
+    void postRequest(ElementResult result) {
+
     }
 
     @Override

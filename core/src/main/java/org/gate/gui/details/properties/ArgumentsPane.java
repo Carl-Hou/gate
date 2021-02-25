@@ -48,6 +48,7 @@ public class ArgumentsPane extends JPanel {
     JButton down = new JButton("Down");
     // Maeke sure setTestElement was called before use this component
     TestElement testElement = null;
+    String nameSpace = TestElement.NS_ARGUMENT;
 
     public ArgumentsPane(){
         PropertiesTableModel tableModel = new PropertiesTableModel(getNameColumnHeader(), getValueColumnHeader());
@@ -69,6 +70,10 @@ public class ArgumentsPane extends JPanel {
         JPanel buttons = makeButtonPanel();
         add(buttons, BorderLayout.SOUTH);
 
+    }
+
+    public void setNameSpace(String nameSpace){
+        this.nameSpace = nameSpace;
     }
 
     String getNameColumnHeader(){
@@ -279,6 +284,8 @@ public class ArgumentsPane extends JPanel {
         return buttonPanel;
     }
 
+
+
     public void setTestElement(TestElement element){
         testElement = element;
         PropertiesTableModel tableModel = new PropertiesTableModel(getNameColumnHeader(), getValueColumnHeader());
@@ -288,7 +295,7 @@ public class ArgumentsPane extends JPanel {
         * because get model from table have issue with Model listener for current implementation
         * change the implementation later if have to.
         * */
-        tableModel.addRows(element.getProps(TestElement.NS_ARGUMENT));
+        tableModel.addRows(element.getProps(nameSpace));
         tableModel.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -306,13 +313,18 @@ public class ArgumentsPane extends JPanel {
 
     }
     void updateElement(){
+
         PropertiesTableModel model = getModel();
         LinkedList<GateProperty> argumentProps = getArgumentProptiesElement(model);
-        testElement.setProps(TestElement.NS_ARGUMENT, argumentProps);
-//        if(!testElement.setProps(TestElement.NS_ARGUMENT, argumentProps)){
-//            OptionPane.showErrorMessageDialog("Error", "Duplicate argument name");
-//            setTestElement(testElement);
-//        }
+        testElement.setProps(nameSpace, argumentProps);
+
+    }
+
+    void updateElement(String nameSpace){
+        PropertiesTableModel model = getModel();
+        LinkedList<GateProperty> argumentProps = getArgumentProptiesElement(model);
+        testElement.setProps(nameSpace, argumentProps);
+
     }
 
     LinkedList<GateProperty> getArgumentProptiesElement(PropertiesTableModel tableModel) {

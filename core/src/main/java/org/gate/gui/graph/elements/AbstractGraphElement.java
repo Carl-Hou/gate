@@ -135,15 +135,15 @@ abstract public class AbstractGraphElement extends AbstractTestElement implement
             return getPropsMap();
         }
 
-        DefaultParameters defaultSeleniumParameters =
+        DefaultParameters defaultParameters =
                 (DefaultParameters) GateContextService.getContext().getConfigs().get(DefaultConfigName);
-        if (defaultSeleniumParameters == null) {
+        if (defaultParameters == null) {
             return getPropsMap();
         }
 
         HashMap<String, LinkedList<GateProperty>> propsMapCopy = GateUtils.deepCopy(getPropsMap()).get();
         for(String nameSpace : getNameSpacesToApplyDefault()){
-            defaultSeleniumParameters.applyDefaultsInNameSpace(propsMapCopy.get(nameSpace));
+            defaultParameters.applyDefaultsInNameSpace(propsMapCopy.get(nameSpace));
         }
         return propsMapCopy;
 

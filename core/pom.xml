@@ -107,6 +107,11 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>io.burt</groupId>
+            <artifactId>jmespath-jackson</artifactId>
+            <version>0.5.0</version>
+        </dependency>
         <!-- Test libs -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

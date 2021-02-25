@@ -32,14 +32,14 @@ import org.gate.varfuncs.property.GateProperty;
 
 import java.util.List;
 
-public class JSONExtractor extends AbstractGraphElement implements Extractor {
+public class JSONPathExtractor extends AbstractGraphElement implements Extractor {
 
     private static final Configuration DEFAULT_CONFIGURATION =
             Configuration.defaultConfiguration().addOptions(Option.ALWAYS_RETURN_LIST);
 
     static final String PN_DefaultValue         = "default value"; // $NON-NLS-1$
 
-    public JSONExtractor(){
+    public JSONPathExtractor(){
         addNameSpace(NS_ARGUMENT);
         addProp(NS_DEFAULT, PN_DefaultValue, "");
     }
@@ -68,7 +68,13 @@ public class JSONExtractor extends AbstractGraphElement implements Extractor {
             List<Object> extractedObjects = JsonPath.compile(jsonPathProperty.getStringValue()).read(
                     previousResponse, DEFAULT_CONFIGURATION);
             if(!extractedObjects.isEmpty()){
-                String jsonValue = JSONValue.toJSONString(extractedObjects.get(0), JSONStyle.LT_COMPRESS);
+                Object value = extractedObjects.get(0);
+                String jsonValue;
+                if(value instanceof String){
+                    jsonValue = value.toString();
+                }else{
+                    jsonValue = JSONValue.toJSONString(extractedObjects.get(0), JSONStyle.LT_COMPRESS);
+                }
                 vars.put(jsonPathProperty.getName(), jsonValue);
             }
         }
@@ -81,6 +87,6 @@ public class JSONExtractor extends AbstractGraphElement implements Extractor {
 
     @Override
     public String getStaticLabel() {
-        return "JSON Extractor";
+        return "JSONPath Extractor";
     }
 }

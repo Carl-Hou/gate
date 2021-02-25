@@ -59,24 +59,24 @@ public class HttpFileUploaderGui extends JPanel implements GraphElementPropertie
         protocolComboBox.setEditable(true);
 
         add(namePane);
-        pathField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {updateElement();}
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {updateElement();}
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {updateElement();}
-            void updateElement(){
-                graphElement.setProp(TestElement.NS_NAME, PN_Path, pathField.getText());
-            }
-        });
-        JPanel pathPanel = new JPanel();
-        pathPanel.setLayout(new BoxLayout(pathPanel, BoxLayout.LINE_AXIS));
-        pathPanel.add(new JLabel("Path: "));
-        pathPanel.add(pathField);
-        add(pathPanel);
+//        pathField.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {updateElement();}
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {updateElement();}
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {updateElement();}
+//            void updateElement(){
+//                graphElement.setProp(TestElement.NS_NAME, PN_Path, pathField.getText());
+//            }
+//        });
+//        JPanel pathPanel = new JPanel();
+//        pathPanel.setLayout(new BoxLayout(pathPanel, BoxLayout.LINE_AXIS));
+//        pathPanel.add(new JLabel("Path: "));
+//        pathPanel.add(pathField);
+//        add(pathPanel);
         JSplitPane propertiesParameters = new JSplitPane();
 
         JPanel propertiesPanel = GuiUtils.getPanel("Request Properties :", new BorderLayout());
@@ -96,7 +96,6 @@ public class HttpFileUploaderGui extends JPanel implements GraphElementPropertie
     public void setCell(mxGraph graph, mxCell cell) {
         namePane.setCell(graph, cell);
         this.graphElement = namePane.getGraphElement();
-        pathField.setText(graphElement.getProp(TestElement.NS_NAME, PN_Path).getStringValue());
         defaultPropertiesTable.setTestElement(graphElement);
         argumentsPane.setTestElement(graphElement);
         updateParamterTabbedPane();
