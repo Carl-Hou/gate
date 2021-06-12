@@ -17,8 +17,6 @@
  */
 package org.gate.gui.graph.elements.sampler.protocol.selenium;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONStyle;
 import org.apache.commons.io.FileUtils;
 import org.gate.common.config.GateProps;
 import org.gate.common.util.GateException;
@@ -99,10 +97,6 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
         getSeleniumContext().putDriver(getRunTimeProp(NS_DEFAULT, PN_DriverId), driver);
     }
 
-    String getJSONString(JSONObject jsonObject){
-        return jsonObject.toJSONString(JSONStyle.MAX_COMPRESS);
-    }
-
     interface MethodSupplier {
         void addArguments();
         void run(ElementResult result);
@@ -159,7 +153,7 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
         try {
             return (MethodSupplier) executorClazzOptional.get().getDeclaredConstructor(getClass()).newInstance(this);
         } catch (Exception e) {
-            log.fatal("fatal error occur when WaitCondition", e);
+            log.fatal("fatal internal error occur", e);
             throw new GateRuntimeExcepiton(e);
         }
     }
