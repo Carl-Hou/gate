@@ -20,13 +20,6 @@ package org.gate.gui.graph.elements.extractor;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 import org.gate.common.util.GateXMLUtils;
-import org.gate.gui.details.results.elements.graph.ElementResult;
-import org.gate.gui.details.results.elements.graph.SamplerResult;
-import org.gate.gui.graph.elements.AbstractGraphElement;
-import org.gate.runtime.GateContext;
-import org.gate.runtime.GateContextService;
-import org.gate.runtime.GateVariables;
-import org.gate.varfuncs.property.GateProperty;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,62 +34,40 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
-public class XPathExtractor extends AbstractGraphElement implements Extractor {
+public class XPathExtractor extends AbstractExtractor {
 
     static final String PN_DefaultValue         = "default value"; // $NON-NLS-1$
+
     static final String PN_ValidateXML = "valid xml";
     static final String PN_IgnoreWhiteSpace = "ignore white space";
     static final String PN_Fragment        = "entire xpath fragment"; // $NON-NLS-1$
 
-    public XPathExtractor(){
-        addNameSpace(NS_ARGUMENT);
+    public XPathExtractor(){ }
+
+    @Override
+    protected void initProperties(){
         addProp(NS_DEFAULT, PN_ValidateXML, "false");
         addProp(NS_DEFAULT, PN_IgnoreWhiteSpace, "false");
         addProp(NS_DEFAULT, PN_Fragment, "false");
-        addProp(NS_DEFAULT, PN_DefaultValue, "");
     }
 
     @Override
-    protected void exec(ElementResult result) {
+    protected String extract(String pattern, String content) throws Exception {
         boolean validXML = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_ValidateXML));
         boolean ignoreWhiteSpace = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_IgnoreWhiteSpace));
         boolean fragment = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_Fragment));
-        String defaultValue = getRunTimeProp(NS_DEFAULT, PN_DefaultValue);
-
-        GateContext context = GateContextService.getContext();
-        final SamplerResult previousSamplerResult =context.getPreviousResult();
-        final String previousResponse = previousSamplerResult.getResponseAsString();
-        if(previousSamplerResult == null){
-            result.setFailure("previous Sampler is null");
-            return;
-        } else if(previousResponse == null){
-            result.setFailure("previous response is null");
+        Document document =  GateXMLUtils.parse(content, validXML, ignoreWhiteSpace);
+        LinkedList<String> matches = new LinkedList<>();
+        putValuesForXPathInList(document,pattern,matches,fragment);
+        if(matches.size() > 0){
+            return matches.getFirst();
         }
-        GateVariables vars = context.getVariables();
-        for(GateProperty xpathQueryProperty : getRunTimeProps(NS_ARGUMENT)){
-            vars.put(xpathQueryProperty.getName(), defaultValue);
-        }
-
-
-        try {
-            Document document =  GateXMLUtils.parse(previousResponse, validXML, ignoreWhiteSpace);
-            for(GateProperty xpathQueryProperty : getRunTimeProps(NS_ARGUMENT)){
-                LinkedList<String> matches = new LinkedList<>();
-                putValuesForXPathInList(document,xpathQueryProperty.getStringValue(),matches,fragment);
-                if(matches.size() > 0){
-                    vars.put(xpathQueryProperty.getName(), matches.getFirst());
-                }
-            }
-        } catch (Throwable t) {
-            log.error("fail to exact from xml", t);
-            result.setThrowable(t);
-            result.appendMessage("fail to exact from xml");
-        }
+        return null;
     }
 
     @Override
     public String getGUI() {
-        return DefaultExactorGui.class.getName();
+        return DefaultExtractorGui.class.getName();
     }
 
     /**
@@ -107,9 +78,8 @@ public class XPathExtractor extends AbstractGraphElement implements Extractor {
      * @param fragment return fragment
      * @throws TransformerException when the internally used xpath engine fails
      */
-    public void putValuesForXPathInList(Document document,
-                                               String xPathQuery,
-                                               List<String> matchStrings, boolean fragment) throws TransformerException {
+    void putValuesForXPathInList(Document document, String xPathQuery,
+                                 List<String> matchStrings, boolean fragment) throws TransformerException {
         String val = null;
         XObject xObject = XPathAPI.eval(document, xPathQuery);
         final int objectType = xObject.getType();

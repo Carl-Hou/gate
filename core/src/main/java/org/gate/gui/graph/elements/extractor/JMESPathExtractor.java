@@ -17,36 +17,39 @@
  */
 package org.gate.gui.graph.elements.extractor;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import net.minidev.json.JSONStyle;
-import net.minidev.json.JSONValue;
+import io.burt.jmespath.Expression;
+import io.burt.jmespath.JmesPath;
+import io.burt.jmespath.jackson.JacksonRuntime;
 
 
-import java.util.List;
+import java.io.IOException;
 
-public class JSONPathExtractor extends AbstractExtractor {
+
+public class JMESPathExtractor extends AbstractExtractor {
 
     private static final Configuration DEFAULT_CONFIGURATION =
             Configuration.defaultConfiguration().addOptions(Option.ALWAYS_RETURN_LIST);
 
-    public JSONPathExtractor(){
+    static JmesPath<JsonNode> jmesPath = new JacksonRuntime();
+    static ObjectMapper objectMapper = new ObjectMapper();
 
-    }
+
+    public JMESPathExtractor(){ }
 
     @Override
-    protected String extract(String pattern, String content) {
-        List<Object> extractedObjects = JsonPath.compile(pattern).read(content, DEFAULT_CONFIGURATION);
-        if(!extractedObjects.isEmpty()) {
-            Object value = extractedObjects.get(0);
-            if (value instanceof String) {
-                return value.toString();
-            } else {
-                return JSONValue.toJSONString(extractedObjects.get(0), JSONStyle.LT_COMPRESS);
-            }
+    protected String extract(String pattern, String content) throws IOException {
+        JsonNode input = objectMapper.readTree(content);
+        Expression<JsonNode> expression  = jmesPath.compile(pattern);
+        JsonNode jsonNode = expression.search(input);
+        if(jsonNode.isTextual()){
+            return jsonNode.textValue();
+        }else{
+            return objectMapper.writeValueAsString(jsonNode);
         }
-        return null;
     }
 
     @Override
@@ -56,6 +59,6 @@ public class JSONPathExtractor extends AbstractExtractor {
 
     @Override
     public String getStaticLabel() {
-        return "JSONPath Extractor";
+        return "JMESPath Extractor";
     }
 }

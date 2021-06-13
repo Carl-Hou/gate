@@ -33,13 +33,10 @@ import java.io.IOException;
 public class HttpRequestJMESPath extends HTTPHCAbstractImpl {
     static final public String NS_JMESPATH_ARGUMENT = "jmespath_argument";
 
-
     static JmesPath<JsonNode> jmesPath = new JacksonRuntime();
     static ObjectMapper objectMapper = new ObjectMapper();
 
-    public HttpRequestJMESPath() {
-
-    }
+    public HttpRequestJMESPath() { }
 
     @Override
     void addProps() {

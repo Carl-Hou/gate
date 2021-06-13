@@ -36,7 +36,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 
-public class PoCExtractorGui extends JPanel implements GraphElementPropertiesGui, ExtractorConstantsInterface {
+public class DefaultExtractorGui extends JPanel implements GraphElementPropertiesGui, ExtractorConstantsInterface {
 
     protected Logger log = LogManager.getLogger(this.getName());
 
@@ -47,7 +47,7 @@ public class PoCExtractorGui extends JPanel implements GraphElementPropertiesGui
 
     AbstractExtractor extractor = null;
 
-    public PoCExtractorGui(){
+    public DefaultExtractorGui(){
         setLayout(new VerticalLayout());
         add(namePane);
         JPanel sourcePanel = new JPanel(new VerticalLayout());

@@ -1,6 +1,6 @@
 *.jar
 *.class
-/target/
+**/target
 /dist/
 /log/
 screenshots/

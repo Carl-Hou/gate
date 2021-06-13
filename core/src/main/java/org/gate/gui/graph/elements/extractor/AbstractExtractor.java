@@ -25,6 +25,10 @@ import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 import org.gate.runtime.GateVariables;
 import org.gate.varfuncs.property.GateProperty;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 
 public abstract class AbstractExtractor extends AbstractGraphElement implements Extractor, ExtractorConstantsInterface{
@@ -38,13 +42,17 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
     void setResponseAsSourceType(){
         getProps(NS_DEFAULT).clear();
         addProp(NS_DEFAULT, PN_DefaultValue, "");
+        initProperties();
     }
 
     void setVariableAsSourceType(){
         getProps(NS_DEFAULT).clear();
         addProp(NS_DEFAULT, PN_Variable_Name,"");
         addProp(NS_DEFAULT, PN_DefaultValue, "");
+        initProperties();
     }
+
+    protected void initProperties(){ }
 
     public String getSelectSourceType(){
         return getProp(TestElement.NS_NAME, PN_SourceType).getStringValue();
@@ -63,6 +71,8 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
                 log.fatal("Internal Error");
         }
     }
+
+    protected void preExtract(){ }
 
     @Override
     protected void exec(ElementResult result) {
@@ -92,17 +102,23 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
         if(content == null){
             result.setFailure("Fail to get source for extract");
         }
-
+        // extract each pattern to var
+        preExtract();
         for(GateProperty patternProperty : getRunTimeProps(NS_ARGUMENT)){
             // take care "\\" when copy from java code
             String pattern = patternProperty.getStringValue();
-
-            String value = extract(pattern, content);
-            if(null != value){
-                vars.put(patternProperty.getName(), value);
+            try {
+                String value = extract(pattern, content);
+                if (null != value) {
+                    vars.put(patternProperty.getName(), value);
+                }
+            }catch (Throwable t){
+                log.error("Fail to extract from content", t);
+                result.setThrowable(t);
+                result.appendMessage("Fail to extract from content");
             }
         }
     }
 
-    protected abstract String extract(String pattern, String content);
+    protected abstract String extract(String pattern, String content) throws  Exception;
 }

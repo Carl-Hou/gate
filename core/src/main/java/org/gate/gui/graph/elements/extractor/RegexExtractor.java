@@ -17,63 +17,32 @@
  */
 package org.gate.gui.graph.elements.extractor;
 
-import org.gate.gui.details.results.elements.graph.ElementResult;
-import org.gate.gui.details.results.elements.graph.SamplerResult;
-import org.gate.gui.graph.elements.AbstractGraphElement;
-import org.gate.runtime.GateContext;
-import org.gate.runtime.GateContextService;
-import org.gate.runtime.GateVariables;
-import org.gate.varfuncs.property.GateProperty;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexExtractor  extends AbstractGraphElement implements Extractor {
+public class RegexExtractor extends AbstractExtractor {
 
-    static final String PN_DefaultValue         = "default value"; // $NON-NLS-1$
 
     public RegexExtractor(){
-        addNameSpace(NS_ARGUMENT);
-        addProp(NS_DEFAULT, PN_DefaultValue, "");
     }
 
+
     @Override
-    protected void exec(ElementResult result) {
-
-        String defaultValue = getRunTimeProp(NS_DEFAULT, PN_DefaultValue);
-        GateContext context = GateContextService.getContext();
-        final SamplerResult previousSamplerResult =context.getPreviousResult();
-        final String previousResponse = previousSamplerResult.getResponseAsString();
-        if(previousSamplerResult == null){
-            result.setFailure("previous Sampler is null");
-            return;
-        } else if(previousResponse == null){
-            result.setFailure("previous response is null");
-        }
-
-        GateVariables vars = context.getVariables();
-        for(GateProperty regexProperty : getRunTimeProps(NS_ARGUMENT)){
-            vars.put(regexProperty.getName(), defaultValue);
-        }
-
-        for(GateProperty regexProperty : getRunTimeProps(NS_ARGUMENT)){
-            // take care "\\" when copy from java code
-            String pattern = regexProperty.getStringValue();
-            String content = previousResponse;
-            Matcher m = Pattern.compile(pattern).matcher(content);
-            if(m.find()){
-                if(m.groupCount() > 0){
-                    vars.put(regexProperty.getName(), m.group(1));
-                }else{
-                    vars.put(regexProperty.getName(), m.group());
-                }
+    protected String extract(String pattern, String content) {
+        Matcher m = Pattern.compile(pattern).matcher(content);
+        if(m.find()){
+            if(m.groupCount() > 0){
+                return m.group(1);
+            }else{
+                return m.group();
             }
         }
+        return null;
     }
 
     @Override
     public String getGUI() {
-        return DefaultExactorGui.class.getName();
+        return DefaultExtractorGui.class.getName();
     }
 
     @Override
