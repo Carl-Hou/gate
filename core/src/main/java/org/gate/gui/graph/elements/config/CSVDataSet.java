@@ -17,7 +17,7 @@
  */
 package org.gate.gui.graph.elements.config;
 
-import javafx.beans.value.ObservableBooleanValue;
+
 import org.gate.common.config.GateProps;
 import org.gate.common.util.FileServer;
 import org.gate.common.util.GateUtils;
@@ -32,19 +32,30 @@ import java.util.LinkedList;
 public class CSVDataSet extends AbstractGraphElement implements Config {
 
     private static final String EOFVALUE = // value to return at EOF
-            GateProps.getProperty("csvdataset.eofstring", "<EOF>"); //$NON-NLS-1$ //$NON-NLS-2$
+            GateProps.getProperty("gate.default.eof", "<EOF>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 
-    public final static String PN_FileName = "file name";
-    public final static String PN_VariableNames = "variable names";
-    public final static String PN_FileEncoding = "file encoding";
-    public final static String PN_Delimiter = "delimiter";
+    public final static String PN_FileName = "File Name";
+    public final static String PN_VariableNames = "Variable Names";
+    public final static String PN_SkipFirstLine = "Skip First Line";
+    public final static String PN_FileEncoding = "File Encoding";
+    public final static String PN_Delimiter = "Delimiter";
     public final static String PN_Quoted = "Quoted";
 
+    boolean isComplete = true;
 
+    String _fileName;
+    String fileEncoding;
+    String delimiter;
+    boolean isQuoted;
+    boolean skipFirstLine;
+    LinkedList<String> variableNames;
+    FileServer server;
+    String alias;
 
     public CSVDataSet(){
         addProp(NS_DEFAULT, PN_FileName, "");
+        addProp(NS_DEFAULT, PN_SkipFirstLine, "true");
         addProp(NS_DEFAULT, PN_FileEncoding, "");
         addProp(NS_DEFAULT, PN_VariableNames, "");
         addProp(NS_DEFAULT, PN_Delimiter, ",");
@@ -52,16 +63,13 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
     }
 
 
-    @Override
-    protected void exec(ElementResult result) {
-        result.setRunTimeProps(getRunTimePropsMap());
-
-        String _fileName = getRunTimeProp(NS_DEFAULT, PN_FileName);
-        String fileEncoding = getRunTimeProp(NS_DEFAULT, PN_FileEncoding);
-        String delimiter = getRunTimeProp(NS_DEFAULT, PN_Delimiter);
-        boolean isQuoted = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_Quoted));
-        LinkedList<String> variableNames = GateUtils.getParameterList(getProp(NS_DEFAULT, PN_VariableNames).getStringValue());
-
+    void init(ElementResult result){
+        _fileName = getRunTimeProp(NS_DEFAULT, PN_FileName);
+        skipFirstLine = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_SkipFirstLine));
+        fileEncoding = getRunTimeProp(NS_DEFAULT, PN_FileEncoding);
+        delimiter = getRunTimeProp(NS_DEFAULT, PN_Delimiter);
+        isQuoted = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_Quoted));
+        variableNames = GateUtils.getParameterList(getProp(NS_DEFAULT, PN_VariableNames).getStringValue());
         if (delimiter.equals("\\t")) { // $NON-NLS-1$
             delimiter = "\t";// Make it easier to enter a Tab // $NON-NLS-1$
         } else if (delimiter.isEmpty()){
@@ -71,9 +79,33 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
         if(fileEncoding.isEmpty()){
             fileEncoding = System.getProperty("file.encoding");
         }
-        String alias = _fileName+"@"+System.identityHashCode(Thread.currentThread());
-        FileServer server = FileServer.getFileServer();
+        alias = _fileName+"@"+System.identityHashCode(Thread.currentThread());
+        server = FileServer.getFileServer();
         server.reserveFile(_fileName, fileEncoding, alias);
+        try {
+            server.resetReader(alias);
+            if (skipFirstLine){
+                server.readLine(alias, false, false);
+            }
+        } catch (IOException e) {
+            result.setFailure("Fail to reset reader file");
+            result.setThrowable(e);
+        }
+    }
+
+
+    @Override
+    protected void exec(ElementResult result) {
+        result.setRunTimeProps(getRunTimePropsMap());
+
+        if(isComplete){
+            init(result);
+            if(result.isSuccess()){
+                isComplete = false;
+            }else{
+                return;
+            }
+        }
 
         GateVariables threadVars = GateContextService.getContext().getVariables();
         String[] lineValues = {};
@@ -93,6 +125,7 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
             }
         } catch (IOException e) { // treat the same as EOF
             result.setThrowable(e);
+            isComplete = true;
             log.error(e.toString());
         }
 
@@ -101,6 +134,7 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
                 threadVars.put(var, EOFVALUE);
             }
             result.setFailure(EOFVALUE);
+            isComplete = true;
         }
     }
 
@@ -111,6 +145,6 @@ public class CSVDataSet extends AbstractGraphElement implements Config {
 
     @Override
     public String getGUI() {
-        return GUI_ClassName_DefaultPropertiesGUI;
+        return CSVDataSetGui.class.getName();
     }
 }

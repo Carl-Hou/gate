@@ -82,7 +82,7 @@ public class DebugSampler extends AbstractGraphElement implements Sampler{
 			StringBuffer sb = new StringBuffer("Gate Properties: ");
 			sb.append(GateProps.LineSeparator);
 			GateProps.getProperties().forEach((k, v) ->{
-				sb.append(k).append(" : ").append(v).append(GateProps.LineSeparator);
+				sb.append(k).append(" = ").append(v).append(GateProps.LineSeparator);
 			});
 			samplerResult.appendMessage(sb);
 		}
@@ -96,7 +96,7 @@ public class DebugSampler extends AbstractGraphElement implements Sampler{
 			StringBuffer sb = new StringBuffer("System Properties: ");
 			sb.append(GateProps.LineSeparator);
 			System.getProperties().forEach((k,v) ->{
-				sb.append(k).append(" : ").append(v).append(GateProps.LineSeparator);
+				sb.append(k).append(" = ").append(v).append(GateProps.LineSeparator);
 			});
 			samplerResult.appendMessage(sb);
 		}

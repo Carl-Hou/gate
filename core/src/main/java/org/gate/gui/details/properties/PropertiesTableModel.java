@@ -36,7 +36,7 @@ public class PropertiesTableModel extends DefaultTableModel {
      public PropertiesTableModel(){
     	addColumn("name");
     	addColumn("value");   	
-    	setRowCount(0);    	
+    	setRowCount(0);
      }
 
 	public PropertiesTableModel(String nameColumnHeader, String valueColumnHeader){
@@ -63,10 +63,7 @@ public class PropertiesTableModel extends DefaultTableModel {
  	}
 
  	public void removeAllRows(){
-         int rowCount = getRowCount();
-         for(int i=0; i< rowCount; i++){
-             removeRow(i);
-         }
+		 getDataVector().clear();
     }
      
      public void setEditableRange(int begin, int end){

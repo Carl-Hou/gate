@@ -24,6 +24,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -33,6 +35,7 @@ public class PropertiesTable extends JTable {
     final static String OptionPaneTitle = "Parameter Constrain Alert";
     final static JComboBox booleanComboBox = new JComboBox(new String[] {GateProps.TRUE, GateProps.FALSE});
     HashMap<Integer, TableCellEditor> cellEditors = new HashMap<>();
+    ArrayList<Integer> notEditableRows = new ArrayList<>();
 
     public PropertiesTable(PropertiesTableModel model){
         super(model);
@@ -50,20 +53,58 @@ public class PropertiesTable extends JTable {
             }
         }
     }
+    // use constraintReadOnly instead of this
+    public void setValueEditable(String name, boolean editable){
+        int row = getRowNumber(name);
+        if(editable){
+            notEditableRows.remove(row);
+        }else{
+            notEditableRows.add(row);
+        }
+    }
+
+    public void removeRow(String name){
+        this.remove(getRowNumber(name));
+    }
+
+    public void removeAllRows(){
+        PropertiesTableModel model = (PropertiesTableModel) getModel();
+        model.removeAllRows();
+    }
+
+    public void addRow(String name, String value){
+        PropertiesTableModel model = (PropertiesTableModel) getModel();
+        model.addRow(name, value);
+
+    }
+
 
     void showErrorMessageDialog(String errorMessage){
         JOptionPane.showMessageDialog(null, errorMessage, OptionPaneTitle, JOptionPane.ERROR_MESSAGE);
     }
 
     public void constraintReadOnly(String name){
-        int row = getRow(name);
+        constraintReadOnly(name, true);
+    }
+
+    public void constraintReadOnly(String name, boolean readOnly){
+        int row = getRowNumber(name);
         JTextField jTextField = new JTextField(name);
-        jTextField.setEnabled(false);
+        jTextField.setText((String)getValueAt(row,1));
+
+        if(readOnly){
+            jTextField.setEnabled(false);
+            jTextField.setBackground(Color.GRAY);
+        }else{
+            jTextField.setEnabled(true);
+            jTextField.setBackground(Color.WHITE);
+        }
+
         cellEditors.put(row, new DefaultCellEditor(jTextField));
     }
 
     public void constraintNotEmpty(String name){
-        int row = getRow(name);
+        int row = getRowNumber(name);
         cellEditors.put(row, new DefaultCellEditor(new JTextField()){
             @Override
             public boolean stopCellEditing(){
@@ -94,7 +135,7 @@ public class PropertiesTable extends JTable {
     }
 
     public void constraintUnsignedInt(String name){
-        constraintUnsignedInt(getRow(name));
+        constraintUnsignedInt(getRowNumber(name));
     }
 
     public void constraintUnsignedLong(int row){
@@ -114,12 +155,12 @@ public class PropertiesTable extends JTable {
     }
 
     public void constraintUnsignedLong(String name){
-        constraintUnsignedLong(getRow(name));
+        constraintUnsignedLong(getRowNumber(name));
 
     }
 
     public void constraintRegex(String name){
-        cellEditors.put(getRow(name), new DefaultCellEditor(new JTextField()){
+        cellEditors.put(getRowNumber(name), new DefaultCellEditor(new JTextField()){
             @Override
             public boolean stopCellEditing(){
                 String value = (String) getCellEditorValue();
@@ -138,7 +179,7 @@ public class PropertiesTable extends JTable {
     * return -1 when the name is not found is an expected behavior
     * constraints will be apply to -1 which will be never be used
     * */
-    int getRow(String name){
+    int getRowNumber(String name){
         int row = -1;
         PropertiesTableModel model = (PropertiesTableModel) getModel();
         for(int i=0; i< model.getRowCount(); i++){
@@ -150,8 +191,12 @@ public class PropertiesTable extends JTable {
         return row;
     }
 
+    public String getValueOfRow(String name){
+        return (String) getValueAt(getRowNumber(name), 1);
+    }
+
     public void setBooleanOnCell(String name){
-        setBooleanOnCell(getRow(name));
+        setBooleanOnCell(getRowNumber(name));
     }
 
     public void setBooleanOnCell(int row) {
@@ -195,6 +240,15 @@ public class PropertiesTable extends JTable {
             return cellEditors.get(row);
         return super.getCellEditor(row, column);
     }
+
+//    @Override
+//    public boolean isCellEditable(int row,int column){
+//        if(notEditableRows.contains(row)){
+//            return false;
+//        }else{
+//            return true;
+//        }
+//    }
 
 
 }

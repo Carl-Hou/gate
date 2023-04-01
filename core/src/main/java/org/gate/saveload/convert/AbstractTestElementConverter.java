@@ -27,10 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /*
  *  This class use to transform TestElement object to DocumentElement and Document Element to TestElement
@@ -99,7 +96,8 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
     }
 
     public HashMap<String, HashMap<String, String>> getSavedMap(Element element) {
-        HashMap<String, HashMap<String, String>> propsMap = new HashMap<>();
+        // use LinkedHashMap to keep the order of properties
+        HashMap<String, HashMap<String, String>> propsMap = new LinkedHashMap<>();
         Optional<Element> mapElementOptional = documentHelper.getChildrenElements(element).stream().
                 filter(e -> e.getNodeName().equals(Properties)).findFirst();
 
@@ -107,7 +105,7 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
             LinkedList<Element> elements = documentHelper.getChildrenElements(mapElementOptional.get());
             for (Element nameSpaceElement : elements) {
                 String nameSpace = nameSpaceElement.getAttribute(NAME);
-                HashMap<String, String> props = new HashMap<>();
+                HashMap<String, String> props = new LinkedHashMap<>();
                 LinkedList<Element> elementsOfNameSpace = documentHelper.getChildrenElements(nameSpaceElement);
                 elementsOfNameSpace.forEach(e -> {
                     props.put(e.getAttribute(NAME), e.getAttribute(VALUE));
@@ -136,6 +134,7 @@ public abstract class AbstractTestElementConverter implements TestElementConvert
             HashMap<String, HashMap<String, String>> savedPropsMap = getSavedMap(element);
 
             for (String nameSpace : savedPropsMap.keySet()) {
+                testElement.getProps(nameSpace).clear();
                 for (Map.Entry<String, String> prop : savedPropsMap.get(nameSpace).entrySet()) {
 //                    if (nameSpace.equals(TestElement.NS_ARGUMENT)) {
 //                        testElement.putProp(nameSpace, prop.getKey(), prop.getValue());

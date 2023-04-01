@@ -24,8 +24,12 @@ public class SeleniumDefaults extends DefaultsConfigElement implements SeleniumC
 
     public SeleniumDefaults(){
         addConfigProperty(PN_BrowserName, BrowserName_Chrome);
-        addConfigProperty(PN_WaitTimeOut, "5");
-        addConfigProperty(PN_WaitPollingInterval, "200");
+        addConfigProperty(PN_ImplicitlyWaitTimeoutSeconds, "");
+        addConfigProperty(PN_PageLoadTimeoutSeconds, "");
+        addConfigProperty(PN_SetScriptTimeoutSeconds, "");
+        addConfigProperty(PN_ExplicitWaitTimeOut, "5");
+        addConfigProperty(PN_ExplicitWaitPollingInterval, "200");
+
     }
 
     @Override

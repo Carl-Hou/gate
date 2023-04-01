@@ -43,7 +43,7 @@ public class DefaultScriptGui extends JPanel implements GraphElementPropertiesGu
     GraphNamePane namePane = new GraphNamePane();
     JComboBox<String> languageSelection;
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
-    RSyntaxTextArea rSyntaxTextArea = GuiUtils.getRSyntaxTextArea(15, 80);
+    RSyntaxTextArea rSyntaxTextArea = GuiUtils.getRSyntaxTextArea(5, 80);
 
     GraphElement element = null;
 

@@ -24,6 +24,7 @@ import org.gate.gui.graph.elements.ElementContext;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 // Selenium context for model execute
 public class SeleniumContext implements ElementContext {
@@ -31,6 +32,7 @@ public class SeleniumContext implements ElementContext {
     Logger log = LogManager.getLogger(this.getClass());
     boolean closeBrowsers = GateProps.getProperty("gate.selenium.context.browsers.close", true);
     HashMap<String, WebDriver> drivers = new HashMap<>();
+    LinkedList<String> driverIDRequireToClose = new LinkedList<>();
 
     public void putDriver(String name, WebDriver dirver){
         if(drivers.containsKey(name)){
@@ -43,8 +45,23 @@ public class SeleniumContext implements ElementContext {
         return drivers.get(name);
     }
 
+    // set driver to close after test
+    public void closeBrowserAfterTest(String driverID, boolean isClose){
+        if(isClose){
+            driverIDRequireToClose.add(driverID);
+        }else{
+            driverIDRequireToClose.remove(driverID);
+        }
+    }
+
     @Override
     public void close() {
+        driverIDRequireToClose.forEach( driverId ->{
+            WebDriver driver = drivers.get(driverId);
+            if(null != driver){
+                driver.quit();
+            }
+        });
         if(closeBrowsers){
             drivers.values().forEach( driver ->{
                 driver.quit();

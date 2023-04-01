@@ -67,6 +67,15 @@ public class GateVariables implements Serializable{
         variables.put(key, value);
     }
 
+    public void putObjects(String keyPrefix, Collection values){
+        int i =1;
+        for(Object object : values){
+            putObject(keyPrefix + "_" + (i), object);
+            i++;
+        }
+        putObject(keyPrefix + "_#", values.size());
+    }
+
     public void putAll(Map<String, ?> vars) {
         variables.putAll(vars);
     }

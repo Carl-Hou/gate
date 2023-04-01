@@ -20,14 +20,12 @@ package org.gate.gui.graph.elements.sampler.protocol.selenium;
 import org.apache.commons.io.FileUtils;
 import org.gate.common.config.GateProps;
 import org.gate.common.util.GateException;
-import org.gate.common.util.GateRuntimeExcepiton;
-import org.gate.gui.common.TestElement;
 import org.gate.gui.details.results.collector.ResultCollector;
 import org.gate.gui.details.results.elements.graph.ElementResult;
-import org.gate.gui.graph.elements.AbstractGraphElement;
+import org.gate.gui.graph.elements.sampler.Sampler;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.gui.DefaultSeleniumElementGui;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
-import org.gate.runtime.GateContext;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumElementInterface;
 import org.gate.runtime.GateContextService;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -36,44 +34,14 @@ import org.openqa.selenium.WebDriver;
 import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-abstract public class AbstractSeleniumSampler extends AbstractGraphElement implements SeleniumElement, SeleniumConstantsInterface {
+abstract public class AbstractSeleniumSampler extends AbstractSeleniumGraphElement
+        implements SeleniumElementInterface, SeleniumConstantsInterface, Sampler {
 
     public AbstractSeleniumSampler(){
-        addNameSpace(NS_ARGUMENT);
         addProp(NS_DEFAULT, PN_DriverId, "");
-        List<String> methodSuppliers = getMethodSuppliers();
-        if(!methodSuppliers.isEmpty() ){
-            String  defaultMethodSupplierName = methodSuppliers.get(0);
-            addProp(NS_NAME, PN_MethodSuppliersName, defaultMethodSupplierName);
-            getMethodSupplierInstance(defaultMethodSupplierName).addArguments();
-        }
-    }
-
-    @Override
-    protected String getContextConfigKey(){
-        return DefaultConfigName;
-    }
-
-    @Override
-    protected LinkedList<String> getNameSpacesToApplyDefault(){
-        LinkedList<String> nameSpaces = new LinkedList();
-        nameSpaces.add(NS_DEFAULT);
-        nameSpaces.add(NS_ARGUMENT);
-        return nameSpaces;
-    }
-
-    SeleniumContext getSeleniumContext(){
-        GateContext context = GateContextService.getContext();
-        SeleniumContext seleniumContext = (SeleniumContext) context.getGraphElementContext().get(Selenium);
-        if(seleniumContext == null){
-            seleniumContext = new SeleniumContext();
-            context.getGraphElementContext().put(Selenium, seleniumContext);
-        }
-        return  seleniumContext;
     }
 
     WebDriver getDriver(){
@@ -91,71 +59,6 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
             result.setThrowable(new GateException("Driver not found by id: ".concat(getRunTimeProp(NS_DEFAULT, PN_DriverId))));
         }
         return driver;
-    }
-
-    void putDriver(WebDriver driver){
-        getSeleniumContext().putDriver(getRunTimeProp(NS_DEFAULT, PN_DriverId), driver);
-    }
-
-    interface MethodSupplier {
-        void addArguments();
-        void run(ElementResult result);
-    }
-
-    abstract class AbstractMethodSupplier implements MethodSupplier{
-        @Override
-        public void addArguments() {}
-
-        void addArg(String name, String value){
-            addProp(NS_ARGUMENT, name, value);
-        }
-
-        String getRTArg(String name){
-            return getRunTimeProp(NS_ARGUMENT, name);
-        }
-
-        void setGateVariable(String name, int value){
-            setGateVariable(name, String.valueOf(value));
-        }
-
-        void setGateVariable(String name, boolean value){
-            setGateVariable(name, String.valueOf(value));
-        }
-
-        void setGateVariable(String name, String value){
-            GateContextService.getContext().getVariables().put(getRTArg(name), value);
-        }
-    }
-
-    List<Class> getSuppliersClasses(){
-        LinkedList<Class> suppliers = new LinkedList<>();
-        for(Class<?> clazz : getClass().getDeclaredClasses()) {
-            if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())
-                    && MethodSupplier.class.isAssignableFrom(clazz)) {
-                suppliers.add(clazz);
-            }
-        }
-        return suppliers;
-    }
-
-    public List<String> getMethodSuppliers() {
-        LinkedList<String> suppliers = new LinkedList<>();
-        getSuppliersClasses().forEach(clazz -> {
-            suppliers.add(clazz.getSimpleName());
-        });
-        Collections.sort(suppliers);
-        return suppliers;
-    }
-
-    MethodSupplier getMethodSupplierInstance(String name) throws GateRuntimeExcepiton {
-        Optional<Class> executorClazzOptional = getSuppliersClasses().stream().filter(clazz ->
-                clazz.getSimpleName().equals(name)).findFirst();
-        try {
-            return (MethodSupplier) executorClazzOptional.get().getDeclaredConstructor(getClass()).newInstance(this);
-        } catch (Exception e) {
-            log.fatal("fatal internal error occur", e);
-            throw new GateRuntimeExcepiton(e);
-        }
     }
 
     public void taskScreenShot(ElementResult result) {
@@ -195,18 +98,6 @@ abstract public class AbstractSeleniumSampler extends AbstractGraphElement imple
         } catch (IOException e) {
             result.setThrowable(e);
         }
-    }
-
-    @Override
-    public String getCurrentMethodSupplier(){
-        return getProp(TestElement.NS_NAME, PN_MethodSuppliersName).getStringValue();
-    }
-
-    @Override
-    public void updateByMethodSupplier(String supplierName) {
-        getProp(NS_NAME, PN_MethodSuppliersName).setObjectValue(supplierName);
-        clearNameSpace(NS_ARGUMENT);
-        getMethodSupplierInstance(supplierName).addArguments();
     }
 
     @Override

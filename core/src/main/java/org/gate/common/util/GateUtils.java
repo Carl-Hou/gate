@@ -20,6 +20,8 @@ package org.gate.common.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.common.config.GateProps;
+import org.gate.runtime.GateContext;
+import org.gate.runtime.GateContextService;
 import org.gate.runtime.GateVariables;
 import org.w3c.dom.Document;
 
@@ -35,6 +37,7 @@ import java.util.*;
 public class GateUtils {
 
     static Logger log = LogManager.getLogger(GateUtils.class);
+
 
     public static LinkedList<String> getParameterList(String parameters){
         return getParameterList(parameters, ",");
@@ -104,7 +107,7 @@ public class GateUtils {
         StringBuffer sb = new StringBuffer();
         sb.append("Variables: ").append(GateProps.LineSeparator);
         variables.entrySet().forEach( v ->{
-            sb.append(v.getKey()).append(":").append(v.getValue()).append(GateProps.LineSeparator);
+            sb.append(v.getKey()).append("=").append(v.getValue()).append(GateProps.LineSeparator);
         });
         sb.trimToSize();
         return sb.toString();

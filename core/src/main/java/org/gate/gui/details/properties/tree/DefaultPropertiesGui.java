@@ -44,7 +44,10 @@ public class DefaultPropertiesGui extends AbstractTreeElementPanel {
     @Override
     protected void setTestElement(GateTreeElement element) {
         defaultPropertiesTable.setTestElement(element);
-        defaultPropertiesTable.constraintReadOnly(TestTreeElement.PN_ENABLE);
+        // Actions in Lib should not be disabled
+        if(TestTreeElement.class.isAssignableFrom(element.getClass())){
+            defaultPropertiesTable.constraintReadOnly(TestTreeElement.PN_ENABLE);
+        }
         updateTableEditors();
     }
 

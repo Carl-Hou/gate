@@ -46,7 +46,7 @@ public class ArgumentsPane extends JPanel {
     JButton delete  = new JButton("Delete");
     JButton up = new JButton("Up");
     JButton down = new JButton("Down");
-    // Maeke sure setTestElement was called before use this component
+    // Make sure setTestElement was called before use this component
     TestElement testElement = null;
     String nameSpace = TestElement.NS_ARGUMENT;
 
@@ -89,22 +89,18 @@ public class ArgumentsPane extends JPanel {
         // Disable DELETE if there are no rows in the table to delete.
         if (getModel().getRowCount() == 0) {
             delete.setEnabled(false);
-//            showDetail.setEnabled(false);
         } else {
             delete.setEnabled(true);
-//            showDetail.setEnabled(true);
         }
 
-//        if(enableUpDown) {  did not see this is used anywhere.
-            if(getModel().getRowCount()>1) {
-                up.setEnabled(true);
-                down.setEnabled(true);
-            }
-            else {
-                up.setEnabled(false);
-                down.setEnabled(false);
-            }
-//        }
+        if(getModel().getRowCount()>1) {
+            up.setEnabled(true);
+            down.setEnabled(true);
+        }
+        else {
+            up.setEnabled(false);
+            down.setEnabled(false);
+        }
     }
 
     /**

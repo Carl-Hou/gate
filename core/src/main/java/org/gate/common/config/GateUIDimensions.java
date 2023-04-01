@@ -48,7 +48,7 @@ public class GateUIDimensions {
         int mainFrameHeight = (int) (screenSize.height * 0.95);
         mainFrameSize = new Dimension(mainFrameWidth, mainFrameHeight);
         workspaceHorizontalDivider = (int) (mainFrameWidth * 0.15);
-        workspaceVerticalDivider = (int) (mainFrameWidth * 0.36);
+        workspaceVerticalDivider = (int) (mainFrameWidth * 0.34);
         libraryOutlineDivider = (int) (mainFrameHeight * 0.63 * 0.8);
 //      first 085 is the size of graphEditor, second 0.85 is the divider position between graphComponent and libaryOutline.
         graphEditorDivider = (int) (mainFrameWidth *0.85 * 0.85);

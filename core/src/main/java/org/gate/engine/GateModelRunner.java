@@ -19,7 +19,6 @@ package org.gate.engine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gate.common.config.GateProps;
 import org.gate.gui.details.results.elements.test.ModelContainerResult;
 import org.gate.gui.graph.elements.ElementContext;
 import org.gate.gui.tree.test.elements.config.ConfigElement;
@@ -60,9 +59,6 @@ public abstract class GateModelRunner implements Runnable, TestConstraint {
 
     abstract void execute(TestModelRuntime modelRuntime);
 
-    /*
-    *   bellowing code won't have Throwable. Try catch is not need for it.
-    * */
     @Override
     public void run() {
         // this should not throw exception.
@@ -73,8 +69,9 @@ public abstract class GateModelRunner implements Runnable, TestConstraint {
             log.fatal("Fatal error:", t);
             getModelContainerResult().setThrowable(t);
         }finally {
-            context.modelShutdown();
+            // external resource must be closed before shutdown
             closeExternalResource();
+            context.modelShutdown();
         }
 
     }
@@ -88,7 +85,7 @@ public abstract class GateModelRunner implements Runnable, TestConstraint {
         });
     }
 
-    // close mode context
+    // close model context
     void closeExternalResource(){
         try {
             context.getGraphElementContext().values().forEach(v -> {

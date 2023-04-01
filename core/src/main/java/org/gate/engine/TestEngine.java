@@ -45,7 +45,7 @@ public class TestEngine implements Runnable{
     Logger log = LogManager.getLogger(this.getClass());
 
     // Engine Parameters
-	int runnerNumber = GateProps.getProperty("gate.engine.test.runner.number",3); //3;
+	int runnerNumber = GateProps.getProperty("gate.engine.test.runner.number",1);
 	int timeOut = GateProps.getProperty("gate.engine.test.timeout", 300); //5*60 in seconds;
 
 	private GateContext context;
@@ -124,7 +124,6 @@ public class TestEngine implements Runnable{
                         workingRunner.put(gateModelRunner, thread);
                         thread.start();
                     }
-
                 }
                 pause(100);
             } catch (Throwable t) {

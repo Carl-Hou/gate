@@ -91,7 +91,7 @@ public class DefaultResult implements Result {
     @Override
     public void setThrowable(Throwable throwable){
         setFailure();
-        if(throwable != null){
+        if(this.throwable != null){
             appendMessage("Previous throwable" );
             appendMessage(GateUtils.getStackTrace(throwable));
         }

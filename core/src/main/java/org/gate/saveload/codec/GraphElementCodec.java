@@ -58,7 +58,6 @@ public class GraphElementCodec {
     }
 
     public void decode(mxGraphModel mxModel) throws ConvertException {
-//        DocumentHelper documentHelper = v1 DocumentHelper();
         Collection<mxCell> cells = (Collection) mxModel.getCells().values();
         for(mxCell cell : cells){
             Object value = cell.getValue();

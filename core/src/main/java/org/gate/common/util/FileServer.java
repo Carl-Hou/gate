@@ -308,6 +308,23 @@ public class FileServer {
         throw new IOException("File never reserved: "+filename);
     }
 
+    public synchronized void resetReader(String filename) throws IOException {
+        FileEntry fileEntry = files.get(filename);
+        if (fileEntry != null) {
+            if (fileEntry.inputOutputObject != null && !(fileEntry.inputOutputObject instanceof Reader)) {
+                throw new IOException("File " + filename + " already in use");
+            }
+            if (fileEntry.inputOutputObject != null
+                    && fileEntry.inputOutputObject instanceof Reader) {
+                    fileEntry.inputOutputObject.close();
+            }
+            fileEntry.inputOutputObject = createBufferedReader(fileEntry);
+        }else{
+            throw new IOException("File never reserved: "+filename);
+        }
+
+    }
+
     /**
      * 
      * @param alias the file name or alias

@@ -17,57 +17,24 @@
  */
 package org.gate.gui.graph.elements.timer;
 
-import org.gate.gui.details.results.elements.graph.ElementResult;
-import org.gate.gui.graph.elements.AbstractGraphElement;
-import org.gate.gui.graph.elements.timer.gui.ConstantTimerGui;
 
-import java.util.concurrent.TimeUnit;
 
-public class ConstantTimer extends AbstractGraphElement implements Timer {
+public class ConstantTimer extends AbstractTimer implements Timer {
+    /*
+        Usually random timer is not used for function test so only constant timer
+     */
     public final static String NP_WaitTime = "Time to wait";
-    public final static String NP_TimeUnit = "Time unit";
-
-    public final static String Milliseconds = "milliseconds";
-    public final static String Seconds = "seconds";
-    public final static String Minutes = "minutes";
-
     public ConstantTimer(){
-        addProp(NS_DEFAULT, NP_WaitTime, "1");
-        addProp(NS_DEFAULT, NP_TimeUnit, Seconds);
+        addProp(NS_DEFAULT, NP_WaitTime, "");
     }
 
     @Override
-    protected void exec(ElementResult controllerResult)  {
-        controllerResult.setRunTimeProps(getRunTimePropsMap());
-        long time = Long.valueOf(getRunTimeProp(NS_DEFAULT, NP_WaitTime));
-        try {
-            switch (getRunTimeProp(NS_DEFAULT, NP_TimeUnit).toLowerCase()) {
-                case Seconds:
-                    TimeUnit.SECONDS.sleep(time);
-                    break;
-                case Milliseconds:
-                    TimeUnit.MILLISECONDS.sleep(time);
-                    break;
-                case Minutes:
-                    TimeUnit.MINUTES.sleep(time);
-                    break;
-                default:
-                    log.warn(getName() + ": Time Unit is not set correctly. Use milliseconds");
-                    TimeUnit.MILLISECONDS.sleep(time);
-            }
-        }catch (InterruptedException e) {
-            log.trace("Interrupted:", e);
-            controllerResult.setThrowable(e);
-        }
-    }
-
-    @Override
-    public String getGUI() {
-        return ConstantTimerGui.class.getName();
+    int getTimeToWait() {
+        return Integer.parseInt(getRunTimeProp(NS_DEFAULT, NP_WaitTime));
     }
 
     @Override
     public String getStaticLabel() {
-        return "Constant Timer";
+        return "Constant";
     }
 }

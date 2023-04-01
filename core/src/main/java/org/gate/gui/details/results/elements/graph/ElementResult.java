@@ -33,8 +33,8 @@ public interface ElementResult extends Result {
 //    Object getResponseObject();
     String getResponseAsString();
 
-    void setThrowable(Throwable t);
-    Throwable getThrowable();
+//    void setThrowable(Throwable t);
+//    Throwable getThrowable();
 
     String getResult();
     void appendRequestMessage(CharSequence message);

@@ -137,6 +137,15 @@ public class GuiUtils {
         return rTextScrollPane;
     }
 
+    public static JPanel getRTextScrollPane(RSyntaxTextArea rSyntaxTextArea, String label){
+
+        RTextScrollPane rTextScrollPane = new RTextScrollPane(rSyntaxTextArea);
+        rTextScrollPane.setFoldIndicatorEnabled(true);
+        JPanel rTextPanel = getPanel(label, new VerticalLayout());
+        rTextPanel.add(rTextScrollPane);
+        return rTextPanel;
+    }
+
     public static ImageIcon getImage(String name) {
         try {
             URL url = GuiUtils.class.getResource(name.trim());

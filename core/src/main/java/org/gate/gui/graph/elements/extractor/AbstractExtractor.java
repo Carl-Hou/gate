@@ -25,61 +25,43 @@ import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
 import org.gate.runtime.GateVariables;
 import org.gate.varfuncs.property.GateProperty;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 
 
 public abstract class AbstractExtractor extends AbstractGraphElement implements Extractor, ExtractorConstantsInterface{
 
     public AbstractExtractor(){
         addNameSpace(NS_ARGUMENT);
-        addProp(NS_NAME, PN_SourceType, ST_Response);
-        setResponseAsSourceType();
-    }
-
-    void setResponseAsSourceType(){
-        getProps(NS_DEFAULT).clear();
+        addProp(NS_NAME, SourceType, SourceType_Response);
         addProp(NS_DEFAULT, PN_DefaultValue, "");
-        initProperties();
+        addProp(NS_DEFAULT, PN_MatchNo, "");
     }
 
-    void setVariableAsSourceType(){
-        getProps(NS_DEFAULT).clear();
-        addProp(NS_DEFAULT, PN_Variable_Name,"");
-        addProp(NS_DEFAULT, PN_DefaultValue, "");
-        initProperties();
-    }
-
-    protected void initProperties(){ }
 
     public String getSelectSourceType(){
-        return getProp(TestElement.NS_NAME, PN_SourceType).getStringValue();
+        return getProp(TestElement.NS_NAME, SourceType).getStringValue();
     }
 
-    public void onSelectSourceType(String sourceType){
-        setProp(TestElement.NS_NAME, PN_SourceType, sourceType);
-        switch (sourceType){
-            case ST_Response:
-                setResponseAsSourceType();
-                break;
-            case ST_Variable:
-                setVariableAsSourceType();
-                break;
-            default:
-                log.fatal("Internal Error");
-        }
-    }
-
-    protected void preExtract(){ }
 
     @Override
     protected void exec(ElementResult result) {
-
+        // get variables
         String defaultValue = getRunTimeProp(NS_DEFAULT, PN_DefaultValue);
+        String matchNoValue = getRunTimeProp(NS_DEFAULT, PN_MatchNo).trim();
+        boolean matchAll = false;
+        int matchNo = 0;
+        if(matchNoValue.isEmpty()){
+            matchAll = true;
+        }else{
+            matchNo = Integer.parseInt(matchNoValue);
+        }
+        if(matchNo < 0){
+            throw new IllegalArgumentException(PN_MatchNo + "require a Positive Integer value");
+        }
+        // start process
         GateContext context = GateContextService.getContext();
-
         final SamplerResult previousSamplerResult =context.getPreviousResult();
 
         if(previousSamplerResult == null){
@@ -88,12 +70,9 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
         }
 
         GateVariables vars = context.getVariables();
-        for(GateProperty patternProperty : getRunTimeProps(NS_ARGUMENT)){
-            vars.put(patternProperty.getName(), defaultValue);
-        }
 
         String content = null;
-        if(getSelectSourceType().equals(ST_Response)){
+        if(getSelectSourceType().equals(SourceType_Response)){
             content = previousSamplerResult.getResponseAsString();
         }else {
             content = vars.get(getRunTimeProp(NS_DEFAULT, PN_Variable_Name));
@@ -102,15 +81,29 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
         if(content == null){
             result.setFailure("Fail to get source for extract");
         }
-        // extract each pattern to var
-        preExtract();
+
         for(GateProperty patternProperty : getRunTimeProps(NS_ARGUMENT)){
-            // take care "\\" when copy from java code
             String pattern = patternProperty.getStringValue();
+            if(pattern.trim().isEmpty()) throw new IllegalArgumentException("pattern is empty");
             try {
-                String value = extract(pattern, content);
-                if (null != value) {
-                    vars.put(patternProperty.getName(), value);
+                List<String> values = extract(pattern, content);
+                if(values.size() == 0){
+                    vars.put(patternProperty.getName(), defaultValue);
+                }else if(values.size() == 1){
+                    vars.put(patternProperty.getName(), values.get(0));
+                }else if (values.size() > 1){
+                    if(matchAll){
+                        vars.putObjects(patternProperty.getName(), values);
+                    }else{
+                        if(matchNo == 0){
+                            Random random = new Random();
+                            vars.put(patternProperty.getName(), values.get(random.nextInt(values.size())));
+                        }else{
+                            if(matchNo <= values.size()){
+                                vars.put(patternProperty.getName(), values.get(matchNo -1));
+                            }
+                        }
+                    }
                 }
             }catch (Throwable t){
                 log.error("Fail to extract from content", t);
@@ -120,5 +113,7 @@ public abstract class AbstractExtractor extends AbstractGraphElement implements 
         }
     }
 
-    protected abstract String extract(String pattern, String content) throws  Exception;
+    protected abstract List<String> extract(String pattern, String content) throws  Exception;
+
+
 }

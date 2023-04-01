@@ -71,8 +71,8 @@ public class GraphNamePane extends JPanel {
         if(elementCategory == null){
             OptionPane.showErrorMessageDialog("Error", "Graph element is not in a supported category");
         }
-        StringBuffer cellName = new StringBuffer(" Category: ");
-        cellName.append(elementCategory).append(" Type: ");
+        StringBuffer cellName = new StringBuffer(elementCategory);
+        cellName.append(" : ");
         cellName.append(graphElement.getStaticLabel());
         cellName.trimToSize();
         label.setText(cellName.toString());

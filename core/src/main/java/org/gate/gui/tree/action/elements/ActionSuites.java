@@ -20,4 +20,8 @@ package org.gate.gui.tree.action.elements;
 
 public class ActionSuites extends ActionTreeElement {
 
+    public ActionSuites(){
+
+    }
+
 }
