@@ -20,11 +20,13 @@ package org.gate.gui.graph.elements.extractor;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 import org.gate.common.util.GateXMLUtils;
+import org.gate.gui.graph.elements.extractor.gui.XMLExtractorGui;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -34,41 +36,38 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
-public class XPathExtractor extends AbstractExtractor {
+public class XMLExtractor extends AbstractExtractor {
 
-    static final String PN_DefaultValue         = "default value"; // $NON-NLS-1$
+    public XMLExtractor(){
+        addProp(NS_DEFAULT, PN_XML_Validate, "false");
+        addProp(NS_DEFAULT, PN_XML_IgnoreWhiteSpace, "false");
+        addProp(NS_DEFAULT, PN_XML_Fragment, "false");
+        addProp(NS_DEFAULT, Extractor_Type, "false");
 
-    static final String PN_ValidateXML = "valid xml";
-    static final String PN_IgnoreWhiteSpace = "ignore white space";
-    static final String PN_Fragment        = "entire xpath fragment"; // $NON-NLS-1$
-
-    public XPathExtractor(){ }
-
-    @Override
-    protected void initProperties(){
-        addProp(NS_DEFAULT, PN_ValidateXML, "false");
-        addProp(NS_DEFAULT, PN_IgnoreWhiteSpace, "false");
-        addProp(NS_DEFAULT, PN_Fragment, "false");
     }
-
     @Override
-    protected String extract(String pattern, String content) throws Exception {
-        boolean validXML = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_ValidateXML));
-        boolean ignoreWhiteSpace = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_IgnoreWhiteSpace));
-        boolean fragment = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_Fragment));
-        Document document =  GateXMLUtils.parse(content, validXML, ignoreWhiteSpace);
-        LinkedList<String> matches = new LinkedList<>();
-        putValuesForXPathInList(document,pattern,matches,fragment);
-        if(matches.size() > 0){
-            return matches.getFirst();
-        }
-        return null;
+    public String getStaticLabel() {
+        return "XML Extractor";
     }
 
     @Override
     public String getGUI() {
-        return DefaultExtractorGui.class.getName();
+        return XMLExtractorGui.class.getName();
     }
+
+    @Override
+    protected List<String> extract(String pattern, String content) throws Exception {
+        boolean validXML = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_XML_Validate));
+        boolean ignoreWhiteSpace = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_XML_IgnoreWhiteSpace));
+        boolean fragment = Boolean.parseBoolean(getRunTimeProp(NS_DEFAULT, PN_XML_Fragment));
+
+        Document document =  GateXMLUtils.parse(content, validXML, ignoreWhiteSpace);
+        LinkedList<String> matches = new LinkedList<>();
+        putValuesForXPathInList(document,pattern,matches,fragment);
+        return matches;
+    }
+
+
 
     /**
      * Put in matchStrings results of evaluation
@@ -103,7 +102,10 @@ public class XPathExtractor extends AbstractExtractor {
                 } else {
                     val = match.getNodeValue();
                 }
-                matchStrings.add(val);
+                if(null != val){
+                    matchStrings.add(val);
+                }
+
             }
         } else if (objectType == XObject.CLASS_NULL
                 || objectType == XObject.CLASS_UNKNOWN
@@ -141,8 +143,5 @@ public class XPathExtractor extends AbstractExtractor {
         return documentBuilderFactory.newDocumentBuilder().parse(in);
     }
 
-    @Override
-    public String getStaticLabel() {
-        return "XPath Extractor";
-    }
+
 }

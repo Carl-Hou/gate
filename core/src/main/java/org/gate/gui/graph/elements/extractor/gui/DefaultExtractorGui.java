@@ -15,71 +15,75 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.elements.extractor;
+package org.gate.gui.graph.elements.extractor.gui;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gate.gui.GuiPackage;
+import org.gate.gui.MainFrame;
 import org.gate.gui.common.GuiUtils;
+import org.gate.gui.common.TestElement;
 import org.gate.gui.common.VerticalLayout;
 import org.gate.gui.details.properties.ArgumentsPane;
 import org.gate.gui.details.properties.PropertiesTable;
 import org.gate.gui.details.properties.PropertiesTableModel;
 import org.gate.gui.details.properties.graph.GraphElementPropertiesGui;
 import org.gate.gui.details.properties.graph.GraphNamePane;
+import org.gate.gui.graph.common.AbstractJComboBoxListener;
 import org.gate.gui.graph.elements.GraphElement;
+import org.gate.gui.graph.elements.extractor.AbstractExtractor;
+import org.gate.gui.graph.elements.extractor.ExtractorConstantsInterface;
 
 import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 
-public class DefaultExtractorGui extends JPanel implements GraphElementPropertiesGui, ExtractorConstantsInterface {
+public abstract class DefaultExtractorGui extends JPanel implements GraphElementPropertiesGui, ExtractorConstantsInterface {
 
     protected Logger log = LogManager.getLogger(this.getName());
 
     GraphNamePane namePane = new GraphNamePane();
     PropertiesTable defaultPropertiesTable = new PropertiesTable( new PropertiesTableModel());
     ArgumentsPane argumentsPane = new ArgumentsPane();
-    JComboBox sourceSelectCombBox = new JComboBox( new String[] {ST_Response, ST_Variable});
+    JComboBox sourceSelectCombBox = new JComboBox( SourceTypes);
 
     AbstractExtractor extractor = null;
 
     public DefaultExtractorGui(){
         setLayout(new VerticalLayout());
         add(namePane);
-        JPanel sourcePanel = new JPanel(new VerticalLayout());
-        JPanel sourceSelectPanel = new JPanel(new GridLayout(1, 2));
-        sourceSelectPanel.add(new JLabel("Source:"));
-        sourceSelectCombBox.addPopupMenuListener(new PopupMenuListener() {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
 
+        sourceSelectCombBox.addPopupMenuListener(new AbstractJComboBoxListener() {
             @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {}
-
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                extractor.onSelectSourceType((String) sourceSelectCombBox.getSelectedItem());
+            protected void onItemSelected(String itemName) {
+                extractor.setProp(TestElement.NS_NAME, SourceType, itemName);
+                extractor.getProps(TestElement.NS_DEFAULT).clear();
+                if(itemName.equals(SourceType_Variable)){
+                    extractor.putProp(TestElement.NS_DEFAULT, PN_Variable_Name, "");
+                }
+                extractor.putProp(TestElement.NS_DEFAULT, PN_DefaultValue, "");
+                extractor.putProp(TestElement.NS_DEFAULT, PN_MatchNo, "");
+                onInputSourceSelected(extractor);
                 defaultPropertiesTable.setTestElement(extractor);
+                updateTableEditors();
             }
         });
-        sourceSelectPanel.add(sourceSelectCombBox);
-        sourcePanel.add(sourceSelectPanel);
-        JPanel tablePanel = GuiUtils.getPanel("Properties");
-        tablePanel.setLayout(new BorderLayout());
-        tablePanel.add(defaultPropertiesTable, BorderLayout.CENTER);
-        tablePanel.add(defaultPropertiesTable.getTableHeader(), BorderLayout.NORTH);
-        sourcePanel.add(tablePanel);
+
+        JPanel propertiesPanel = GuiUtils.getPanel("Properties", new VerticalLayout());
+        propertiesPanel.add(sourceSelectCombBox);
+        propertiesPanel.add(defaultPropertiesTable.getTableHeader());
+        propertiesPanel.add(defaultPropertiesTable);
+
         JSplitPane propsPattern = new JSplitPane();
-        propsPattern.setLeftComponent(sourcePanel);
+        propsPattern.setLeftComponent(propertiesPanel);
         propsPattern.setRightComponent(argumentsPane);
         add(propsPattern);
         int divider = (int) (GuiPackage.getIns().getPropertiesPanel().getWidth() *0.3);
         propsPattern.setDividerLocation(divider);
     }
+
+    abstract void onInputSourceSelected(AbstractExtractor extractor);
 
     @Override
     public void setCell(mxGraph graph, mxCell cell) {
@@ -96,7 +100,5 @@ public class DefaultExtractorGui extends JPanel implements GraphElementPropertie
         updateTableEditors();
     }
 
-    void updateTableEditors(){
-
-    }
+    abstract void updateTableEditors();
 }

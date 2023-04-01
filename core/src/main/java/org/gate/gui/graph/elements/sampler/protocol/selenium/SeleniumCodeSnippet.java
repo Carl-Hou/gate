@@ -21,7 +21,7 @@ import org.gate.common.util.GateException;
 import org.gate.gui.details.results.elements.graph.ElementResult;
 import org.gate.gui.graph.common.AbstractJSR223GraphElement;
 import org.gate.gui.graph.elements.sampler.Sampler;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.gui.CodeSnippetGui;
+import org.gate.gui.graph.elements.sampler.protocol.selenium.gui.SeleniumCodeSnippetGui;
 import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.gate.runtime.GateContext;
 import org.gate.runtime.GateContextService;
@@ -33,13 +33,13 @@ import javax.script.ScriptException;
 
 import static org.gate.gui.graph.elements.sampler.JSR223Sampler.PN_Parameters;
 
-public class CodeSnippet extends AbstractJSR223GraphElement implements SeleniumConstantsInterface, Sampler {
+public class SeleniumCodeSnippet extends AbstractJSR223GraphElement implements SeleniumConstantsInterface, Sampler {
 
     final static String language = "groovy";
 
     public final static String PN_Script = "script";
 
-    public CodeSnippet(){
+    public SeleniumCodeSnippet(){
         addNameSpace(NS_ARGUMENT);
         addProp(NS_DEFAULT, PN_DriverId, "");
         addProp(NS_DEFAULT, PN_Parameters, "");
@@ -49,7 +49,7 @@ public class CodeSnippet extends AbstractJSR223GraphElement implements SeleniumC
 
     @Override
     public String getStaticLabel() {
-        return "Selenium Snippet";
+        return "Selenium Code Snippet";
     }
     SeleniumContext getSeleniumContext(){
         GateContext context = GateContextService.getContext();
@@ -96,6 +96,6 @@ public class CodeSnippet extends AbstractJSR223GraphElement implements SeleniumC
 
     @Override
     public String getGUI() {
-        return CodeSnippetGui.class.getName();
+        return SeleniumCodeSnippetGui.class.getName();
     }
 }

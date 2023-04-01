@@ -15,38 +15,29 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.elements.extractor;
+package org.gate.gui.graph.common;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
-public class RegexExtractor extends AbstractExtractor {
-
-
-    public RegexExtractor(){
-    }
-
-
+public abstract class AbstractJComboBoxListener implements PopupMenuListener {
     @Override
-    protected String extract(String pattern, String content) {
-        Matcher m = Pattern.compile(pattern).matcher(content);
-        if(m.find()){
-            if(m.groupCount() > 0){
-                return m.group(1);
-            }else{
-                return m.group();
-            }
-        }
-        return null;
+    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+
     }
 
     @Override
-    public String getGUI() {
-        return DefaultExtractorGui.class.getName();
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        JComboBox comboBox = (JComboBox) e.getSource();
+        String selectedItem = (String) comboBox.getSelectedItem();
+        onItemSelected(selectedItem);
     }
 
     @Override
-    public String getStaticLabel() {
-        return "Regex Extractor";
+    public void popupMenuCanceled(PopupMenuEvent e) {
+
     }
+
+    protected abstract void onItemSelected(String itemName);
 }

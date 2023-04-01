@@ -15,11 +15,16 @@
  * limitations under the License.
  *
  */
-package org.gate.gui.graph.elements.sampler.protocol.selenium;
+package org.gate.gui.graph.elements.sampler.protocol.selenium.util;
 
 import org.gate.common.util.GateRuntimeExcepiton;
-import org.gate.gui.graph.elements.sampler.protocol.selenium.util.SeleniumConstantsInterface;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
@@ -31,7 +36,7 @@ import java.util.Arrays;
 
 public class SeleniumUtils implements SeleniumConstantsInterface {
 
-    public static WebElement getWebElement(Wait<WebDriver> wait, String expectedCondition, By by) {
+    static public WebElement getWebElement(Wait<WebDriver> wait, String expectedCondition, By by) {
         switch (expectedCondition) {
             case "elementToBeClickable":
                 return wait.until(ExpectedConditions.elementToBeClickable(by));
@@ -40,17 +45,17 @@ public class SeleniumUtils implements SeleniumConstantsInterface {
             case "visibilityOfElementLocated":
                 return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
         }
-        throw new GateRuntimeExcepiton("expectedCondition is not in support list");
+        throw new GateRuntimeExcepiton("ExpectedCondition is not in support list");
     }
 
-    public static FluentWait<WebDriver> getWait(WebDriver driver, String waitTimeOut, String waitFrequency) {
+    static public FluentWait<WebDriver> getWait(WebDriver driver, String waitTimeOut, String waitFrequency) {
         FluentWait<WebDriver> fluentWait = new FluentWait(driver).ignoring(NoSuchElementException.class);
         fluentWait.withTimeout(Duration.ofSeconds(Integer.parseUnsignedInt(waitTimeOut)));
         fluentWait.pollingEvery(Duration.ofMillis(Long.parseUnsignedLong(waitFrequency)));
         return fluentWait;
     }
 
-    public static WebElement getWebElementByWait(FluentWait<WebDriver> wait, String expectedCondition, By locator) {
+    static public WebElement getWebElementByWait(FluentWait<WebDriver> wait, String expectedCondition, By locator) {
         switch (expectedCondition) {
             case "ElementToBeClickable":
                 return wait.until(ExpectedConditions.elementToBeClickable(locator));
@@ -62,7 +67,40 @@ public class SeleniumUtils implements SeleniumConstantsInterface {
         throw new GateRuntimeExcepiton("expectedCondition is not in support list");
     }
 
-    public static By getLocator(String locatorType, String locatorCondition) {
+    static public WebDriver getDriver(String browserName){
+        switch (browserName) {
+            case BrowserName_Chrome:
+                return new ChromeDriver();
+            case BrowserName_Safari:
+                return new SafariDriver();
+            case BrowserName_FireFox:
+                return new FirefoxDriver();
+            case BrowserName_Edge:
+                return new EdgeDriver();
+            case BrowserName_Opera:
+                return new OperaDriver();
+        }
+        // Should not be here.
+        throw new GateRuntimeExcepiton("Browser Name no in supported list:" + Arrays.toString(BrowserNames));
+    }
+
+    static public DesiredCapabilities getDesiredCapabilities(String browserName){
+        switch (browserName) {
+            case BrowserName_Chrome:
+                return DesiredCapabilities.chrome();
+            case BrowserName_Safari:
+                return DesiredCapabilities.safari();
+            case BrowserName_FireFox:
+                return DesiredCapabilities.firefox();
+            case BrowserName_Edge:
+                return DesiredCapabilities.edge();
+            case BrowserName_Opera:
+                return DesiredCapabilities.operaBlink();
+        }
+        throw new GateRuntimeExcepiton("DesiredCapabilities no in supported list:" + Arrays.toString(BrowserNames));
+    }
+
+    static public By getLocator(String locatorType, String locatorCondition) {
         switch (locatorType) {
             case Locator_ClassName:
                 return By.className(locatorCondition);
@@ -81,8 +119,8 @@ public class SeleniumUtils implements SeleniumConstantsInterface {
             case Locator_XPath:
                 return By.xpath(locatorCondition);
         }
-        // Should never been here.
-        throw new GateRuntimeExcepiton("locatorType no in supported list. should be one of:" + Arrays.toString(LocatorTypes));
+        // Should not be here.
+        throw new GateRuntimeExcepiton("locatorType no in supported list: " + Arrays.toString(LocatorTypes));
     }
 
     public static JPanel getMethodSupplierPanel(String name, JComboBox comboBox) {
@@ -90,5 +128,17 @@ public class SeleniumUtils implements SeleniumConstantsInterface {
         executorPanel.add(new JLabel(name));
         executorPanel.add(comboBox);
         return executorPanel;
+    }
+
+    static public Keys getKeys(String key){
+        switch (key){
+            case KK_ALT:
+                return Keys.ALT;
+            case KK_Control:
+                return Keys.CONTROL;
+            case KK_Shift:
+                return Keys.SHIFT;
+        }
+        throw new GateRuntimeExcepiton("Keys no in supported list: " + Arrays.toString(Keyboard_Keys));
     }
 }
